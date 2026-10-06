@@ -13,17 +13,9 @@
 :root {
   --paper-tile: url("/paper-light.svg");
   /* Code is written in the same ink, at different pressures. */
-  --code-foreground: var(--ink);
-  --code-background: transparent;
-  --code-token-keyword: var(--ink);
-  --code-token-function: var(--ink);
-  --code-token-constant: var(--ink-2);
-  --code-token-parameter: var(--ink-2);
-  --code-token-string: var(--ink-2);
-  --code-token-string-expression: var(--ink-2);
-  --code-token-punctuation: var(--ink-3);
-  --code-token-comment: var(--ink-3);
-  --code-token-link: var(--ink);
+  --code-strong: var(--ink);
+  --code-plain: var(--ink-2);
+  --code-quiet: var(--ink-3);
 }
 
 .dark {
@@ -48,24 +40,24 @@ body {
   outline-offset: 4px;
 }
 
-/* Code blocks: a faint wash of ink rather than a box. */
-.code-block {
-  background: color-mix(in oklab, var(--ink) 5%, transparent);
-  border-radius: var(--hand-radius);
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.6;
+/* Code is set on the paper, not in a box (see components/code-block). A
+   typewriter mono: typed onto the page, then annotated in pen. */
+.code-block .code pre,
+.code-block .code code {
+  font-family: var(--font-code), ui-monospace, monospace;
+}
+
+.code-block .code pre {
+  overflow-x: auto;
+  padding: 0.25rem 0 0.5rem;
+  background: transparent !important;
+  font-size: 0.9375rem;
+  line-height: 1.65;
   -webkit-text-stroke: 0;
 }
 
-.code-block pre {
-  overflow-x: auto;
-  padding: 1rem 1.25rem;
-  background: transparent !important;
-}
-
-.code-block [style*="font-style:italic"] {
-  font-family: var(--font-mono);
+.code-block .code pre:focus-visible {
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {

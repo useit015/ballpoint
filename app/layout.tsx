@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Gaegu, Victor_Mono } from "next/font/google";
+import { Courier_Prime, Gaegu } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
 // Matches what `shadcn init @ballpoint/ballpoint` writes into an app.
 const gaegu = Gaegu({ variable: "--font-sans", weight: ["300", "400", "700"], subsets: ["latin"] });
-// Code only: a mono with a pen-like italic for comments.
-const code = Victor_Mono({ variable: "--font-code", subsets: ["latin"] });
+// Code only: a typewriter mono, as if the code were typed onto the page.
+const code = Courier_Prime({ variable: "--font-code", weight: ["400", "700"], style: ["normal", "italic"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: { default: "Ballpoint", template: "%s · Ballpoint" },

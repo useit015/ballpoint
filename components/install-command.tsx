@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { install } from "@/lib/docs";
 import { CopyButton } from "@/components/copy-button";
+import { MarginRule } from "@/components/margin-rule";
 import { cn } from "@/lib/utils";
 
 type Manager = keyof typeof install;
@@ -40,9 +41,10 @@ export function InstallCommand({ what, className }: { what: string; className?: 
   const current = useSyncExternalStore(subscribe, read, () => "pnpm" as Manager);
   const command = install[current](what);
   return (
-    <div className={cn("code-block", className)}>
-      <div className="flex items-center justify-between gap-4 border-b border-ink-5 pr-2 pl-4">
-        <div role="tablist" aria-label="Package manager" className="flex gap-4 pt-1.5">
+    <div className={cn("code-block relative pl-6", className)}>
+      <MarginRule seed={what} />
+      <div className="flex items-center justify-between gap-4">
+        <div role="tablist" aria-label="Package manager" className="flex gap-4">
           {managers.map((m) => (
             <button
               key={m}
@@ -61,9 +63,16 @@ export function InstallCommand({ what, className }: { what: string; className?: 
         </div>
         <CopyButton text={command} />
       </div>
-      <pre className="overflow-x-auto px-4 py-3">
-        <code>{command}</code>
-      </pre>
+      <div className="code">
+        <pre>
+          <code>
+            <span aria-hidden="true" className="text-ink-3 select-none">
+              ${" "}
+            </span>
+            {command}
+          </code>
+        </pre>
+      </div>
     </div>
   );
 }

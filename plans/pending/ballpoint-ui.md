@@ -1,6 +1,6 @@
 # Ballpoint UI — a shadcn-style registry drawn in ballpoint
 
-Status: **approved 2026-10-06 · Phases 0–2 done · at the review checkpoint** · Owner: Oussama · Drafted 2026-10-06
+Status: **approved 2026-10-06 · Phases 0–2 done · checkpoint reviewed: customisation added (D23–D28)** · Owner: Oussama · Drafted 2026-10-06
 
 A copy-in component library (installed with `shadcn add`, the way shadcn/ui
 works) that brings the portfolio's look to other projects. It covers the
@@ -75,7 +75,7 @@ tokens are new:
 ## Catalogue
 
 **Everyday** (same names and props as shadcn, so they drop in as replacements)
-- Wave A, forms and actions: button (solid / outline / ghost / link / destructive), input, textarea, label, field (label + hint + red-pen error), checkbox, radio-group, switch
+- Wave A, forms and actions: button (solid / outline / secondary / ghost / link / destructive), input, textarea, label, field (label + hint + red-pen error), checkbox, radio-group, switch, slider
 - Wave B, display: card, badge, separator, avatar (crossed frame), kbd, alert, skeleton (pencil hatching), progress (shading fill), table, tabs, accordion
 - Wave C, overlays: dialog, alert-dialog, sheet, popover, tooltip, dropdown-menu, select, toast
 - Wave D, navigation and complex (v1.1): breadcrumb, pagination, slider, toggle, toggle-group, calendar / date-picker (graph-paper cells), combobox, command
@@ -92,7 +92,9 @@ tokens are new:
 | 1 | **Engine port.** `sketch.ts` + new shapes; `ink.tsx` with `InkBox`/`useInkBox` (shared ResizeObserver, 2px rounding, memo); `--ink-line`, `--pen-red`; `scripts/contrast.ts` | M | `pnpm test` determinism suite (same seed gives the same path string under node and jsdom). Bench: 200 InkBoxes mount in under 50ms. `pnpm contrast` passes |
 | 2 | **Docs shell + test harness.** Preview pages, install-command block, "redraw" seed shuffle, light/dark; Playwright visual + axe runners | M | `pnpm test:visual` (reduced-motion emulation, both themes) and `pnpm test:a11y` run on the button page |
 | — | *Checkpoint: review the button, tokens and docs page together before scaling out* | | |
-| 3 | Wave A, form controls | M | visual + a11y + keyboard script per control; `test:install` adds all of Wave A |
+| 2.5 | **Pen settings.** `InkProvider`/props, auto-draw on view, `roundedBoxStroke`, weight/speed variables, fill and shadow styles; button takes them all | S | unit snapshot for new geometry; e2e: strokes stay pending until in view, then draw; visual baselines for a pen-settings example; bench still under 50ms |
+| 3 | Wave A, form controls (+ slider, moved from Wave D) | M | visual + a11y + keyboard script per control; `test:install` adds all of Wave A |
+| 3.5 | **Customizer + pens and papers.** Docs customizer page; `registry:theme` pens and papers | M | contrast gate covers every pen × paper; e2e drives the customizer and checks the copied code; `test:install` adds a theme |
 | 4 | Wave B, display | M | same |
 | 5 | Wave C, overlays (focus trap, exit drawing, portals) | M | same + focus-return checks |
 | — | *Checkpoint* | | |
@@ -130,8 +132,14 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D18 | `useInkFrame` returns `ref` separately from the spreadable `frame` | The React Compiler lint treats an object holding a ref as a ref |
 | D19 | Benches run in headless Chrome via Playwright (`channel: "chrome"`, no browser download) | The in-app browser pane throttles when hidden, so its timings swung 59–400ms |
 | D20 | `InkSeedProvider` / `useInkSeed` ship in ink-core | Lets the docs "Redraw" previews, and lets users give a region its own hand, without touching each component |
-| D21 | Docs code is highlighted at build time by shiki with a CSS-variable theme mapped to ink pressures, set in Victor Mono | One ink for code too; Gaegu is too loose for code; comments use ink-3 to keep 4.5:1 |
+| D21 | Docs code is set on the paper, not in a box: a pen-drawn margin rule, Courier Prime, and an ink-only shiki theme where tokens differ by pressure and weight (keywords bold, names and strings full ink, plumbing and comments ink-3) | Your feedback: Victor Mono in a grey rounded box looked bad, and nearly every token came out the same ink. Compared Courier Prime, Sometype Mono and Xanh Mono on the page; Courier reads as code typed onto the paper and annotated in pen |
 | D22 | Screenshot tests run with reduced motion | Strokes render finished, so baselines compare drawn results, not animation frames. Stable across 3× repeats |
+| D23 | Components draw themselves in by default, the first time they scroll into view (`draw="auto"`); `"mount"` and `"none"` remain | Checkpoint call. "On view" rather than "on mount" so below-the-fold parts are seen being drawn. Strokes wait behind `data-ink-pending` (one shared IntersectionObserver), only under `@media (scripting: enabled)` so a no-JS page still shows them. Reduced motion shows them finished |
+| D24 | Pen settings on every component as props, and for a subtree via `<InkProvider>`: roughness, passes, radius, corners, fill, shadow, draw, weight, speed, salt | Checkpoint call. Geometry knobs are JS (they change paths); weight and speed are CSS variables (`--ink-weight`, `--ink-speed`), so they can also be set in plain CSS. Replaces `InkSeedProvider` |
+| D25 | Rounded and pill shapes: `radius` (px or `"full"`), drawn by a new `roundedBoxStroke` | Checkpoint call. A hand-drawn rounded box is one continuous pull that runs on past where it closed; `capsuleStroke` becomes a pill of it |
+| D26 | A Customizer page in the docs: controls, a live sheet that redraws as you drag, copyable provider props + CSS | Checkpoint call. It's built from the library's own controls, so it lands after Wave A, and **slider moves from Wave D into Wave A** |
+| D27 | Pens and papers ship in v1 as `registry:theme` items: pens blue ballpoint (default), black fineliner, pencil, green ink; papers cream (default), white, night. Every pen × paper pair must pass the contrast gate | Checkpoint call (was v1.2). Graph paper's grid is drawn by the `paper` component (special set 1), not a colour theme |
+| D28 | Fill styles: `shade` (solid's default), `hatch` (secondary's default), `scribble`, `flat`; shadows: `hatch` (default), `solid`, `none` (no lift either) | One vocabulary for how any area is coloured in, shared by every component that fills |
 
 ## Always / Never
 
@@ -140,8 +148,7 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 
 ## Out of scope (v1)
 
-npm package, Vue/Svelte ports, a chart library, a Figma kit, extra pens and
-papers (black fineliner, pencil, white paper: v1.2 themes), and moving the
+npm package, Vue/Svelte ports, a chart library, a Figma kit, and moving the
 portfolio onto the library.
 
 ## Progress
