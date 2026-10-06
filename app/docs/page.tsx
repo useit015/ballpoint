@@ -4,20 +4,10 @@ import { CodeBlock } from "@/components/code-block";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
 import { PropsTable } from "@/components/props-table";
-import { penProps } from "@/lib/docs";
+import { penProps, tokens } from "@/lib/docs";
 import { homepage } from "@/registry/manifest";
 
 export const metadata: Metadata = { title: "Installation" };
-
-const tokens = [
-  ["--paper", "The page. Cream by day, navy by night."],
-  ["--ink", "The pen. Text, strokes, focus rings."],
-  ["--ink-2, --ink-3", "Lighter pressure for secondary and muted text. Both clear 4.5:1."],
-  ["--ink-line", "Control borders: the lightest pressure that clears 3:1."],
-  ["--ink-4, --ink-5", "Decoration only: rules, washes, hatching."],
-  ["--pen-red", "The only other pen, for destructive and invalid states."],
-  ["--ink-fill", "How solid a pen-shaded fill is under its strokes."],
-];
 
 export default function Installation() {
   return (

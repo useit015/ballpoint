@@ -580,6 +580,17 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
 };
 
 /** The pen settings every drawn component takes, as props or from InkProvider. */
+/** The theme tokens, as the Installation page and llms-full.txt list them. */
+export const tokens = [
+  ["--paper", "The page. Cream by day, navy by night."],
+  ["--ink", "The pen. Text, strokes, focus rings."],
+  ["--ink-2, --ink-3", "Lighter pressure for secondary and muted text. Both clear 4.5:1."],
+  ["--ink-line", "Control borders: the lightest pressure that clears 3:1."],
+  ["--ink-4, --ink-5", "Decoration only: rules, washes, hatching."],
+  ["--pen-red", "The only other pen, for destructive and invalid states."],
+  ["--ink-fill", "How solid a pen-shaded fill is under its strokes."],
+];
+
 export const penProps: Prop[] = [
   { name: "draw", type: '"auto" | "mount" | "none"', default: '"auto"', description: "When the strokes draw themselves in: the first time they scroll into view, as soon as they render, or never (already drawn)." },
   { name: "roughness", type: "number", default: "1", description: "0 is ruler-neat, 1 a quick confident hand, 2 a scrawl." },

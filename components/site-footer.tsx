@@ -14,7 +14,7 @@ export function SiteFooter() {
           </a>
           . MIT licensed; the components are yours once you add them.
         </p>
-        <nav aria-label="Footer" className="flex gap-5">
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-1">
           <Link href="/docs" className="transition-colors hover:text-ink">
             Docs
           </Link>
@@ -24,6 +24,12 @@ export function SiteFooter() {
           <Link href="/customize" className="transition-colors hover:text-ink">
             Customize
           </Link>
+          <a href="https://github.com/useit015/ballpoint" className="transition-colors hover:text-ink">
+            GitHub
+          </a>
+          <a href="/llms.txt" className="transition-colors hover:text-ink">
+            llms.txt
+          </a>
         </nav>
       </div>
     </footer>

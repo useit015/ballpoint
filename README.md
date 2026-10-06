@@ -19,6 +19,11 @@ pnpm dlx shadcn@latest add @ballpoint/button
 the `@ballpoint` namespace in `components.json`. After that, each `add`
 copies one component.
 
+For coding assistants, the docs are also plain markdown:
+[`/llms.txt`](https://ballpoint.st9wd.com/llms.txt) (an index) and
+[`/llms-full.txt`](https://ballpoint.st9wd.com/llms-full.txt) (every
+component's usage, props and pen settings in one file).
+
 ## Develop
 
 ```bash
