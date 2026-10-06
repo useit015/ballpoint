@@ -42,6 +42,15 @@
   --code-comment: color-mix(in oklab, var(--code-pencil) 80%, var(--paper));
 }
 
+/* Popups, dialogs, sheets and toasts (.ink-paper) are cut from the same
+   paper as the page they're laid on. */
+:root,
+.dark,
+[data-ink-scope] {
+  --paper-texture: var(--paper-tile);
+  --paper-texture-size: 600px 600px;
+}
+
 /* Paper: a seamless tile of soft crinkle relief that averages out to exactly
    --paper (scripts/paper-tiles.ts). The page is one sheet, painted on the
    root so it scrolls with the page; .paper-sheet lays another anywhere. */
@@ -60,9 +69,13 @@ body {
   background: transparent;
 }
 
-:focus-visible {
-  outline: 1.5px solid var(--ring);
-  outline-offset: 4px;
+/* A default ring for anything focusable; in the base layer, so a
+   component's own outline utilities (outline-none on menu rows) win. */
+@layer base {
+  :focus-visible {
+    outline: 1.5px solid var(--ring);
+    outline-offset: 4px;
+  }
 }
 
 /* Code: Recursive at full Mono and full Casual. */

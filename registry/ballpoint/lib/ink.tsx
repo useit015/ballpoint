@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode, Ref } from "react";
-import { hashSeed, ruleStroke, type InkStroke } from "@/registry/ballpoint/lib/ink-sketch";
+import { hashSeed, ruleStroke, shadeFill, type InkStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
 // Server-safe drawing primitives. Every drawn part of a component is an
 // absolutely positioned SVG overlay (InkSvg) holding pen strokes (Stroke)
@@ -139,5 +139,20 @@ export const inkRules: CSSProperties = Object.fromEntries(
   [1, 2, 3].map((n) => {
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -1 700 5' preserveAspectRatio='none'><path d='${ruleStroke(hashSeed(`ink-rule-${n}`), 700)}' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round'/></svg>`;
     return [`--ink-rule-${n}`, `url("data:image/svg+xml,${encodeURIComponent(svg)}")`];
+  }),
+);
+
+/**
+ * Three patches of quick pen shading as CSS mask images, for marking many
+ * rows cheaply (the highlighted item in a menu or a select): a
+ * pseudo-element painted in the current colour at low opacity and masked by
+ * one of these, stretched to the row. Spread the object onto a container's
+ * style; patches read --ink-wash-1…3.
+ */
+export const inkWash: CSSProperties = Object.fromEntries(
+  [1, 2, 3].map((n) => {
+    const d = shadeFill(hashSeed(`ink-wash-${n}`), 200, 32, { gap: 2.4, angle: -9, overrun: 1 });
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -3 208 38' preserveAspectRatio='none'><path d='${d}' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>`;
+    return [`--ink-wash-${n}`, `url("data:image/svg+xml,${encodeURIComponent(svg)}")`];
   }),
 );

@@ -250,6 +250,19 @@
   }
 }
 
+/* ─── Paper ────────────────────────────────────────────────────────────
+   A piece of paper laid on the page: popups, dialogs, sheets and toasts.
+   The popover colour, plus a texture when --paper-texture names an image
+   (tiled at --paper-texture-size). InkPanel draws its edge and shadow. */
+
+@layer components {
+  .ink-paper {
+    background-color: var(--popover);
+    background-image: var(--paper-texture, none);
+    background-size: var(--paper-texture-size, auto);
+  }
+}
+
 /* Set on each stroke by Stroke (lib/ink.tsx): its width, how long the pen
    takes, and when it starts. Not inherited, so nothing leaks between
    nested drawings. */

@@ -327,6 +327,233 @@ import { Switch } from "@/components/ui/switch"
 </Accordion>`,
     primitive: { name: "Accordion", href: "https://base-ui.com/react/components/accordion" },
   },
+  dialog: {
+    group: "Components",
+    examples: ["dialog-demo"],
+    usage: `import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+<Dialog>
+  <DialogTrigger render={<Button variant="outline" />}>Edit profile</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Edit profile</DialogTitle>
+      <DialogDescription>Save when you're done.</DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <DialogClose render={<Button />}>Save</DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>`,
+    props: [
+      { name: "DialogContent showCloseButton", type: "boolean", default: "true", description: "A drawn cross in the top-right corner." },
+      { name: "DialogFooter showCloseButton", type: "boolean", default: "false", description: "Adds an outlined Close button to the footer." },
+      { name: "DialogTrigger render", type: "ReactElement", description: "Renders the trigger as your own element, usually a Button." },
+      { name: "seed", type: "string | number", description: "On DialogContent: pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
+    primitive: { name: "Dialog", href: "https://base-ui.com/react/components/dialog" },
+  },
+  "alert-dialog": {
+    group: "Components",
+    examples: ["alert-dialog-demo"],
+    usage: `import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
+
+<AlertDialog>
+  <AlertDialogTrigger render={<Button variant="destructive" />}>Delete</AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Delete this notebook?</AlertDialogTitle>
+      <AlertDialogDescription>This can't be undone.</AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Keep it</AlertDialogCancel>
+      <AlertDialogAction variant="destructive">Delete</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>`,
+    props: [
+      { name: "AlertDialogContent size", type: '"default" | "sm"', default: '"default"', description: "Small centres everything and puts the two buttons side by side." },
+      { name: "AlertDialogMedia", type: "component", description: "An icon in a ring drawn round it, beside the title." },
+      { name: "AlertDialogAction / AlertDialogCancel", type: "Button props", description: "The answer, and the way out. Cancel closes the dialog and is outlined by default." },
+      { name: "seed", type: "string | number", description: "On AlertDialogContent: pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
+    primitive: { name: "Alert Dialog", href: "https://base-ui.com/react/components/alert-dialog" },
+  },
+  sheet: {
+    group: "Components",
+    examples: ["sheet-demo"],
+    usage: `import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+
+<Sheet>
+  <SheetTrigger render={<Button variant="outline" />}>Open</SheetTrigger>
+  <SheetContent side="right">
+    <SheetHeader>
+      <SheetTitle>Edit profile</SheetTitle>
+      <SheetDescription>Save when you're done.</SheetDescription>
+    </SheetHeader>
+  </SheetContent>
+</Sheet>`,
+    props: [
+      { name: "SheetContent side", type: '"top" | "right" | "bottom" | "left"', default: '"right"', description: "The edge it slides in from." },
+      { name: "SheetContent showCloseButton", type: "boolean", default: "true", description: "A drawn cross in the top-right corner." },
+      { name: "seed", type: "string | number", description: "On SheetContent: pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "weight", "speed"],
+    primitive: { name: "Dialog", href: "https://base-ui.com/react/components/dialog" },
+  },
+  popover: {
+    group: "Components",
+    examples: ["popover-demo"],
+    usage: `import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+
+<Popover>
+  <PopoverTrigger render={<Button variant="outline" />}>Open</PopoverTrigger>
+  <PopoverContent>Place content here.</PopoverContent>
+</Popover>`,
+    props: [
+      { name: "side", type: '"top" | "right" | "bottom" | "left" | "inline-start" | "inline-end"', default: '"bottom"', description: "On PopoverContent: which side of the trigger it opens on." },
+      { name: "align", type: '"start" | "center" | "end"', default: '"center"', description: "How it lines up with the trigger along that side." },
+      { name: "sideOffset / alignOffset", type: "number", default: "8 / 0", description: "Gap from the trigger, and nudge along it, in px." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
+    primitive: { name: "Popover", href: "https://base-ui.com/react/components/popover" },
+  },
+  tooltip: {
+    group: "Components",
+    examples: ["tooltip-demo"],
+    usage: `import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger render={<Button variant="outline" />}>Hover me</TooltipTrigger>
+    <TooltipContent>Saved to your notebook</TooltipContent>
+  </Tooltip>
+</TooltipProvider>`,
+    props: [
+      { name: "TooltipProvider delay", type: "number", default: "0", description: "ms before a tooltip opens. Tooltips under one provider open instantly after the first." },
+      { name: "side", type: '"top" | "right" | "bottom" | "left" | "inline-start" | "inline-end"', default: '"top"', description: "On TooltipContent: which side of the trigger it shows on." },
+      { name: "align / sideOffset / alignOffset", type: "string / number", default: '"center" / 8 / 0', description: "Placement along that side, in px." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["roughness", "radius", "weight"],
+    primitive: { name: "Tooltip", href: "https://base-ui.com/react/components/tooltip" },
+  },
+  "dropdown-menu": {
+    group: "Components",
+    examples: ["dropdown-menu-demo"],
+    usage: `import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+<DropdownMenu>
+  <DropdownMenuTrigger render={<Button variant="outline" />}>Open</DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuLabel>Notebook</DropdownMenuLabel>
+    <DropdownMenuItem>New page</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem variant="destructive">Tear out page</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>`,
+    props: [
+      { name: "DropdownMenuItem variant", type: '"default" | "destructive"', default: '"default"', description: "Destructive rows are written, and shaded, in red pen." },
+      { name: "inset", type: "boolean", description: "On items, labels and sub-triggers: lines them up with checkable items." },
+      { name: "DropdownMenuCheckboxItem checked", type: "boolean", description: "Ticked when true; the tick draws in and pulls back out." },
+      { name: "DropdownMenuContent side / align", type: "string", default: '"bottom" / "start"', description: "Where it opens against the trigger." },
+      { name: "seed", type: "string | number", description: "On DropdownMenuContent: pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
+    primitive: { name: "Menu", href: "https://base-ui.com/react/components/menu" },
+  },
+  select: {
+    group: "Components",
+    examples: ["select-demo"],
+    usage: `import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+const pens = [
+  { label: "Blue ballpoint", value: "blue" },
+  { label: "Black fineliner", value: "black" },
+]
+
+<Select items={pens}>
+  <SelectTrigger aria-label="Pen" className="w-52">
+    <SelectValue placeholder="Pick a pen" />
+  </SelectTrigger>
+  <SelectContent>
+    {pens.map((pen) => (
+      <SelectItem key={pen.value} value={pen.value}>
+        {pen.label}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>`,
+    props: [
+      { name: "Select items", type: "{ label, value }[]", description: "Lets SelectValue show the chosen item's label rather than its value." },
+      { name: "SelectTrigger size", type: '"default" | "sm"', default: '"default"', description: "Height and type size, matching Input." },
+      { name: "SelectContent alignItemWithTrigger", type: "boolean", default: "true", description: "Opens over the trigger with the chosen item lined up on it, like a native select. False drops it below." },
+      { name: "seed", type: "string | number", description: "On SelectTrigger and SelectContent: pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
+    primitive: { name: "Select", href: "https://base-ui.com/react/components/select" },
+  },
+  toast: {
+    group: "Components",
+    examples: ["toast-demo"],
+    usage: `// app/layout.tsx: once, near the root
+import { Toaster } from "@/components/ui/toast"
+
+<body>
+  {children}
+  <Toaster />
+</body>
+
+// anywhere
+import { toast } from "@/components/ui/toast"
+
+toast("Page torn out", { action: { label: "Undo", onClick: restore } })
+toast.success("Saved")
+toast.error("Couldn't send")
+toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't save" })`,
+    props: [
+      { name: "toast(title, options)", type: "string id", description: "Also toast.success, .error, .warning, .info, .loading (stays until dismissed), .promise, .update and .dismiss(id?)." },
+      { name: "options", type: "{ description, action, timeout, priority, id, onClose }", description: "action is { label, onClick }; timeout 0 keeps it up; priority \"high\" announces it at once." },
+      { name: "Toaster limit", type: "number", default: "3", description: "How many notes show at once; older ones wait." },
+      { name: "Toaster timeout", type: "number", default: "5000", description: "ms before a note takes itself down." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
+    primitive: { name: "Toast", href: "https://base-ui.com/react/components/toast" },
+  },
 };
 
 /** The pen settings every drawn component takes, as props or from InkProvider. */

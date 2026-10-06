@@ -22,6 +22,14 @@ import ProgressDemo from "@/registry/ballpoint/examples/progress-demo";
 import TableDemo from "@/registry/ballpoint/examples/table-demo";
 import TabsDemo from "@/registry/ballpoint/examples/tabs-demo";
 import AccordionDemo from "@/registry/ballpoint/examples/accordion-demo";
+import DialogDemo from "@/registry/ballpoint/examples/dialog-demo";
+import AlertDialogDemo from "@/registry/ballpoint/examples/alert-dialog-demo";
+import SheetDemo from "@/registry/ballpoint/examples/sheet-demo";
+import PopoverDemo from "@/registry/ballpoint/examples/popover-demo";
+import TooltipDemo from "@/registry/ballpoint/examples/tooltip-demo";
+import DropdownMenuDemo from "@/registry/ballpoint/examples/dropdown-menu-demo";
+import SelectDemo from "@/registry/ballpoint/examples/select-demo";
+import ToastDemo from "@/registry/ballpoint/examples/toast-demo";
 
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
@@ -45,6 +53,14 @@ export const examples: Record<string, ComponentType> = {
   "table-demo": TableDemo,
   "tabs-demo": TabsDemo,
   "accordion-demo": AccordionDemo,
+  "dialog-demo": DialogDemo,
+  "alert-dialog-demo": AlertDialogDemo,
+  "sheet-demo": SheetDemo,
+  "popover-demo": PopoverDemo,
+  "tooltip-demo": TooltipDemo,
+  "dropdown-menu-demo": DropdownMenuDemo,
+  "select-demo": SelectDemo,
+  "toast-demo": ToastDemo,
 };
 
 /** An example's source, with registry imports written the way they land in an app. */
