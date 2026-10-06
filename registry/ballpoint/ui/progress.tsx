@@ -42,7 +42,12 @@ function ProgressTrack({ className, children, seed, roughness, passes, radius, f
           <Stroke key={i} d={d} draw={mode} delay={i * 240} duration={520} width={[1.3, 1, 0.9][i]} opacity={[1, 0.7, 0.5][i]} />
         ))}
       </InkSvg>
-      <TrackContext value={track}>{children}</TrackContext>
+      {/* The indicator moves inside a clip shaped like the track, so the
+          shading (and the indeterminate patch sliding in and out) never
+          spills past it. The track itself can't clip: its outline overshoots. */}
+      <div data-slot="progress-clip" className="absolute inset-0 overflow-hidden" style={{ borderRadius: r }}>
+        <TrackContext value={track}>{children}</TrackContext>
+      </div>
     </ProgressPrimitive.Track>
   );
 }
@@ -52,11 +57,14 @@ function ProgressTrack({ className, children, seed, roughness, passes, radius, f
  * and the indicator only uncovers it, so the strokes hold still as the value
  * grows. Indeterminate progress slides a patch of shading along.
  */
-function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.Props) {
+function ProgressIndicator({ className, style, ...props }: ProgressPrimitive.Indicator.Props) {
   const track = useContext(TrackContext);
+  // Rounded like the track, so the shading ends in a pill, not a cut.
+  const round = track ? { borderRadius: track.r } : undefined;
   return (
     <ProgressPrimitive.Indicator
       data-slot="progress-indicator"
+      style={typeof style === "function" ? (state) => ({ ...round, ...style(state) }) : { ...round, ...style }}
       className={cn(
         // .ink-progress (base.css) slides it along when indeterminate.
         "ink-progress absolute inset-y-0 left-0 overflow-hidden transition-[width] duration-(--dur-state) ease-out motion-reduce:transition-none",
