@@ -203,14 +203,13 @@ export function Customizer() {
           data-ink-scope=""
           data-customizer-preview=""
           aria-label="Preview"
-          className={cn("paper-sheet relative px-5 py-8 text-foreground sm:px-8", night && "dark")}
+          className={cn("paper-sheet sheet relative px-5 py-8 text-foreground sm:px-8", night && "dark")}
           style={
             {
               "--ink": colours.ink,
               "--paper": colours.paper,
               "--pen-red": colours.red,
               "--paper-tile": paperTile(s.paper, mode),
-              borderRadius: "var(--hand-radius)",
             } as CSSProperties
           }
         >

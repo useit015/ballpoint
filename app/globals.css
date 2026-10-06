@@ -17,8 +17,12 @@
    clears 5:1 on its slip, on every paper, by day and by night. */
 :root {
   --paper-tile: url("/paper/cream-light.svg");
-  /* A lighter slip laid on the page: the paper's own texture shows through. */
-  --code-slip: color-mix(in oklab, white 42%, transparent);
+  /* Code is written on a lighter slip of paper laid on the page
+     (scripts/paper-tiles.ts makes its texture from the same mix). */
+  --code-slip: color-mix(in oklab, var(--paper) 55%, white);
+  --code-slip-tile: url("/paper/slip-light.svg");
+  /* A sheet lying on the page: a contact shadow and a soft one under it. */
+  --sheet-shadow: 0 0.5px 1px oklch(0.35 0.03 70 / 0.16), 0 3px 10px -3px oklch(0.35 0.03 70 / 0.2);
   --code-plain: oklch(0.26 0.012 265);
   --code-string: oklch(0.38 0.1 158);
   --code-pencil: oklch(0.37 0.012 255);
@@ -27,7 +31,9 @@
 .dark {
   --paper-tile: url("/paper/cream-dark.svg");
   /* At night the slip catches a little of the pen's light instead. */
-  --code-slip: color-mix(in oklab, var(--ink) 5%, transparent);
+  --code-slip: color-mix(in oklab, var(--paper) 90%, var(--ink));
+  --code-slip-tile: url("/paper/slip-dark.svg");
+  --sheet-shadow: 0 0.5px 1px oklch(0 0 0 / 0.5), 0 4px 12px -3px oklch(0 0 0 / 0.55);
   --code-plain: oklch(0.94 0.006 265);
   --code-string: oklch(0.88 0.08 158);
   --code-pencil: oklch(0.86 0.01 255);
@@ -57,6 +63,39 @@
 html,
 .paper-sheet {
   background: var(--paper) var(--paper-tile) 0 0 / 600px 600px repeat;
+}
+
+/* A separate sheet laid on the page: its own paper, a lifted shadow, and
+   the barely rounded corners of a cut sheet. */
+.sheet {
+  border-radius: 2px;
+  box-shadow: var(--sheet-shadow);
+}
+
+.code-slip {
+  background: var(--code-slip) var(--code-slip-tile) 0 0 / 600px 600px repeat;
+}
+
+/* Pens and papers shown side by side, each following day and night:
+   --pen-day/--pen-night, --paper-day/--paper-night (+ tile and red pen). */
+.pen-scope {
+  --ink: var(--pen-day);
+}
+
+.paper-scope {
+  --paper: var(--paper-day);
+  --pen-red: var(--red-day);
+  --paper-tile: var(--tile-day);
+}
+
+.dark .pen-scope {
+  --ink: var(--pen-night);
+}
+
+.dark .paper-scope {
+  --paper: var(--paper-night);
+  --pen-red: var(--red-night);
+  --paper-tile: var(--tile-night);
 }
 
 html {

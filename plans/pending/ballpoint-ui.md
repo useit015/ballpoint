@@ -172,6 +172,9 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D58 | `InkGlyph` is its own class (`.ink-glyph`), not an overlay, so components size and lay it out like any icon; new arrow and ringed info/alert glyphs replace typed "+" and hand-written SVG | Alerts, buttons and menus excluded `.ink-sketch` from their icon rules, so glyphs fell out of layout |
 | D59 | Menu and select highlights are a filled highlighter swipe (`swipePath`), not pen shading | The shading read as a grey smear |
 | D60 | Docs: Preview/Code use the drawn Tabs; sidebar sorted A–Z, scrolls on its own, current page marked with a drawn dot; header marks the current section; home has a live example beside the hero, an Install row, and a ruled component index | First impressions: the home page was a wall of links and the docs tabs were a CSS underline |
+| D61 | Paper textures model real paper: soft formation (pulp cloudiness), a fine lit tooth and a few fibres, mapped onto the paper's own colour around the filter's measured mean (0.5964), so every tile averages to its paper within 0.1/255 | Your feedback: the crinkle relief didn't look like real paper. Five prototypes compared at 2×; heavy tooth read as stucco, strong mottling as camouflage |
+| D62 | Sheets of paper laid on the page (code slips, swatches, the customizer preview, the Pens and papers sheets) get their own texture, a soft paper shadow and 2px corners, never a drawn border | Your feedback: "all bgs" should look like paper. Code colours re-checked on the new slips (all ≥ 5:1) |
+| D63 | Pens and papers is shown on real sheets: each pen writes live components on cream, each paper is a sheet of itself with the blue and red pens; both follow day and night through --pen-day/--pen-night and --paper-day/--paper-night scopes | The old page was swatches and seven install blocks |
 
 ## Always / Never
 

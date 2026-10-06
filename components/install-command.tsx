@@ -37,6 +37,12 @@ function choose(m: Manager) {
   window.dispatchEvent(new Event("ballpoint:pm"));
 }
 
+/** The command for `what` in the viewer's chosen package manager. */
+export function useInstallCommand(what: string) {
+  const current = useSyncExternalStore(subscribe, read, () => "pnpm" as Manager);
+  return install[current](what);
+}
+
 /** A URL or path may break after any slash on a narrow screen, never mid-word. */
 function breakable(part: string) {
   return part.split(/(?<=\/)/).map((piece, i) => (
