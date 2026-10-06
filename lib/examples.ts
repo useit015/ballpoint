@@ -2,9 +2,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ComponentType } from "react";
 import ButtonDemo from "@/registry/ballpoint/examples/button-demo";
+import ButtonPens from "@/registry/ballpoint/examples/button-pens";
 
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
+  "button-pens": ButtonPens,
 };
 
 /** An example's source, with registry imports written the way they land in an app. */

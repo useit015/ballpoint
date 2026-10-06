@@ -23,7 +23,7 @@ test.describe("button", () => {
   });
 
   test("activates with Enter and Space", async ({ page }) => {
-    const redraw = page.getByRole("button", { name: "Redraw" });
+    const redraw = page.getByRole("button", { name: "Redraw" }).first();
     const stroke = page.locator("[data-preview] [data-slot=button] svg path[pathLength]").first();
     for (const key of ["Enter", " "]) {
       const before = await stroke.getAttribute("d");

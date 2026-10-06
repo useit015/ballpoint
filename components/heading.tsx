@@ -41,8 +41,8 @@ export function Heading({
       <Tag id={id} className={cn("font-bold tracking-wide uppercase", className)}>
         {children}
       </Tag>
-      <InkSvg ref={ref} box={[-20, -3, w + 42, 20]} stretch className="top-full -mt-1.5" style={{ left: -20, width: "calc(100% + 42px)", height: 20 }}>
-        <InkMarks id={`u${s.toString(36)}`} strokes={strokes} delay={200} />
+      <InkSvg ref={ref} pending box={[-20, -3, w + 42, 20]} stretch className="top-full -mt-1.5" style={{ left: -20, width: "calc(100% + 42px)", height: 20 }}>
+        <InkMarks id={`u${s.toString(36)}`} strokes={strokes} draw="auto" delay={200} />
       </InkSvg>
     </div>
   );

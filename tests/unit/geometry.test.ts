@@ -34,6 +34,7 @@ const generators: Record<string, (s: number) => unknown> = {
   chevronRight: (s) => ink.chevronStroke(s, 8, 12, "right"),
   ringStroke: (s) => ink.ringStroke(s, 18),
   capsuleStroke: (s) => ink.capsuleStroke(s, 44, 24),
+  roundedBoxStroke: (s) => ink.roundedBoxStroke(s, 120, 40, 10, { shift: [1, -1] }),
   zigzagPulls: (s) => ink.zigzagPulls(s, 20, 60),
   cornerPulls: (s) => ink.cornerPulls(s, 60, 60),
   starPulls: (s) => ink.starPulls(s, 40, 40),
@@ -45,7 +46,9 @@ const generators: Record<string, (s: number) => unknown> = {
   inkPulls: (s) => ink.inkPulls(s, ink.starPulls(s, 40, 40), { retrace: 0.5 }),
 };
 
-const exported = Object.entries(ink).filter(([name, v]) => typeof v === "function" && !["createRng", "hashSeed"].includes(name));
+// Pure helpers with no seed to vary.
+const unseeded = ["createRng", "hashSeed", "roundedRectPath"];
+const exported = Object.entries(ink).filter(([name, v]) => typeof v === "function" && !unseeded.includes(name));
 
 describe("ink-sketch", () => {
   it("covers every exported generator", () => {
@@ -74,6 +77,8 @@ describe("ink-sketch", () => {
         ink.shadeFill(seed, w, h),
         ink.hatchStrokes(seed, w, h),
         ink.capsuleStroke(seed, w, h),
+        ink.roundedBoxStroke(seed, w, h, 12),
+        ink.roundedRectPath(w, h, 12),
         ink.chevronStroke(seed, w, h),
         ink.tickStroke(seed, w),
         ink.cornerTicks(seed, w, h),

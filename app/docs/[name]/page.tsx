@@ -5,7 +5,7 @@ import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
 import { Preview } from "@/components/preview";
 import { PropsTable } from "@/components/props-table";
-import { allDocs, getDoc } from "@/lib/docs";
+import { allDocs, getDoc, penProps } from "@/lib/docs";
 import { exampleSource, examples, itemSource } from "@/lib/examples";
 
 export const dynamicParams = false;
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps<"/docs/[name]">): P
 export default async function ComponentPage({ params }: PageProps<"/docs/[name]">) {
   const doc = getDoc((await params).name);
   if (!doc) notFound();
-  const [main] = doc.examples;
+  const [main, ...more] = doc.examples;
   const Example = examples[main];
 
   return (
@@ -37,6 +37,20 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
       <Preview code={<CodeBlock code={exampleSource(main)} />}>
         <Example />
       </Preview>
+
+      {more.map((name) => {
+        const More = examples[name];
+        const meta = doc.exampleTitles?.[name];
+        return (
+          <section key={name} className="flex flex-col gap-4">
+            <Heading id={name}>{meta?.title ?? name}</Heading>
+            {meta && <p className="text-ink-2">{meta.description}</p>}
+            <Preview code={<CodeBlock code={exampleSource(name)} />}>
+              <More />
+            </Preview>
+          </section>
+        );
+      })}
 
       <section className="flex flex-col gap-4">
         <Heading id="install">Install</Heading>
@@ -60,6 +74,15 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
         <section className="flex flex-col gap-4">
           <Heading id="api">API</Heading>
           <PropsTable props={doc.props} />
+          {doc.pen && (
+            <>
+              <h3 className="pt-4 font-bold">Pen settings</h3>
+              <p className="text-ink-2">
+                Every drawn component takes these, as props or from the nearest <code className="font-mono text-sm">InkProvider</code>. Props win.
+              </p>
+              <PropsTable props={penProps} />
+            </>
+          )}
           {doc.primitive && (
             <p className="text-ink-2">
               Every other prop goes to Base UI&apos;s{" "}

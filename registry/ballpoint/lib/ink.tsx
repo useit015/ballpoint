@@ -4,13 +4,17 @@ import type { InkStroke } from "@/registry/ballpoint/lib/ink-sketch";
 // Server-safe drawing primitives. Every drawn part of a component is an
 // absolutely positioned SVG overlay (InkSvg) holding pen strokes (Stroke)
 // that can draw themselves in:
-// - "mount": the pen runs once when the stroke first renders
+// - "auto":  the pen runs the first time the drawing scrolls into view
+//            (the InkSvg is rendered `pending`; useInkBox releases it)
+// - "mount": the pen runs once, as soon as the stroke renders
 // - "hover": drawn while the nearest .ink-hover is hovered or focused
 // - "none":  always fully drawn
+// Widths and timings scale with --ink-weight and --ink-speed.
 
-export type DrawMode = "mount" | "hover" | "none";
+export type DrawMode = "auto" | "mount" | "hover" | "none";
 
 const drawClass: Record<DrawMode, string> = {
+  auto: "ink-draw",
   mount: "ink-draw",
   hover: "ink-hover-draw",
   none: "",
@@ -41,8 +45,9 @@ export function Stroke({
       pathLength={1}
       className={[drawClass[draw], className].filter(Boolean).join(" ") || undefined}
       opacity={opacity}
-      // Inline, so the width beats the shared `.ink-sketch path` rule.
-      style={{ strokeWidth: width, "--dd": `${delay}ms`, "--d": `${duration}ms` } as CSSProperties}
+      // Plain numbers: the shared rules in base.css scale them by
+      // --ink-weight and --ink-speed, so each path parses no calc() of its own.
+      style={{ "--ink-w": width, "--ink-d": `${duration}ms`, "--ink-dd": `${delay}ms` } as CSSProperties}
     />
   );
 }
@@ -50,6 +55,7 @@ export function Stroke({
 export function InkSvg({
   box,
   stretch = false,
+  pending = false,
   className,
   style,
   ref,
@@ -59,6 +65,8 @@ export function InkSvg({
   box: readonly [number, number, number, number];
   /** Fill the element box exactly (strokes are regenerated to the real size, so this only absorbs rounding). */
   stretch?: boolean;
+  /** Hold "auto" strokes undrawn until useInkBox sees the drawing scroll into view. */
+  pending?: boolean;
   className?: string;
   style?: CSSProperties;
   ref?: Ref<SVGSVGElement>;
@@ -69,6 +77,7 @@ export function InkSvg({
       ref={ref}
       aria-hidden="true"
       focusable="false"
+      data-ink-pending={pending ? "" : undefined}
       viewBox={box.join(" ")}
       preserveAspectRatio={stretch ? "none" : undefined}
       className={["ink-sketch absolute", className].filter(Boolean).join(" ")}

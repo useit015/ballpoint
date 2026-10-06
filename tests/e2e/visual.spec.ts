@@ -7,7 +7,11 @@ for (const name of docs) {
   for (const theme of themes) {
     test(`visual ${name} (${theme})`, async ({ page }) => {
       await open(page, `/docs/${name}`, theme);
-      await expect(page.locator("[data-preview]").first()).toHaveScreenshot(`${name}-${theme}.png`);
+      const previews = page.locator("[data-preview]");
+      const count = await previews.count();
+      for (let i = 0; i < count; i++) {
+        await expect(previews.nth(i)).toHaveScreenshot(i ? `${name}-${i}-${theme}.png` : `${name}-${theme}.png`);
+      }
     });
   }
 }

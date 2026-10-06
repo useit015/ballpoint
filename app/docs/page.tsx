@@ -69,19 +69,40 @@ export default function Installation() {
       </section>
 
       <section className="flex flex-col gap-4">
-        <Heading id="drawing">Drawing</Heading>
+        <Heading id="pen">Pen settings</Heading>
         <p className="text-ink-2">
-          Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser. Pass{" "}
-          <code className="font-mono text-sm">seed</code> to pin one; otherwise each instance gets its own. Components that can draw
-          themselves in take <code className="font-mono text-sm">draw=&quot;mount&quot;</code>. With reduced motion, everything appears already
-          drawn. Wrap part of a page in <code className="font-mono text-sm">InkSeedProvider</code> to redraw it all in a different hand.
+          Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser; pass{" "}
+          <code className="font-mono text-sm">seed</code> to pin one. By default everything draws itself in the first time it scrolls into
+          view (<code className="font-mono text-sm">draw=&quot;auto&quot;</code>); with reduced motion it appears already drawn.
+        </p>
+        <p className="text-ink-2">
+          How the pen behaves is yours to set, per component or for a whole region: roughness, how many passes, corner radius (pills
+          included), crossed or joined corners, how areas are coloured in, the shadow, line weight and drawing speed. A{" "}
+          <code className="font-mono text-sm">salt</code> redraws everything inside in a slightly different hand.
         </p>
         <CodeBlock
-          code={`import { InkSeedProvider } from "@/hooks/use-ink-box"
+          title="app/layout.tsx"
+          code={`import { InkProvider } from "@/hooks/use-ink-box"
 
-<InkSeedProvider salt="monday">
-  <Toolbar />
-</InkSeedProvider>`}
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        <InkProvider radius={10} roughness={0.8} fill="hatch">
+          {children}
+        </InkProvider>
+      </body>
+    </html>
+  )
+}`}
+        />
+        <p className="text-ink-2">Weight and speed are plain CSS variables too:</p>
+        <CodeBlock
+          lang="css"
+          code={`:root {
+  --ink-weight: 1.2; /* heavier pen everywhere */
+  --ink-speed: 0.8;  /* draw a little slower */
+}`}
         />
       </section>
     </article>

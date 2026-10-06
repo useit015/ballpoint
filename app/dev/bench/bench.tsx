@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "@/registry/ballpoint/ui/button";
+import type { InkDraw } from "@/registry/ballpoint/hooks/use-ink-box";
 
 const variants = ["default", "outline", "secondary", "destructive"] as const;
 
@@ -14,6 +15,10 @@ const variants = ["default", "outline", "secondary", "destructive"] as const;
 export function Bench() {
   const [count, setCount] = useState(0);
   const [result, setResult] = useState<string>("");
+  // ?draw=none|mount|auto, to compare what drawing modes cost.
+  const [draw] = useState<InkDraw | undefined>(() =>
+    typeof location === "undefined" ? undefined : ((new URLSearchParams(location.search).get("draw") as InkDraw | null) ?? undefined),
+  );
 
   function run(n: number) {
     flushSync(() => setCount(0));
@@ -38,7 +43,7 @@ export function Bench() {
       <output data-testid="bench-result">{result}</output>
       <div className="flex flex-wrap gap-4">
         {Array.from({ length: count }, (_, i) => (
-          <Button key={i} variant={variants[i % variants.length]} seed={i}>
+          <Button key={i} variant={variants[i % variants.length]} seed={i} draw={draw}>
             Button {i}
           </Button>
         ))}

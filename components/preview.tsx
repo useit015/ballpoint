@@ -1,14 +1,14 @@
 "use client";
 
 import { useId, useState, type ReactNode } from "react";
-import { InkSeedProvider } from "@/registry/ballpoint/hooks/use-ink-box";
+import { InkProvider } from "@/registry/ballpoint/hooks/use-ink-box";
 import { Button } from "@/registry/ballpoint/ui/button";
 import { DrawnFrame } from "@/components/drawn-frame";
 import { cn } from "@/lib/utils";
 
 /**
- * A live example and its code. "Redraw" hands the example a new salt, so
- * every stroke in it is drawn again by a slightly different hand.
+ * A live example and its code. "Redraw" hands the example a new salt and
+ * remounts it, so every stroke is drawn in again by a slightly different hand.
  */
 export function Preview({ children, code, className }: { children: ReactNode; code: ReactNode; className?: string }) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
@@ -44,9 +44,9 @@ export function Preview({ children, code, className }: { children: ReactNode; co
       </div>
       <div id={`${id}-preview`} role="tabpanel" aria-labelledby={`${id}-preview-tab`} hidden={tab !== "preview"}>
         <DrawnFrame seed="preview" className="px-6 py-10 sm:px-10" data-preview="">
-          <InkSeedProvider key={salt} salt={salt === 0 ? "" : salt}>
+          <InkProvider key={salt} salt={salt === 0 ? undefined : salt}>
             {children}
-          </InkSeedProvider>
+          </InkProvider>
         </DrawnFrame>
       </div>
       <div id={`${id}-code`} role="tabpanel" aria-labelledby={`${id}-code-tab`} hidden={tab !== "code"}>

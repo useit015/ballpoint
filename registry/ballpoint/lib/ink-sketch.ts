@@ -274,7 +274,7 @@ export function crossedBoxStroke(
   seed: number,
   w: number,
   h: number,
-  { overshoot = 5, jitter = 1.2, shift = [0, 0] as Pt } = {},
+  { overshoot = 5, jitter = 1.2, bow = 1.1, shift = [0, 0] as Pt } = {},
 ) {
   const r = createRng(seed);
   const [sx, sy] = shift;
@@ -287,7 +287,7 @@ export function crossedBoxStroke(
   let d = "";
   // Top, right, bottom, left — in the order a hand tends to go.
   for (const [a, b] of [[0, 1], [1, 2], [3, 2], [0, 3]] as const) {
-    const seg = strokeSegment(r, c[a], c[b], { bow: 1.1, jitter: jitter * 0.4, overshoot });
+    const seg = strokeSegment(r, c[a], c[b], { bow, jitter: jitter * 0.4, overshoot });
     d += `M${pt(seg.s)}C${pt(seg.c1)} ${pt(seg.c2)} ${pt(seg.e)}`;
   }
   return d;
@@ -399,39 +399,72 @@ export function ringStroke(seed: number, d: number, { turns = 1.1 } = {}) {
 }
 
 /**
- * A capsule (a switch track): two straight runs joined by round ends, pulled
- * in one motion that runs on past where it started. Fits 0…w × 0…h.
+ * A rounded box pulled in one motion, the way a hand draws one: starting a
+ * little before the top-left corner, round the outline, and running on past
+ * where it began. `r` is clamped to the box (r = h/2 gives a pill); `shift`
+ * nudges the whole pass, for re-traced outlines that don't line up.
+ * Fits 0…w × 0…h.
  */
-export function capsuleStroke(seed: number, w: number, h: number, { overrun = 0.1, jitter = 0.45 } = {}) {
-  const r = createRng(seed);
-  const rad = h / 2;
-  const run = Math.max(0, w - h);
-  const arc = Math.PI * rad;
-  const total = 2 * run + 2 * arc;
+export function roundedBoxStroke(
+  seed: number,
+  w: number,
+  h: number,
+  r: number,
+  { overrun = 0.08, jitter = 0.45, shift = [0, 0] as Pt } = {},
+) {
+  const rand = createRng(seed);
+  const rad = Math.max(0, Math.min(r, w / 2, h / 2));
+  const runX = Math.max(0, w - 2 * rad);
+  const runY = Math.max(0, h - 2 * rad);
+  const arc = (Math.PI / 2) * rad;
+  const total = 2 * runX + 2 * runY + 4 * arc;
   if (!total) return "";
-  // A point `l` along the outline, clockwise from the top-left of the run.
-  const at = (l: number): Pt => {
+  // Sides and corners in drawing order, clockwise from the top-left.
+  const parts: { len: number; at: (t: number) => Pt }[] = [
+    { len: runX, at: (t) => [rad + t * runX, 0] },
+    { len: arc, at: (t) => corner(w - rad, rad, -Math.PI / 2 + (t * Math.PI) / 2) },
+    { len: runY, at: (t) => [w, rad + t * runY] },
+    { len: arc, at: (t) => corner(w - rad, h - rad, (t * Math.PI) / 2) },
+    { len: runX, at: (t) => [w - rad - t * runX, h] },
+    { len: arc, at: (t) => corner(rad, h - rad, Math.PI / 2 + (t * Math.PI) / 2) },
+    { len: runY, at: (t) => [0, h - rad - t * runY] },
+    { len: arc, at: (t) => corner(rad, rad, Math.PI + (t * Math.PI) / 2) },
+  ];
+  function corner(cx: number, cy: number, a: number): Pt {
+    return [cx + Math.cos(a) * rad, cy + Math.sin(a) * rad];
+  }
+  const pointAt = (l: number): Pt => {
     l = ((l % total) + total) % total;
-    if (l < run) return [rad + l, 0];
-    l -= run;
-    if (l < arc) {
-      const a = -Math.PI / 2 + (l / arc) * Math.PI;
-      return [rad + run + Math.cos(a) * rad, rad + Math.sin(a) * rad];
+    for (const part of parts) {
+      if (l <= part.len && part.len > 0) return part.at(l / part.len);
+      l -= part.len;
     }
-    l -= arc;
-    if (l < run) return [rad + run - l, h];
-    l -= run;
-    const a = Math.PI / 2 + (l / arc) * Math.PI;
-    return [rad + Math.cos(a) * rad, rad + Math.sin(a) * rad];
+    return parts[0].at(0);
   };
-  const steps = Math.max(16, Math.round(total / 7));
-  const start = -total * (0.02 + r() * 0.04);
+  // Dense enough to hold the corners' curve, sparse along the runs so the
+  // jitter reads as a hand, not as noise.
+  const step = Math.max(2.5, Math.min(9, rad * 0.6 || 9));
+  const start = -total * (0.015 + rand() * 0.03);
+  const end = total * (1 + overrun);
   const points: Pt[] = [];
-  for (let i = 0; i <= steps; i++) {
-    const [x, y] = at(start + (i / steps) * total * (1 + overrun));
-    points.push([x + spread(r, jitter), y + spread(r, jitter)]);
+  for (let l = start; l <= end + 0.01; l += step) {
+    const [x, y] = pointAt(l);
+    points.push([x + shift[0] + spread(rand, jitter), y + shift[1] + spread(rand, jitter)]);
   }
   return smooth(points);
+}
+
+/** The exact outline of a rounded box, closed: for fills, masks and clips. */
+export function roundedRectPath(w: number, h: number, r: number) {
+  const rad = Math.max(0, Math.min(r, w / 2, h / 2));
+  if (!rad) return `M0 0H${n1(w)}V${n1(h)}H0Z`;
+  const a = `A${n1(rad)} ${n1(rad)} 0 0 1`;
+  return `M${n1(rad)} 0H${n1(w - rad)}${a} ${n1(w)} ${n1(rad)}V${n1(h - rad)}${a} ${n1(w - rad)} ${n1(h)}H${n1(rad)}${a} 0 ${n1(h - rad)}V${n1(rad)}${a} ${n1(rad)} 0Z`;
+}
+
+/** A capsule (a switch track): a pill pulled in one motion. Fits 0…w × 0…h. */
+export function capsuleStroke(seed: number, w: number, h: number, { overrun = 0.1, jitter = 0.45 } = {}) {
+  return roundedBoxStroke(seed, w, h, h / 2, { overrun, jitter });
 }
 
 /**
