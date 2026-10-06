@@ -1,0 +1,145 @@
+# Ballpoint UI — a shadcn-style registry drawn in ballpoint
+
+Status: **approved 2026-10-06 · Phase 0 done** · Owner: Oussama · Drafted 2026-10-06
+
+A copy-in component library (installed with `shadcn add`, the way shadcn/ui
+works) that brings the portfolio's look to other projects. It covers the
+everyday components with the same names and props as shadcn/ui, plus a set of
+components that only make sense in this style. Everything is drawn at runtime
+from seeded strokes, so it renders the same on server and client, resizes
+cleanly, and draws itself in.
+
+## What we already have (and what it becomes)
+
+| Portfolio source | Becomes | Notes |
+|---|---|---|
+| `lib/sketch.ts` (seeded geometry, pressured ink ribbons) | `@ballpoint/ink-core` (registry:lib) | The engine. Ported mostly as is, with new shapes added (chevrons, ticks, crosses, brackets, circles) |
+| `components/ink/sketch.tsx` (`Stroke`, `SketchSvg`, `InkMarks`, `Underline`, `Hatch`, `InkDot`…) | `ink-core` primitives | Server-safe |
+| `components/ink/measured.tsx` (`useParentSize`, `MeasuredBox`, `HoverLoop`) | `useInkBox` hook + `InkBox` | Generalised: one shared ResizeObserver, size rounded to 2px steps, memoised paths |
+| `app/globals.css` tokens + Sketch/Reveal/Controls sections | `@ballpoint/ballpoint` (registry:base, `extends: "none"`) | cssVars + `css` (`@keyframes`, `@utility`, `@layer`) |
+| Gaegu via `next/font` | `@ballpoint/font-gaegu` (registry:font) | |
+| `public/paper-*.svg`, stains | `@ballpoint/paper` (registry:file + component) | Files go to `public/ballpoint/` |
+| `ink-btn`, `copy-email`, `see-more`, `theme-toggle`, `contribution-cells`, `paper-doodles`, `not-found` strike, `margin-scrawl`, `heading`, `experience-section` timeline | Components (see the catalogue) | |
+| `public/ink/glyphs.webp` atlas | **Not shipped**: these are tech logos, not UI icons | UI icons get rebuilt as seeded strokes |
+
+## Architecture
+
+```
+ballpoint/                      new repo (useit015/ballpoint)
+  app/                          Next 16 docs site: /docs/<item>, live previews, install commands
+  registry/ballpoint/
+    lib/sketch.ts               the engine (from face)
+    lib/ink.tsx                 Stroke, SketchSvg, InkMarks, InkBox, useInkBox, cn
+    icons/                      ~30 UI icons generated from strokes
+    ui/<component>.tsx          everyday components (same names and props as shadcn)
+    ink/<component>.tsx         components specific to this style
+  registry.json                 item manifest → `shadcn build` → public/r/*.json
+  scripts/contrast.ts           fails the build if a token misses its WCAG ratio
+  tests/{visual,a11y,install}/
+```
+
+**Item layering.** Every component lists `ink-core` as a registry dependency.
+`shadcn init @ballpoint/ballpoint` installs the tokens, CSS, font and engine
+once. After that, `shadcn add @ballpoint/<name>` copies just the component.
+
+**Tokens.** These are the portfolio's tokens (`--paper`, `--ink`, `--ink-2…5`,
+the motion tokens). They are also mapped onto shadcn's names (`background`,
+`foreground`, `primary`, `muted`, `border`, `input`, `ring`, `destructive`,
+`card`, `popover`, …) so third-party shadcn blocks look roughly right. Two
+tokens are new:
+- `--ink-line` = ink mixed at 60%. This one carries control borders.
+  **ink-4 is 2.05:1 on cream** (2.79:1 at night), which fails WCAG 1.4.11's
+  3:1 for UI boundaries. ink@60% measures 3.11:1 in light and 4.94:1 in dark.
+  ink-4 stays for decoration only.
+- `--pen-red`: a red ballpoint, used only for destructive and invalid
+  states, like a teacher's correction pen. It is the only second ink.
+
+**Rendering rules (all components).**
+- Decorative SVG is `aria-hidden`. Semantics come from the headless primitive.
+- Seeds come from a `seed` prop, falling back to `hashSeed(useId())`. useId
+  is stable between server and client, so there is no hydration drift.
+- Boxes render first with an estimated size, stretched to fit, so there is
+  never an empty frame. Then they measure and regenerate (the portfolio's
+  pattern).
+- All state styling is CSS on the primitive's data attributes
+  (`data-checked`, `data-open`, `data-highlighted`, `data-disabled`, …). No JS
+  animation for hover, focus or press.
+- Draw-on is controlled with `draw="mount" | "inview" | "hover" | "none"`,
+  with a sensible default per component. Whole-app off switch:
+  `[data-ink-draw="off"]`.
+- Reduced motion: strokes appear finished, with short crossfades only (as on
+  the portfolio).
+- Motion follows the README vocabulary (Write, Draw, Ink, Circle, Lift, Boil,
+  Blot): transform and opacity only, no bounce.
+
+## Catalogue
+
+**Everyday** (same names and props as shadcn, so they drop in as replacements)
+- Wave A, forms and actions: button (solid / outline / ghost / link / destructive), input, textarea, label, field (label + hint + red-pen error), checkbox, radio-group, switch
+- Wave B, display: card, badge, separator, avatar (crossed frame), kbd, alert, skeleton (pencil hatching), progress (shading fill), table, tabs, accordion
+- Wave C, overlays: dialog, alert-dialog, sheet, popover, tooltip, dropdown-menu, select, toast
+- Wave D, navigation and complex (v1.1): breadcrumb, pagination, slider, toggle, toggle-group, calendar / date-picker (graph-paper cells), combobox, command
+
+**Special to this style**
+- Set 1: `annotate` (underline · circle · box · strike · scribble-out · bracket · hatch-highlight, inline, drawn when scrolled into view), `section-heading` (written in, swoosh, specks), `paper` (tile + coffee ring + night lamp), `frame` (crossed photo frame), `copy-button` (label swap + drawn tick), `ink-icons`
+- Set 2: `signature-pad` (pressured ballpoint input; form value plus SVG/PNG export), `hatch-grid` (contribution-style heatmap, 5 hatch levels), `timeline` (arrow whose columns land as the pen passes), `ink-theme-toggle` (sun/moon + ink-blot view transition), `margin-note` (handwritten aside with an arrow to its target, shown inline on mobile), `checklist` (done items get struck through), `redact` (scribbled-out text, revealed on click), `scrawls` (margin pen tests)
+
+## Phases (riskiest first; each phase ends green)
+
+| # | Phase | Size | Verification (named) |
+|---|---|---|---|
+| 0 | **Pipeline proof.** Create the repo, a minimal `registry.json` with `ballpoint` base + `font-gaegu` + `ink-core` + `button`, then `shadcn build` | S | `pnpm registry:build` passes schema validation. `pnpm test:install` creates a fresh Next 16 + Tailwind 4 app in tmp, runs `shadcn init` from the local registry, `add button`, then `tsc` and `next build`. The button renders drawn (screenshot) |
+| 1 | **Engine port.** `sketch.ts` + new shapes; `ink.tsx` with `InkBox`/`useInkBox` (shared ResizeObserver, 2px rounding, memo); `--ink-line`, `--pen-red`; `scripts/contrast.ts` | M | `pnpm test` determinism suite (same seed gives the same path string under node and jsdom). Bench: 200 InkBoxes mount in under 50ms. `pnpm contrast` passes |
+| 2 | **Docs shell + test harness.** Preview pages, install-command block, "redraw" seed shuffle, light/dark; Playwright visual + axe runners | M | `pnpm test:visual` (reduced-motion emulation, both themes) and `pnpm test:a11y` run on the button page |
+| — | *Checkpoint: review the button, tokens and docs page together before scaling out* | | |
+| 3 | Wave A, form controls | M | visual + a11y + keyboard script per control; `test:install` adds all of Wave A |
+| 4 | Wave B, display | M | same |
+| 5 | Wave C, overlays (focus trap, exit drawing, portals) | M | same + focus-return checks |
+| — | *Checkpoint* | | |
+| 6 | Special set 1 | M | same + `annotate` in-view trigger test |
+| 7 | Special set 2 | M | same + signature-pad pointer/pen/touch test and form submit value |
+| 8 | Launch: deploy, README, `llms.txt`, registry index page | S | production URL serves `/r/registry.json`; `shadcn add @ballpoint/button` works in a fresh app against prod |
+| 9 | Wave D (v1.1) | M | same as 3 |
+
+Steps that need a person outside this session are written down rather than
+assumed: DNS for the docs domain, and the PR adding `@ballpoint` to
+shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
+425 entries, none hand-drawn). I draft these. You confirm and perform them.
+
+## Decision log
+
+| # | Decision | Why |
+|---|---|---|
+| D1 | Distribute as a shadcn registry (copy-in), not an npm package | "shadcn-style installable". Users own the code and can redraw it |
+| D2 | Same names and props as shadcn for everyday components | Drop-in swap is the adoption story |
+| D3 | Ship our own stroke icons; no raster atlas | The portfolio atlas is tech logos. Stroke icons get the draw-on and take any ink colour |
+| D4 | `--ink-line` (60%) for control borders | ink-4 fails 3:1 non-text contrast (measured 2.05:1 in light) |
+| D5 | Red pen only for destructive/invalid | Keeps the "one ink" restraint while giving errors a distinct colour |
+| D6 | Deterministic seeds → screenshot tests are stable | Same seed, same pixels, so visual regression has no flake from randomness |
+| D7 | Name `ballpoint`, namespace `@ballpoint` | Says what it is; unused among the 425 registries in shadcn's directory (checked 2026-10-06) |
+| D8 | New repo `useit015/ballpoint` with its own docs site | Its own versioning and deploys; the portfolio can install from it later |
+| D9 | Base UI primitives | Its enter/exit data attributes let strokes draw in and out with plain CSS; shadcn supports it. Check the package name in Phase 0 |
+| D10 | v1 = Waves A–C + special sets 1–2; Wave D in v1.1 | About 41 items is a full-feeling launch without calendar, combobox or command |
+| D11 | Rescale Tailwind's own `text-xs…5xl` for Gaegu instead of custom size tokens | Found in Phase 0: tailwind-merge read `text-control` as a colour and dropped the solid button's label colour. Standard names also size shadcn blocks correctly |
+| D12 | Only literal colours go in `cssVars`; derived tones and timings go in `css` `:root` / `.dark` | Found in Phase 0: the CLI adds a `--x: var(--x)` @theme line for every non-literal cssVar. `test:install` now fails if any appear |
+| D13 | The base item carries `config.registries` | `shadcn init <base url>` writes the `@ballpoint` namespace into components.json, so `add @ballpoint/x` works with no manual setup and before any directory listing |
+| D14 | Env var is `BALLPOINT_REGISTRY_URL` | `REGISTRY_URL` is read by the shadcn CLI itself and redirects its default registry |
+| D15 | Pinned to releases older than 7 days (shadcn 4.21.0, Base UI 1.8.0, Next 16.3.6) | Matches your npm `min-release-age=7` policy |
+
+## Always / Never
+
+- **Always:** server-renders without layout shift; reduced-motion path; keyboard and screen-reader parity with shadcn; both themes treated as equals; every item passes `test:install` before it counts as done; read `node_modules/next/dist/docs/` before writing Next code (AGENTS.md).
+- **Never:** sticker-bomb decoration by default (specials are opt-in); marker or comic fonts; JS-driven hover animation; touching the portfolio repo during v1; publishing, posting or DNS changes without your yes.
+
+## Out of scope (v1)
+
+npm package, Vue/Svelte ports, a chart library, a Figma kit, extra pens and
+papers (black fineliner, pencil, white paper: v1.2 themes), and moving the
+portfolio onto the library.
+
+## Progress
+
+| Phase | State | Evidence |
+|---|---|---|
+| 0 | ✅ done 2026-10-06 | `pnpm test:install`: fresh Next 16.3.6 app → `shadcn init` base (tokens, Gaegu via next/font, engine, namespace) → `add @ballpoint/button` → `tsc` ✔ `next build` ✔, no self-referencing vars. Checked in the browser: 6 variants × 8 sizes in both themes, hover lift and shadow, ghost hover-draw, focus ring, no console errors. Repo: lint ✔ typecheck ✔ build ✔ |
+| 1–9 | not started | |
