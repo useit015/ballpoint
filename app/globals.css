@@ -1,0 +1,5 @@
+@import "tailwindcss";
+/* The same file the registry ships as @ballpoint/ballpoint. */
+@import "../registry/ballpoint/styles/base.css";
+
+@custom-variant dark (&:is(.dark *));

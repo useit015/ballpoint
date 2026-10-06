@@ -1,0 +1,262 @@
+/* Ballpoint base: the paper, the ink, and the rules every drawn component
+   shares. This file is the single source for the @ballpoint/ballpoint
+   registry item (scripts/build-registry.ts splits it into cssVars and css)
+   and is imported as-is by the docs site.
+
+   One ink, one paper. Everything else is the same ink at lighter pressure,
+   mixed toward the paper in oklab so the hue never drifts. The only other
+   pen is red, kept for destructive and invalid states. */
+
+:root {
+  --paper: #ede8df;
+  --ink: oklch(0.4 0.185 267);
+  --pen-red: oklch(0.5 0.19 27);
+  --ink-2: color-mix(in oklab, var(--ink) 86%, var(--paper));
+  --ink-3: color-mix(in oklab, var(--ink) 77%, var(--paper));
+  /* Control boundaries: the lightest pressure that still clears WCAG
+     1.4.11's 3:1 against the paper. ink-4 and ink-5 are decoration only. */
+  --ink-line: color-mix(in oklab, var(--ink) 60%, var(--paper));
+  --ink-4: color-mix(in oklab, var(--ink) 40%, var(--paper));
+  --ink-5: color-mix(in oklab, var(--ink) 16%, var(--paper));
+
+  /* shadcn's semantic names, mapped onto the pen, so blocks written for
+     shadcn/ui sit on the same paper. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--ink-5);
+  --secondary-foreground: var(--ink);
+  --muted: var(--ink-5);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--ink-5);
+  --accent-foreground: var(--ink);
+  --destructive: var(--pen-red);
+  --border: var(--ink-4);
+  --input: var(--ink-line);
+  --ring: var(--ink);
+
+  --hand-radius: 14px 5px 12px 6px / 6px 12px 5px 14px;
+
+  /* Motion: exponential ease-outs for arrivals, a quicker ease-in for
+     exits, and a pen curve (accelerate, then settle) for strokes. */
+  --dur-press: 90ms;
+  --dur-hover: 220ms;
+  --dur-state: 300ms;
+  --dur-enter: 560ms;
+}
+
+/* Night: pale ink on navy paper. Everything derived is repeated, so a .dark
+   subtree recomputes from its own ink and paper, and so installing over an
+   existing shadcn theme replaces its dark values too. */
+.dark {
+  --paper: oklch(0.215 0.038 266);
+  --ink: oklch(0.9 0.045 258);
+  --pen-red: oklch(0.74 0.14 25);
+  --ink-2: color-mix(in oklab, var(--ink) 86%, var(--paper));
+  --ink-3: color-mix(in oklab, var(--ink) 77%, var(--paper));
+  --ink-line: color-mix(in oklab, var(--ink) 60%, var(--paper));
+  --ink-4: color-mix(in oklab, var(--ink) 40%, var(--paper));
+  --ink-5: color-mix(in oklab, var(--ink) 16%, var(--paper));
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--ink-5);
+  --secondary-foreground: var(--ink);
+  --muted: var(--ink-5);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--ink-5);
+  --accent-foreground: var(--ink);
+  --destructive: var(--pen-red);
+  --border: var(--ink-4);
+  --input: var(--ink-line);
+  --ring: var(--ink);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-line: var(--ink-line);
+  --color-ink-4: var(--ink-4);
+  --color-ink-5: var(--ink-5);
+  --color-pen-red: var(--pen-red);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  /* Gaegu runs small (low x-height), so Tailwind's own scale is redrawn a
+     step larger: text-sm in the hand reads like text-sm in a sans. Keeping
+     the standard names means shadcn blocks size correctly, and class
+     mergers know these are sizes, not colours. */
+  --text-xs: 0.9375rem;
+  --text-xs--line-height: 1.3;
+  --text-sm: 1.0625rem;
+  --text-sm--line-height: 1.35;
+  --text-base: 1.25rem;
+  --text-base--line-height: 1.45;
+  --text-lg: 1.375rem;
+  --text-lg--line-height: 1.4;
+  --text-xl: 1.5625rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 1.75rem;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2.125rem;
+  --text-3xl--line-height: 1.15;
+  --text-4xl: 2.625rem;
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 3.5rem;
+  --text-5xl--line-height: 1.05;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-pen: cubic-bezier(0.45, 0.05, 0.25, 1);
+  --ease-write: cubic-bezier(0.37, 0, 0.63, 1);
+}
+
+@layer base {
+  html {
+    background-color: var(--paper);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    /* Gaegu is drawn with a fine nib; a hair of stroke gives it the weight
+       of a ballpoint line without changing its shapes. */
+    -webkit-text-stroke: 0.2px currentColor;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--ink) 20%, var(--paper));
+  }
+}
+
+/* ─── Strokes ──────────────────────────────────────────────────────────
+   Every drawn part is an SVG overlay (.ink-sketch). Strokes run on
+   pathLength=1, so one dash pattern draws any of them in. */
+
+@layer components {
+  .ink-sketch {
+    pointer-events: none;
+    overflow: visible;
+    color: inherit;
+  }
+
+  .ink-sketch path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Ballpoint ribbons are filled shapes; their draw-on masks are strokes. */
+  .ink-sketch .ink-ribbon,
+  .ink-sketch .ink-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .ink-sketch .ink-guide {
+    stroke: #fff;
+  }
+
+  /* Draw on mount: the pen runs once, from its delay (--dd) over --d. */
+  .ink-sketch .ink-draw {
+    stroke-dasharray: 1.05 1.05;
+    animation: ink-draw var(--d, 500ms) var(--ease-pen) var(--dd, 0ms) both;
+  }
+
+  /* Draw on hover/focus of the nearest .ink-hover, pulled back out faster
+     on leave. The opacity hand-off hides the round cap that would
+     otherwise sit at rest. */
+  .ink-sketch .ink-hover-draw {
+    --out: calc(var(--d, 320ms) * 0.65);
+    stroke-dasharray: 1.05 1.05;
+    stroke-dashoffset: 1.05;
+    opacity: 0;
+    transition:
+      stroke-dashoffset var(--out) var(--ease-in),
+      opacity 0s linear var(--out);
+  }
+
+  .ink-hover:focus-visible .ink-hover-draw {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transition:
+      stroke-dashoffset var(--d, 320ms) var(--ease-out),
+      opacity 0s;
+  }
+
+  @media (hover: hover) {
+    .ink-hover:hover .ink-hover-draw {
+      stroke-dashoffset: 0;
+      opacity: 1;
+      transition:
+        stroke-dashoffset var(--d, 320ms) var(--ease-out),
+        opacity 0s;
+    }
+  }
+}
+
+@keyframes ink-draw {
+  from {
+    stroke-dashoffset: 1.05;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ─── Preferences ──────────────────────────────────────────────────────── */
+
+/* Reduced motion: the drawing is already finished. */
+@media (prefers-reduced-motion: reduce) {
+  .ink-sketch .ink-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .ink-sketch .ink-hover-draw {
+    transition: none;
+  }
+}
+
+/* Asked for more contrast: drop the lighter pen pressures. */
+@media (prefers-contrast: more) {
+  :root {
+    --ink-2: var(--ink);
+    --ink-3: var(--ink);
+    --ink-line: var(--ink);
+    --ink-4: color-mix(in oklab, var(--ink) 70%, var(--paper));
+  }
+}

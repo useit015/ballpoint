@@ -1,0 +1,39 @@
+{
+  "name": "ballpoint",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A shadcn-style component registry drawn in blue ballpoint.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm registry:build && next dev",
+    "build": "pnpm registry:build && next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "registry:build": "node scripts/build-registry.ts && shadcn build",
+    "test:install": "node scripts/test-install.ts"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.8.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "next": "16.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tailwind-merge": "3.7.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "postcss": "^8",
+    "shadcn": "4.21.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5"
+  },
+  "packageManager": "pnpm@11.8.0"
+}
