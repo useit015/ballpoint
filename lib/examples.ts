@@ -30,6 +30,14 @@ import TooltipDemo from "@/registry/ballpoint/examples/tooltip-demo";
 import DropdownMenuDemo from "@/registry/ballpoint/examples/dropdown-menu-demo";
 import SelectDemo from "@/registry/ballpoint/examples/select-demo";
 import ToastDemo from "@/registry/ballpoint/examples/toast-demo";
+import InkIconsDemo from "@/registry/ballpoint/examples/ink-icons-demo";
+import AnnotateDemo from "@/registry/ballpoint/examples/annotate-demo";
+import AnnotateTypes from "@/registry/ballpoint/examples/annotate-types";
+import AnnotateActive from "@/registry/ballpoint/examples/annotate-active";
+import SectionHeadingDemo from "@/registry/ballpoint/examples/section-heading-demo";
+import PaperDemo from "@/registry/ballpoint/examples/paper-demo";
+import FrameDemo from "@/registry/ballpoint/examples/frame-demo";
+import CopyButtonDemo from "@/registry/ballpoint/examples/copy-button-demo";
 
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
@@ -61,6 +69,14 @@ export const examples: Record<string, ComponentType> = {
   "dropdown-menu-demo": DropdownMenuDemo,
   "select-demo": SelectDemo,
   "toast-demo": ToastDemo,
+  "ink-icons-demo": InkIconsDemo,
+  "annotate-demo": AnnotateDemo,
+  "annotate-types": AnnotateTypes,
+  "annotate-active": AnnotateActive,
+  "section-heading-demo": SectionHeadingDemo,
+  "paper-demo": PaperDemo,
+  "frame-demo": FrameDemo,
+  "copy-button-demo": CopyButtonDemo,
 };
 
 /** An example's source, with registry imports written the way they land in an app. */

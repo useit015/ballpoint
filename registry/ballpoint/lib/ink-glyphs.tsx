@@ -4,17 +4,21 @@ import { chevronStroke, crossStroke, dashStroke, dotStroke, hashSeed, lineStroke
 // Small icons drawn with the pen on a 16px grid: the close cross, ticks,
 // chevrons and the like that components need inside their controls.
 // Server-safe, and seeded by name, so a glyph is the same drawing wherever
-// it appears.
+// it appears. @ballpoint/ink-icons draws a fuller set on the same grid.
 
-type Glyph = { paths: string[]; width: number };
+/** A glyph: its pen strokes, drawn in order, and how heavy the pen is. */
+export type Glyph = { paths: string[]; width: number };
 
 const seed = (name: string) => hashSeed(`glyph-${name}`);
-function shift(d: string, dx: number, dy: number) {
-  // Every number pair in our stroke paths is an absolute x,y point.
+
+/** Moves a stroke path by (dx, dy). Every number pair in our stroke paths is an absolute x,y point. */
+export function shiftPath(d: string, dx: number, dy: number) {
   return d.replace(/(-?\d*\.?\d+)[ ,](-?\d*\.?\d+)/g, (_, x: string, y: string) => `${+(+x + dx).toFixed(2)} ${+(+y + dy).toFixed(2)}`);
 }
 
-const glyphs = {
+const shift = shiftPath;
+
+export const glyphs = {
   close: { paths: [shift(crossStroke(seed("close"), 12, { inset: 0.1 }), 2, 2)], width: 1.7 },
   check: { paths: [shift(tickStroke(seed("check"), 11), 2.5, 3.2)], width: 1.8 },
   "chevron-down": { paths: [shift(chevronStroke(seed("down"), 10, 6, "down"), 3, 5)], width: 1.6 },
@@ -45,17 +49,25 @@ const glyphs = {
 
 export type GlyphName = keyof typeof glyphs;
 
-/**
- * A pen-drawn icon that sits in the flow like any other icon: components
- * size it as they would a lucide one (16px on its own). `draw` makes
- * it draw itself in: "mount" as it appears, "checked" while its parent
- * carries data-checked (a menu's checkbox item indicator, say).
- */
-export function InkGlyph({ name, draw = "none", duration = 240, className }: { name: GlyphName; draw?: DrawMode; duration?: number; className?: string }) {
-  const glyph: Glyph = glyphs[name];
+export type GlyphProps = {
+  /** When it draws itself in: "mount" as it appears, "checked" while its parent carries data-checked, and so on. */
+  draw?: DrawMode;
+  /** ms each stroke takes. */
+  duration?: number;
+  className?: string;
+  /** Names the icon for screen readers. Without it the icon is decorative. */
+  label?: string;
+};
+
+/** Renders a glyph on the 16px grid. InkGlyph and InkIcon are this with a name. */
+export function GlyphSvg({ glyph, name, draw = "none", duration = 240, className, label }: GlyphProps & { glyph: Glyph; name: string }) {
+  // Strokes follow one another; a busy icon keeps the whole drawing short.
+  const gap = Math.min(140, 560 / glyph.paths.length);
   return (
     <svg
-      aria-hidden="true"
+      aria-hidden={label ? undefined : true}
+      role={label ? "img" : undefined}
+      aria-label={label}
       focusable="false"
       viewBox="0 0 16 16"
       // 16px unless a class or the surrounding component sizes it.
@@ -66,8 +78,18 @@ export function InkGlyph({ name, draw = "none", duration = 240, className }: { n
       className={["ink-glyph shrink-0", className].filter(Boolean).join(" ")}
     >
       {glyph.paths.map((d, i) => (
-        <Stroke key={i} d={d} draw={draw} delay={i * 140} duration={duration} width={glyph.width} />
+        <Stroke key={i} d={d} draw={draw} delay={Math.round(i * gap)} duration={duration} width={glyph.width} />
       ))}
     </svg>
   );
+}
+
+/**
+ * A pen-drawn icon that sits in the flow like any other icon: components
+ * size it as they would a lucide one (16px on its own). `draw` makes
+ * it draw itself in: "mount" as it appears, "checked" while its parent
+ * carries data-checked (a menu's checkbox item indicator, say).
+ */
+export function InkGlyph({ name, ...props }: GlyphProps & { name: GlyphName }) {
+  return <GlyphSvg glyph={glyphs[name]} name={name} {...props} />;
 }

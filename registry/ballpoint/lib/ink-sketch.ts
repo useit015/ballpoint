@@ -97,6 +97,19 @@ function smooth(points: Pt[]) {
   return d;
 }
 
+/**
+ * A pen line through the given points, each nudged by up to `jitter`, as
+ * one smooth curve. `closed` runs it back round to the start (and a little
+ * past, the way a pen closes a shape).
+ */
+export function handCurve(seed: number, points: readonly Pt[], { jitter = 0.15, closed = false } = {}) {
+  const r = createRng(seed);
+  const pts = points.map((p): Pt => [p[0] + spread(r, jitter), p[1] + spread(r, jitter)]);
+  if (!closed) return smooth(pts);
+  const past: Pt = [(pts[0][0] + pts[1][0]) / 2, (pts[0][1] + pts[1][1]) / 2];
+  return smooth([...pts, pts[0], past]);
+}
+
 /** A loose loop around a box — the "circle it with a pen" gesture. */
 export function loopStroke(seed: number, w: number, h: number, { turns = 1.12, pad = 4 } = {}) {
   const r = createRng(seed);

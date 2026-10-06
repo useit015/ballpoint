@@ -577,9 +577,115 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
     pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
     primitive: { name: "Toast", href: "https://base-ui.com/react/components/toast" },
   },
+  "ink-icons": {
+    group: "Drawn",
+    examples: ["ink-icons-demo"],
+    usage: `import { InkIcon } from "@/components/ui/ink-icons"
+
+<Button variant="ghost" size="icon" aria-label="Search">
+  <InkIcon name="search" />
+</Button>`,
+    props: [
+      { name: "name", type: "IconName", description: "Which icon. iconNames lists them all." },
+      { name: "draw", type: '"none" | "mount" | "hover" | "focus" | "checked"', default: '"none"', description: "When it draws itself in: never (already drawn), as it appears, or while its trigger is hovered, focused or checked." },
+      { name: "label", type: "string", description: "Names the icon for screen readers when it stands on its own. Without it the icon is hidden from them." },
+      { name: "duration", type: "number", default: "240", description: "ms each stroke takes to draw in." },
+      { name: "className", type: "string", description: "Size it like any icon (size-4, size-5); it takes the text colour." },
+    ],
+  },
+  annotate: {
+    group: "Drawn",
+    examples: ["annotate-demo", "annotate-types", "annotate-active"],
+    exampleTitles: {
+      "annotate-types": { title: "Seven marks", description: "Underline, circle, box, strike, scribble, bracket and highlight, in the ink or the red pen." },
+      "annotate-active": { title: "On and off", description: "With active, a mark draws in when it turns true and pulls back out when it turns false." },
+    },
+    usage: `import { Annotate } from "@/components/ui/annotate"
+
+<p>
+  The build <Annotate type="circle" color="red">failed</Annotate> twice.
+</p>`,
+    props: [
+      { name: "type", type: '"underline" | "circle" | "box" | "strike" | "scribble" | "bracket" | "highlight"', default: '"underline"', description: "The mark. A highlight is shaded in behind the words." },
+      { name: "color", type: '"ink" | "red"', default: '"ink"', description: "The ink, or the red pen corrections are made in." },
+      { name: "as", type: '"span" | "mark" | "del" | "s" | "ins" | "em" | "strong"', default: '"span"', description: "The element: mark for a highlight, del or s for words struck out, so the meaning survives without the drawing." },
+      { name: "delay", type: "number", default: "0", description: "ms after it scrolls into view before the pen starts. Rising delays draw a run of marks one after another." },
+      { name: "active", type: "boolean", description: "Draws the mark while true and pulls it back out when false, instead of drawing it once." },
+      { name: "brackets", type: '"both" | "left" | "right"', default: '"both"', description: "Which brackets a bracket draws." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "weight", "speed"],
+  },
+  "section-heading": {
+    group: "Drawn",
+    examples: ["section-heading-demo"],
+    usage: `import { SectionHeading } from "@/components/ui/section-heading"
+
+<section aria-labelledby="projects">
+  <SectionHeading id="projects" specks>Projects</SectionHeading>
+</section>`,
+    props: [
+      { name: "as", type: '"h1" | "h2" | "h3" | "h4"', default: '"h2"', description: "The heading level." },
+      { name: "id", type: "string", description: "The heading's id, for aria-labelledby and links. Also seeds the drawing." },
+      { name: "specks", type: "boolean", default: "false", description: "A few scratches beside the swoosh, where the pen was lifted." },
+      { name: "delay", type: "number", default: "0", description: "ms after it scrolls into view before the pen starts." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "weight", "speed"],
+  },
+  paper: {
+    group: "Drawn",
+    examples: ["paper-demo"],
+    usage: `import { Paper } from "@/components/ui/paper"
+
+<Paper variant="ruled" margin lifted stains={1}>
+  <p>Dear diary,</p>
+</Paper>`,
+    props: [
+      { name: "variant", type: '"plain" | "ruled" | "grid" | "dots"', default: '"plain"', description: "Plain, ruled like a notebook, squared like graph paper, or dotted. Lines are --paper-rule apart (2rem), in the ink at low strength." },
+      { name: "margin", type: "boolean", default: "false", description: "The red margin line down the left (--paper-margin), with the content moved clear of it." },
+      { name: "texture", type: "boolean", default: "true", description: "The grain and fibres. They work on any paper colour, and average out to it, so text contrast is the contrast against --paper." },
+      { name: "stains", type: "number", default: "0", description: "Coffee rings, up to 3. Brown by day; a faint warm tide line at night." },
+      { name: "foxing", type: "boolean", default: "false", description: "Age spots scattered over the sheet." },
+      { name: "lamp", type: "boolean", default: "false", description: "At night, a desk lamp warming the top of the sheet. Nothing by day." },
+      { name: "lifted", type: "boolean", default: "false", description: "A soft shadow under the sheet." },
+      { name: "as", type: '"div" | "main" | "section" | "article" | "aside"', default: '"div"', description: "The element." },
+      { name: "seed", type: "string | number", description: "Moves the coffee rings." },
+    ],
+  },
+  frame: {
+    group: "Drawn",
+    examples: ["frame-demo"],
+    usage: `import { Frame } from "@/components/ui/frame"
+
+<Frame caption="Drawn on a Tuesday">
+  <img src="/portrait.jpg" alt="Me, at my desk" className="size-40" />
+</Frame>`,
+    props: [
+      { name: "caption", type: "ReactNode", description: "Written under the frame, as the figure's caption." },
+      { name: "gap", type: "number", default: "6", description: "px between the picture and the frame." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "weight", "speed"],
+  },
+  "copy-button": {
+    group: "Drawn",
+    examples: ["copy-button-demo"],
+    usage: `import { CopyButton } from "@/components/ui/copy-button"
+
+<CopyButton value="hello@example.com">Copy email</CopyButton>`,
+    props: [
+      { name: "value", type: "string | (() => string)", description: "What to copy, or a function that returns it when clicked." },
+      { name: "children", type: "ReactNode", default: '"Copy"', description: "The label. Icon sizes show the copy icon instead and use this as the button's accessible name." },
+      { name: "copiedLabel", type: "ReactNode", default: '"Copied"', description: "Shown, after a drawn tick, once it's copied." },
+      { name: "timeout", type: "number", default: "1600", description: "ms before it goes back to the label." },
+      { name: "onCopy", type: "(value: string) => void", description: "Called once the value is on the clipboard." },
+      { name: "variant, size", type: "Button's", default: '"outline"', description: "Any Button variant and size; icon sizes swap the copy icon for the tick." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "fill", "shadow", "weight", "speed"],
+  },
 };
 
-/** The pen settings every drawn component takes, as props or from InkProvider. */
 /** The theme tokens, as the Installation page and llms-full.txt list them. */
 export const tokens = [
   ["--paper", "The page. Cream by day, navy by night."],
@@ -591,6 +697,7 @@ export const tokens = [
   ["--ink-fill", "How solid a pen-shaded fill is under its strokes."],
 ];
 
+/** The pen settings every drawn component takes, as props or from InkProvider. */
 export const penProps: Prop[] = [
   { name: "draw", type: '"auto" | "mount" | "none"', default: '"auto"', description: "When the strokes draw themselves in: the first time they scroll into view, as soon as they render, or never (already drawn)." },
   { name: "roughness", type: "number", default: "1", description: "0 is ruler-neat, 1 a quick confident hand, 2 a scrawl." },

@@ -1,6 +1,6 @@
 # Ballpoint UI — a shadcn-style registry drawn in ballpoint
 
-Status: **approved 2026-10-06 · Phases 0–5 done · next: checkpoint, then special set 1** · Owner: Oussama · Drafted 2026-10-06
+Status: **approved 2026-10-06 · Phases 0–6 done · next: special set 2** · Owner: Oussama · Drafted 2026-10-06
 
 A copy-in component library (installed with `shadcn add`, the way shadcn/ui
 works) that brings the portfolio's look to other projects. It covers the
@@ -180,6 +180,12 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D66 | Docs chrome: drawn disclosure chevrons, a footer, a header that fits a phone (Components moves into the docs contents below `sm`) | At 390px the header pushed the page to 493px wide |
 | D67 | Hosted on Vercel as project `ballpoint` (team oussama-nahizs-projects, next to the portfolio), deployed from the CLI; build runs `pnpm build` (registry + paper tiles + next) with `BALLPOINT_REGISTRY_URL=https://ballpoint.st9wd.com` and pnpm 11 via corepack | st9wd.com already lives there; no Git remote yet, so CLI deploys. Domain needs one CNAME at Namecheap |
 | D68 | The shadcn registry directory PR waits until v1 (special sets 1–2) ships | Your call: reviewers and the directory's readers see the complete set first. The namespace URL template means items added later would appear anyway, so nothing is lost by waiting |
+| D69 | Annotate is an inline-block sized to the words (line height 1.2), with one drawing per mark | The marks hug the text whatever the paragraph's leading. A mark spanning a line break would need per-line rects; it's for a word or a short phrase, and the docs say so |
+| D70 | Paper's texture is one tile of faint black and white specks laid over `--paper`, not a tile per paper colour; its fibres are dark only | A component can't know the paper colour ahead of time. Specks centred on the measured noise mean keep the sheet its own colour on average; pale fibres were invisible on cream and read as scratches on navy |
+| D71 | `ink-icons` is a registry:ui item on ink-core's glyph renderer (`GlyphSvg`), and includes every ink-core glyph | One grid, one renderer, one name space: `<InkIcon name="check" />` and the components' own ticks are the same drawing |
+| D72 | Text written in (`.ink-write`) waits on its sibling's pending drawing via `:has()`, in base.css | No second observer: the heading starts writing when the IntersectionObserver releases its swoosh |
+| D73 | State strokes (hover, focus, checked) honour their delay when drawing in | Annotate's `active` marks have several passes; without the delay they all ran at once |
+| D74 | The docs dogfood the drawn set: headings are SectionHeading, code copy buttons are CopyButton | Anything wrong with them shows up on every page first |
 
 ## Always / Never
 
@@ -206,4 +212,5 @@ portfolio onto the library.
 | 5.5 | ✅ done 2026-10-06 | Detail pass after your review: single-pass outlines, darker control lines, smoother rounded boxes, borderless snippets, roomier headings, drawn icons in buttons and alerts, avatar group fixed, marker-swipe highlights, docs tabs/sidebar/header/home reworked. `test:e2e` 208/208 with every baseline redrawn; `test:install` 38 ✔ |
 | 8a | ✅ 2026-10-07 | Production on Vercel, deployed from GitHub (useit015/ballpoint, private) on every push to `main`. DNS at Namecheap: `ballpoint` and `www` are A records to 216.198.79.1 and 76.76.21.21 (CNAMEs to Vercel resolved to 64.29.17.x / *.65, which don't answer from your network). `www.st9wd.com` attached to the portfolio project as a 308 redirect to st9wd.com. HTTPS: Let's Encrypt, valid to 2027-01-04 |
 | 8b | ✅ 2026-10-07 | Repo public (useit015/ballpoint, topics set; history checked for secrets first). `/llms.txt` (index) and `/llms-full.txt` (every component's usage, props, pen settings), generated from `lib/docs.ts` so they can't drift; linked in README and footer with GitHub; e2e asserts every component is in both. Portfolio: Ballpoint added first under Projects, linking the live docs, with a pen icon drawn into the projects atlas. The shadcn registry directory PR waits for v1 (D68) |
+| 6 | ✅ done 2026-10-07 | Special set 1: `annotate` (underline, circle, box, strike, scribble, bracket, highlight; ink or red pen; `as` for mark/del/s; `delay` to run marks in order; `active` draws in and pulls back out), `section-heading` (written in by a sweeping mask, swoosh, specks; the docs' own headings now use it), `paper` (texture as faint black/white specks, so it works on any paper colour; ruled on the baseline, squared, dotted; red margin; coffee rings, foxing, night lamp), `frame` (crossed photo frame, caption), `copy-button` (label swap with a drawn tick, icon sizes, status for screen readers, clipboard fallback; the docs' code blocks now use it), `ink-icons` (38 new icons on the glyph grid, plus every ink-core glyph). `test:e2e` 246/246 incl. 7 new behaviour tests (annotate in-view trigger, marks hug the words, active on/off, heading written in on scroll, copy + status + swap back, paper layers, every icon drawn); axe clean on the six new pages. Unit 41/41. `test:install` 44 items ✔ |
 | 5–9 | not started | |

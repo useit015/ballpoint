@@ -28,6 +28,12 @@
   --dur-hover: 220ms;
   --dur-state: 300ms;
   --dur-enter: 560ms;
+
+  /* What a sheet picks up on a desk (Paper): coffee, and age spots. */
+  --stain: oklch(0.5 0.075 62);
+  --stain-strength: 0.5;
+  --stain-blend: multiply;
+  --lamp: none;
 }
 
 /* Night: pale ink on navy paper. */
@@ -37,6 +43,13 @@
   --pen-red: oklch(0.74 0.14 25);
   /* Pale ink on navy has contrast to spare, so the shading reads through more. */
   --ink-fill: 0.72;
+  /* At night a dried coffee ring catches the light: a faint warm tide line
+     rather than a dark mark. A desk lamp lights the sheet a touch warmer
+     near the top and falls off toward the edges. */
+  --stain: oklch(0.78 0.05 70);
+  --stain-strength: 0.14;
+  --stain-blend: screen;
+  --lamp: radial-gradient(90% 70% at 50% 18%, oklch(0.75 0.06 80 / 0.07), transparent 70%), radial-gradient(130% 100% at 50% 40%, transparent 55%, oklch(0.1 0.03 266 / 0.55) 100%);
 }
 
 /* Everything derived from the pen and the paper. A custom property computed
@@ -234,11 +247,12 @@
   .ink-within:focus-within .ink-focus-draw,
   [data-checked] > :is(.ink-sketch, .ink-glyph) .ink-checked-draw,
   [data-indeterminate] > :is(.ink-sketch, .ink-glyph) .ink-indeterminate-draw {
+    --in: calc(var(--ink-dd) / var(--ink-speed, 1));
     stroke-dashoffset: 0;
     opacity: 1;
     transition:
-      stroke-dashoffset calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-pen),
-      opacity 0s;
+      stroke-dashoffset calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-pen) var(--in),
+      opacity 0s linear var(--in);
   }
 
   @media (hover: hover) {
@@ -249,6 +263,42 @@
         stroke-dashoffset calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-out),
         opacity 0s;
     }
+  }
+}
+
+/* ─── Writing ──────────────────────────────────────────────────────────
+   Words written in by hand (.ink-write): a soft edge sweeps across them
+   left to right, over --ink-d after --ink-dd. Beside a pending ("auto")
+   drawing it waits, unwritten, until that drawing is released. */
+
+@layer components {
+  .ink-write {
+    padding-inline: 0.12em 0.3em;
+    margin-inline: -0.12em -0.3em;
+    mask-image: linear-gradient(90deg, #000 calc(var(--ink-write) - 18%), transparent var(--ink-write));
+    animation: ink-write calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-write) calc(var(--ink-dd) / var(--ink-speed, 1)) both;
+  }
+
+  @media (scripting: enabled) {
+    :has(> .ink-sketch[data-ink-pending]) > .ink-write {
+      --ink-write: 0%;
+      animation: none;
+    }
+  }
+}
+
+@property --ink-write {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 130%;
+}
+
+@keyframes ink-write {
+  from {
+    --ink-write: 0%;
+  }
+  to {
+    --ink-write: 130%;
   }
 }
 
@@ -342,6 +392,12 @@
   .ink-progress[data-indeterminate] {
     animation: none;
     translate: 100% 0;
+  }
+
+  .ink-write,
+  :has(> .ink-sketch[data-ink-pending]) > .ink-write {
+    --ink-write: 130%;
+    animation: none;
   }
 }
 

@@ -50,6 +50,8 @@ const generators: Record<string, (s: number) => unknown> = {
   underlineInk: (s) => ink.underlineInk(s, 140),
   inkPulls: (s) => ink.inkPulls(s, ink.starPulls(s, 40, 40), { retrace: 0.5 }),
   swipePath: (s) => ink.swipePath(s, 200, 32),
+  handCurve: (s) => ink.handCurve(s, [[1, 1], [8, 3], [14, 12]]),
+  handCurveClosed: (s) => ink.handCurve(s, [[1, 1], [8, 3], [14, 12]], { closed: true }),
 };
 
 // Pure helpers with no seed to vary.
