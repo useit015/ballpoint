@@ -1,6 +1,7 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { createContext, createElement, useContext, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { hashSeed } from "@/registry/ballpoint/lib/ink-sketch";
 
 export type InkSize = readonly [number, number];
 
@@ -92,4 +93,27 @@ export function useInkFrame(estimate: InkSize, { pad = 10, step = 2 }: { pad?: n
       style: { left: -pad, top: -pad, width: `calc(100% + ${pad * 2}px)`, height: `calc(100% + ${pad * 2}px)` },
     },
   };
+}
+
+const InkSalt = createContext("");
+
+/**
+ * Redraws everything inside with a different hand: every seed beneath is
+ * salted, so the same components get new wobbles. Change `salt` (and remount
+ * with a `key`) to replay draw-on animations with fresh strokes.
+ */
+export function InkSeedProvider({ salt, children }: { salt: string | number; children: ReactNode }) {
+  return createElement(InkSalt, { value: String(salt) }, children);
+}
+
+/**
+ * The seed a drawn part should use: the `seed` prop when given, otherwise
+ * one derived from the component's place in the tree (stable between server
+ * and client), salted by the nearest InkSeedProvider.
+ */
+export function useInkSeed(seed?: string | number) {
+  const uid = useId();
+  const salt = useContext(InkSalt);
+  const base = seed ?? uid;
+  return hashSeed(salt ? `${salt}:${base}` : base);
 }

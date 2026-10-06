@@ -15,7 +15,10 @@
     "test:install": "node scripts/test-install.ts",
     "contrast": "node scripts/contrast.ts",
     "test": "node --test \"tests/unit/**/*.test.ts\"",
-    "bench": "node scripts/bench.ts"
+    "bench": "node scripts/bench.ts",
+    "test:e2e": "playwright test",
+    "test:visual": "playwright test visual",
+    "test:a11y": "playwright test a11y"
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",
@@ -24,6 +27,7 @@
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "shiki": "4.4.3",
     "tailwind-merge": "3.7.0"
   },
   "devDependencies": {

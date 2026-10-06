@@ -1,6 +1,6 @@
 # Ballpoint UI — a shadcn-style registry drawn in ballpoint
 
-Status: **approved 2026-10-06 · Phases 0–1 done** · Owner: Oussama · Drafted 2026-10-06
+Status: **approved 2026-10-06 · Phases 0–2 done · at the review checkpoint** · Owner: Oussama · Drafted 2026-10-06
 
 A copy-in component library (installed with `shadcn add`, the way shadcn/ui
 works) that brings the portfolio's look to other projects. It covers the
@@ -129,6 +129,9 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D17 | Components generate only the strokes their variant shows, and cache by (variant, seed, size) | Shading and hatching were ~70% of path cost and were computed for every variant |
 | D18 | `useInkFrame` returns `ref` separately from the spreadable `frame` | The React Compiler lint treats an object holding a ref as a ref |
 | D19 | Benches run in headless Chrome via Playwright (`channel: "chrome"`, no browser download) | The in-app browser pane throttles when hidden, so its timings swung 59–400ms |
+| D20 | `InkSeedProvider` / `useInkSeed` ship in ink-core | Lets the docs "Redraw" previews, and lets users give a region its own hand, without touching each component |
+| D21 | Docs code is highlighted at build time by shiki with a CSS-variable theme mapped to ink pressures, set in Victor Mono | One ink for code too; Gaegu is too loose for code; comments use ink-3 to keep 4.5:1 |
+| D22 | Screenshot tests run with reduced motion | Strokes render finished, so baselines compare drawn results, not animation frames. Stable across 3× repeats |
 
 ## Always / Never
 
@@ -147,4 +150,5 @@ portfolio onto the library.
 |---|---|---|
 | 0 | ✅ done 2026-10-06 | `pnpm test:install`: fresh Next 16.3.6 app → `shadcn init` base (tokens, Gaegu via next/font, engine, namespace) → `add @ballpoint/button` → `tsc` ✔ `next build` ✔, no self-referencing vars. Checked in the browser: 6 variants × 8 sizes in both themes, hover lift and shadow, ghost hover-draw, focus ring, no console errors. Repo: lint ✔ typecheck ✔ build ✔ |
 | 1 | ✅ done 2026-10-06 | New shapes (tick, cross, dash, plus, chevron, ring, capsule); `useInkFrame` + ink settle; `--ink-fill` token. `pnpm test` 36/36: determinism for all 32 generators, geometry snapshot, degenerate boxes (caught a NaN in `capsuleStroke` at 0×0, fixed). `pnpm contrast` 14/14, wired into `registry:build`. `pnpm bench`: 200 buttons cold median 45.7ms, warm 36.7ms (budget 50; about 10% margin). `test:install` ✔ lint ✔ typecheck ✔ |
-| 2–9 | not started | |
+| 2 | ✅ done 2026-10-06 | Docs site: home, Installation (init, add, tokens, drawing), `/docs/[item]` with Preview/Code tabs and Redraw, package-manager install tabs, collapsible source, usage, API table; phone layout with folded contents and no sideways scroll. `pnpm test:e2e` 17/17: axe WCAG 2.2 AA on every page × both themes, no console errors or hydration warnings, keyboard focus/Enter/Space/disabled, strokes match measured boxes, screenshots (stable 3/3). `test:install` ✔, `bench` cold median 42.4ms |
+| 3–9 | not started | |

@@ -4,13 +4,12 @@ import { Children, useId, useMemo, type ReactNode } from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { useInkFrame, type InkSize } from "@/registry/ballpoint/hooks/use-ink-box";
+import { useInkFrame, useInkSeed, type InkSize } from "@/registry/ballpoint/hooks/use-ink-box";
 import { InkSvg, Stroke, type DrawMode } from "@/registry/ballpoint/lib/ink";
 import {
   boxStroke,
   cornerTicks,
   crossedBoxStroke,
-  hashSeed,
   hatchStrokes,
   linkStroke,
   shadeFill,
@@ -184,7 +183,7 @@ function ButtonInk({
 }) {
   const uid = useId();
   const id = uid.replace(/[^\w-]/g, "");
-  const s = hashSeed(seed ?? uid);
+  const s = useInkSeed(seed);
   const { ref, w, h, frame } = useInkFrame(estimate);
   const paths = useMemo(() => buttonPaths(variant, s, w, h), [variant, s, w, h]);
   const at = (delay: number) => ({ draw, delay });

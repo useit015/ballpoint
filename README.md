@@ -25,11 +25,18 @@ copies one component.
 ```bash
 pnpm install
 pnpm dev            # builds the registry, then serves the docs on :3000
+pnpm lint && pnpm typecheck && pnpm test   # static checks + stroke determinism
+pnpm contrast       # every token against WCAG, both themes (also runs in registry:build)
+pnpm build          # registry + docs
+pnpm test:e2e       # after build: a11y (axe, WCAG 2.2 AA), console/hydration, keyboard, screenshots
 pnpm test:install   # installs every item into a fresh Next app, then tsc + next build
-pnpm lint && pnpm typecheck && pnpm build
+pnpm bench          # after build: 200 buttons must mount in under 50ms
 ```
 
-pnpm is required (`packageManager: pnpm@11.8.0`).
+pnpm is required (`packageManager: pnpm@11.8.0`). Browser tests use the
+installed Google Chrome (`channel: "chrome"`). Screenshot baselines live in
+`tests/e2e/__screenshots__`; refresh them deliberately with
+`pnpm test:visual --update-snapshots`.
 
 ## How it's put together
 

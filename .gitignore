@@ -42,3 +42,7 @@ next-env.d.ts
 public/r/
 app/registry.generated.css
 registry.json
+
+# playwright
+/test-results/
+/playwright-report/

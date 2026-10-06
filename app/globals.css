@@ -3,3 +3,73 @@
 @import "../registry/ballpoint/styles/base.css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* ─── Docs site only ─────────────────────────────────────────────────── */
+
+@theme inline {
+  --font-mono: var(--font-code), ui-monospace, monospace;
+}
+
+:root {
+  --paper-tile: url("/paper-light.svg");
+  /* Code is written in the same ink, at different pressures. */
+  --code-foreground: var(--ink);
+  --code-background: transparent;
+  --code-token-keyword: var(--ink);
+  --code-token-function: var(--ink);
+  --code-token-constant: var(--ink-2);
+  --code-token-parameter: var(--ink-2);
+  --code-token-string: var(--ink-2);
+  --code-token-string-expression: var(--ink-2);
+  --code-token-punctuation: var(--ink-3);
+  --code-token-comment: var(--ink-3);
+  --code-token-link: var(--ink);
+}
+
+.dark {
+  --paper-tile: url("/paper-dark.svg");
+}
+
+/* The paper: a seamless tile of soft crinkle relief, averaging out to
+   exactly --paper. Painted on the root, so it scrolls with the page. */
+html {
+  background: var(--paper) var(--paper-tile) 0 0 / 600px 600px repeat;
+  scroll-behavior: smooth;
+  /* Strokes overshoot their boxes; never let that scroll the page. */
+  overflow-x: clip;
+}
+
+body {
+  background: transparent;
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--ring);
+  outline-offset: 4px;
+}
+
+/* Code blocks: a faint wash of ink rather than a box. */
+.code-block {
+  background: color-mix(in oklab, var(--ink) 5%, transparent);
+  border-radius: var(--hand-radius);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  -webkit-text-stroke: 0;
+}
+
+.code-block pre {
+  overflow-x: auto;
+  padding: 1rem 1.25rem;
+  background: transparent !important;
+}
+
+.code-block [style*="font-style:italic"] {
+  font-family: var(--font-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
