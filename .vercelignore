@@ -1,0 +1,9 @@
+# Not needed to build or serve the site.
+nvim.log
+test-results
+playwright-report
+tests/e2e/__screenshots__
+plans
+.next
+node_modules
+.env*.local
