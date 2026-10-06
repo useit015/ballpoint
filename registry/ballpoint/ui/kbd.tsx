@@ -37,7 +37,7 @@ function Kbd({
 }
 
 function KbdGroup({ className, ...props }: ComponentProps<"kbd">) {
-  return <kbd data-slot="kbd-group" className={cn("inline-flex items-center gap-1.5", className)} {...props} />;
+  return <kbd data-slot="kbd-group" className={cn("inline-flex items-center gap-1.5 font-sans", className)} {...props} />;
 }
 
 export { Kbd, KbdGroup };

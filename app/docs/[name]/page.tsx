@@ -78,7 +78,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
             <>
               <h3 className="pt-4 font-bold">Pen settings</h3>
               <p className="text-ink-2">
-                Every drawn component takes these, as props or from the nearest <code className="font-mono text-sm">InkProvider</code>. Props win.
+                Every drawn component takes these, as props or from the nearest <code className="inline-code">InkProvider</code>. Props win.
               </p>
               <PropsTable props={penProps.filter((prop) => doc.pen?.includes(prop.name))} />
             </>

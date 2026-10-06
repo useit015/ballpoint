@@ -34,9 +34,9 @@ export default function Installation() {
         <Heading id="init">1. Set up the paper and ink</Heading>
         <p className="text-ink-2">
           In an app that already has Tailwind CSS 4, run init with the Ballpoint base. It writes the colour, type and motion tokens into your
-          global CSS, adds Gaegu with <code className="font-mono text-sm">next/font</code>, copies the stroke engine into{" "}
-          <code className="font-mono text-sm">lib/</code> and <code className="font-mono text-sm">hooks/</code>, and registers the{" "}
-          <code className="font-mono text-sm">@ballpoint</code> namespace in <code className="font-mono text-sm">components.json</code>.
+          global CSS, adds Gaegu with <code className="inline-code">next/font</code>, copies the stroke engine into{" "}
+          <code className="inline-code">lib/</code> and <code className="inline-code">hooks/</code>, and registers the{" "}
+          <code className="inline-code">@ballpoint</code> namespace in <code className="inline-code">components.json</code>.
         </p>
         <InstallCommand what={`init ${homepage}/r/ballpoint.json`} />
       </section>
@@ -55,13 +55,13 @@ export default function Installation() {
         <Heading id="theming">Theming</Heading>
         <p className="text-ink-2">
           Everything is one ink at different pressures, mixed toward the paper in oklab so the hue never drifts. Change{" "}
-          <code className="font-mono text-sm">--ink</code> and <code className="font-mono text-sm">--paper</code> and the rest follows. The
-          usual shadcn names (<code className="font-mono text-sm">--background</code>, <code className="font-mono text-sm">--primary</code>,{" "}
-          <code className="font-mono text-sm">--border</code>, …) are mapped onto these, so shadcn blocks sit on the same page.
+          <code className="inline-code">--ink</code> and <code className="inline-code">--paper</code> and the rest follows. The
+          usual shadcn names (<code className="inline-code">--background</code>, <code className="inline-code">--primary</code>,{" "}
+          <code className="inline-code">--border</code>, …) are mapped onto these, so shadcn blocks sit on the same page.
         </p>
         <p className="text-ink-2">
           Other pens and papers install the same way, for example{" "}
-          <code className="font-mono text-sm">add @ballpoint/pen-black @ballpoint/paper-white</code>. See{" "}
+          <code className="inline-code">add @ballpoint/pen-black @ballpoint/paper-white</code>. See{" "}
           <Link href="/docs/themes" className="underline decoration-ink-4 underline-offset-4 hover:decoration-ink">
             pens and papers
           </Link>
@@ -85,13 +85,13 @@ export default function Installation() {
         <Heading id="pen">Pen settings</Heading>
         <p className="text-ink-2">
           Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser; pass{" "}
-          <code className="font-mono text-sm">seed</code> to pin one. By default everything draws itself in the first time it scrolls into
-          view (<code className="font-mono text-sm">draw=&quot;auto&quot;</code>); with reduced motion it appears already drawn.
+          <code className="inline-code">seed</code> to pin one. By default everything draws itself in the first time it scrolls into
+          view (<code className="inline-code">draw=&quot;auto&quot;</code>); with reduced motion it appears already drawn.
         </p>
         <p className="text-ink-2">
           How the pen behaves is yours to set, per component or for a whole region: roughness, how many passes, corner radius (pills
           included), crossed or joined corners, how areas are coloured in, the shadow, line weight and drawing speed. A{" "}
-          <code className="font-mono text-sm">salt</code> redraws everything inside in a slightly different hand.
+          <code className="inline-code">salt</code> redraws everything inside in a slightly different hand.
         </p>
         <CodeBlock
           title="app/layout.tsx"

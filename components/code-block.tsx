@@ -1,12 +1,8 @@
 import { highlight } from "@/lib/highlight";
+import { CodeFrame } from "@/components/code-frame";
 import { CopyButton } from "@/components/copy-button";
-import { MarginRule } from "@/components/margin-rule";
-import { cn } from "@/lib/utils";
 
-/**
- * Code set on the page itself, not in a box: a pen-drawn margin rule down
- * the left, the file name and a copy action above.
- */
+/** Highlighted code on a slip of paper, with its file name (or language) and a copy button. */
 export async function CodeBlock({
   code,
   lang = "tsx",
@@ -20,18 +16,17 @@ export async function CodeBlock({
 }) {
   const html = await highlight(code, lang);
   return (
-    <figure className={cn("code-block relative pl-6", className)}>
-      <MarginRule seed={title ?? code.slice(0, 40)} />
-      {title ? (
-        <figcaption className="flex min-h-8 items-center justify-between gap-4">
-          <span className="text-sm text-ink-3">{title}</span>
+    <CodeFrame
+      seed={title ?? code.slice(0, 32)}
+      className={className}
+      header={
+        <>
+          <span className="truncate text-sm text-ink-3">{title ?? lang}</span>
           <CopyButton text={code} />
-        </figcaption>
-      ) : (
-        // No caption row to hang it on: copy sits in the corner, with room kept clear for it.
-        <CopyButton text={code} className="absolute top-0 right-0" />
-      )}
-      <div className={cn("code", !title && "pr-16")} dangerouslySetInnerHTML={{ __html: html }} />
-    </figure>
+        </>
+      }
+    >
+      <div dangerouslySetInnerHTML={{ __html: html }} />
+    </CodeFrame>
   );
 }

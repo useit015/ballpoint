@@ -1,27 +1,27 @@
 import { createHighlighter, type Highlighter, type ThemeRegistration } from "shiki";
 
-// One ink for code too. Tokens differ by pressure and weight rather than
-// hue: keywords pressed hard, names in full ink, the plumbing (punctuation,
-// operators) and comments lighter. Colours are CSS variables defined in
-// app/globals.css, so code follows the theme.
+// Code inked with a four-colour ballpoint: blue keywords, green strings,
+// red for names (functions, components, tags), black for the rest, and
+// pencil for comments. The colours are CSS variables in app/globals.css,
+// so code follows the theme.
 const ink: ThemeRegistration = {
   name: "ink",
   type: "light",
   colors: { "editor.foreground": "var(--code-plain)", "editor.background": "transparent" },
   tokenColors: [
-    { scope: ["comment", "punctuation.definition.comment"], settings: { foreground: "var(--code-quiet)", fontStyle: "italic" } },
+    { scope: ["comment", "punctuation.definition.comment"], settings: { foreground: "var(--code-comment)", fontStyle: "italic" } },
     {
-      scope: ["keyword", "storage", "storage.type", "storage.modifier", "keyword.control", "variable.language", "constant.language"],
-      settings: { foreground: "var(--code-strong)", fontStyle: "bold" },
+      scope: ["keyword", "storage", "storage.type", "storage.modifier", "keyword.control", "variable.language", "constant.language", "keyword.operator.new"],
+      settings: { foreground: "var(--code-keyword)", fontStyle: "bold" },
     },
+    { scope: ["string", "punctuation.definition.string", "string.template", "string.quoted"], settings: { foreground: "var(--code-string)" } },
     {
       scope: ["entity.name.function", "support.function", "entity.name.tag", "support.class.component", "entity.name.type", "entity.name.class", "support.type"],
-      settings: { foreground: "var(--code-strong)" },
+      settings: { foreground: "var(--code-name)" },
     },
-    { scope: ["string", "punctuation.definition.string", "string.template"], settings: { foreground: "var(--code-strong)" } },
-    { scope: ["entity.other.attribute-name", "variable.parameter", "meta.object-literal.key"], settings: { foreground: "var(--code-plain)", fontStyle: "italic" } },
-    { scope: ["constant.numeric", "constant", "support.constant"], settings: { foreground: "var(--code-plain)" } },
-    { scope: ["punctuation", "meta.brace", "keyword.operator", "punctuation.separator", "punctuation.terminator"], settings: { foreground: "var(--code-quiet)" } },
+    { scope: ["entity.other.attribute-name", "variable.parameter", "meta.object-literal.key", "support.type.property-name"], settings: { foreground: "var(--code-plain)", fontStyle: "italic" } },
+    { scope: ["constant.numeric", "constant.other", "support.constant"], settings: { foreground: "var(--code-string)" } },
+    { scope: ["punctuation", "meta.brace", "keyword.operator", "punctuation.separator", "punctuation.terminator", "meta.tag.punctuation"], settings: { foreground: "var(--code-quiet)" } },
   ],
 };
 

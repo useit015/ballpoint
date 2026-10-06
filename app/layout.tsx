@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Courier_Prime, Gaegu } from "next/font/google";
+import { Gaegu, Recursive } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
 // Matches what `shadcn init @ballpoint/ballpoint` writes into an app.
 const gaegu = Gaegu({ variable: "--font-sans", weight: ["300", "400", "700"], subsets: ["latin"] });
-// Code only: a typewriter mono, as if the code were typed onto the page.
-const code = Courier_Prime({ variable: "--font-code", weight: ["400", "700"], style: ["normal", "italic"], subsets: ["latin"] });
+// Code only: Recursive with its Mono and Casual axes, a monospace with a
+// soft, hand-lettered stroke that sits beside Gaegu and stays legible.
+const code = Recursive({ variable: "--font-code", axes: ["CASL", "MONO", "slnt"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: { default: "Ballpoint", template: "%s · Ballpoint" },

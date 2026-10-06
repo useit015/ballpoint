@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
-import { papers, pens } from "@/registry/themes";
+import { PaperSwatch } from "@/components/paper-swatch";
+import { papers, pens, type PaperName } from "@/registry/themes";
 
 export const metadata: Metadata = { title: "Pens and papers" };
 
@@ -37,12 +38,11 @@ export default function ThemesPage() {
           <div key={name} className="flex flex-col gap-3">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
               <h3 className="font-bold">{pen.title}</h3>
-              <span className="flex items-center gap-2 rounded-sm px-2 py-1" style={{ background: papers.cream.paper.light }}>
-                <Stroke ink={pen.ink.light} />
-              </span>
-              <span className="flex items-center gap-2 rounded-sm px-2 py-1" style={{ background: papers.cream.paper.dark }}>
-                <Stroke ink={pen.ink.dark} />
-              </span>
+              {(["light", "dark"] as const).map((mode) => (
+                <PaperSwatch key={mode} paper="cream" mode={mode} seed={`pen-${name}-${mode}`} className="h-9 w-28">
+                  <Stroke ink={pen.ink[mode]} />
+                </PaperSwatch>
+              ))}
             </div>
             <p className="text-ink-2">{pen.description}</p>
             <InstallCommand what={`add @ballpoint/pen-${name}`} />
@@ -57,12 +57,9 @@ export default function ThemesPage() {
             <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
               <h3 className="font-bold">{paper.title}</h3>
               {(["light", "dark"] as const).map((mode) => (
-                <span
-                  key={mode}
-                  aria-hidden="true"
-                  className="h-6 w-16 border border-ink-line"
-                  style={{ background: paper.paper[mode], borderRadius: "var(--hand-radius)" }}
-                />
+                <PaperSwatch key={mode} paper={name as PaperName} mode={mode} className="h-9 w-28">
+                  <Stroke ink={pens.blue.ink[mode]} />
+                </PaperSwatch>
               ))}
             </div>
             <p className="text-ink-2">{paper.description}</p>

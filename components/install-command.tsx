@@ -1,10 +1,10 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { Fragment, useSyncExternalStore } from "react";
 import { install } from "@/lib/docs";
+import { CodeFrame } from "@/components/code-frame";
 import { CopyButton } from "@/components/copy-button";
-import { MarginRule } from "@/components/margin-rule";
-import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/ballpoint/ui/tabs";
 
 type Manager = keyof typeof install;
 const managers = Object.keys(install) as Manager[];
@@ -37,42 +37,69 @@ function choose(m: Manager) {
   window.dispatchEvent(new Event("ballpoint:pm"));
 }
 
+/** A URL or path may break after any slash on a narrow screen, never mid-word. */
+function breakable(part: string) {
+  return part.split(/(?<=\/)/).map((piece, i) => (
+    <Fragment key={i}>
+      {i > 0 && <wbr />}
+      {piece}
+    </Fragment>
+  ));
+}
+
+/** `pnpm dlx shadcn@latest add …`, inked like code: the runner in the page's pen, the CLI in its red pen, the package in green. */
+function Command({ command }: { command: string }) {
+  const [runner, ...rest] = command.split(" ");
+  const cliAt = rest.findIndex((part) => part.startsWith("shadcn@"));
+  const lead = rest.slice(0, cliAt);
+  const cli = rest[cliAt];
+  const tail = rest.slice(cliAt + 1);
+  return (
+    <code>
+      <span aria-hidden="true" className="select-none" style={{ color: "var(--code-quiet)" }}>
+        ${" "}
+      </span>
+      <span style={{ color: "var(--code-keyword)", fontWeight: 600 }}>{[runner, ...lead].join(" ")}</span>{" "}
+      <span style={{ color: "var(--code-name)" }}>{cli}</span>{" "}
+      {tail.map((part, i) => (
+        <span key={i} style={{ color: part.startsWith("@") || part.startsWith("http") ? "var(--code-string)" : "var(--code-plain)" }}>
+          {breakable(part)}
+          {i < tail.length - 1 ? " " : ""}
+        </span>
+      ))}
+    </code>
+  );
+}
+
 export function InstallCommand({ what, className }: { what: string; className?: string }) {
   const current = useSyncExternalStore(subscribe, read, () => "pnpm" as Manager);
   const command = install[current](what);
   return (
-    <div className={cn("code-block relative pl-6", className)}>
-      <MarginRule seed={what} />
-      <div className="flex items-center justify-between gap-4">
-        <div role="tablist" aria-label="Package manager" className="flex gap-4">
-          {managers.map((m) => (
-            <button
-              key={m}
-              type="button"
-              role="tab"
-              aria-selected={m === current}
-              onClick={() => choose(m)}
-              className={cn(
-                "-mb-px cursor-pointer border-b-2 pb-1 text-sm transition-colors",
-                m === current ? "border-ink text-ink" : "border-transparent text-ink-3 hover:text-ink",
-              )}
-            >
-              {m}
-            </button>
-          ))}
-        </div>
-        <CopyButton text={command} />
-      </div>
-      <div className="code">
-        <pre>
-          <code>
-            <span aria-hidden="true" className="text-ink-3 select-none">
-              ${" "}
-            </span>
-            {command}
-          </code>
-        </pre>
-      </div>
-    </div>
+    <Tabs value={current} onValueChange={(v) => choose(v as Manager)} className="gap-0">
+      <CodeFrame
+        seed={`install-${what}`}
+        className={className}
+        header={
+          <>
+            <TabsList variant="line" aria-label="Package manager" className="-ml-1 gap-1 text-sm">
+              {managers.map((m) => (
+                <TabsTrigger key={m} value={m} className="h-8 text-sm">
+                  {m}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <CopyButton text={command} />
+          </>
+        }
+      >
+        {managers.map((m) => (
+          <TabsContent key={m} value={m}>
+            <pre className="wrap">
+              <Command command={install[m](what)} />
+            </pre>
+          </TabsContent>
+        ))}
+      </CodeFrame>
+    </Tabs>
   );
 }

@@ -8,24 +8,49 @@
 
 @theme inline {
   --font-mono: var(--font-code), ui-monospace, monospace;
+  --font-mono--font-variation-settings: "MONO" 1, "CASL" 1;
 }
 
+/* Code is written with the pens from registry/themes.ts: the page's own pen
+   for keywords, the paper's red pen for names, the green pen for strings,
+   the black fineliner for the rest, and pencil for comments. Every one
+   clears 5:1 on its slip, on every paper, by day and by night. */
 :root {
-  --paper-tile: url("/paper-light.svg");
-  /* Code is written in the same ink, at different pressures. */
-  --code-strong: var(--ink);
-  --code-plain: var(--ink-2);
-  --code-quiet: var(--ink-3);
+  --paper-tile: url("/paper/cream-light.svg");
+  /* A lighter slip laid on the page: the paper's own texture shows through. */
+  --code-slip: color-mix(in oklab, white 42%, transparent);
+  --code-plain: oklch(0.26 0.012 265);
+  --code-string: oklch(0.38 0.1 158);
+  --code-pencil: oklch(0.37 0.012 255);
 }
 
 .dark {
-  --paper-tile: url("/paper-dark.svg");
+  --paper-tile: url("/paper/cream-dark.svg");
+  /* At night the slip catches a little of the pen's light instead. */
+  --code-slip: color-mix(in oklab, var(--ink) 5%, transparent);
+  --code-plain: oklch(0.94 0.006 265);
+  --code-string: oklch(0.88 0.08 158);
+  --code-pencil: oklch(0.86 0.01 255);
 }
 
-/* The paper: a seamless tile of soft crinkle relief, averaging out to
-   exactly --paper. Painted on the root, so it scrolls with the page. */
-html {
+:root,
+.dark,
+[data-ink-scope] {
+  --code-keyword: var(--ink);
+  --code-name: var(--pen-red);
+  --code-quiet: var(--ink-3);
+  --code-comment: color-mix(in oklab, var(--code-pencil) 80%, var(--paper));
+}
+
+/* Paper: a seamless tile of soft crinkle relief that averages out to exactly
+   --paper (scripts/paper-tiles.ts). The page is one sheet, painted on the
+   root so it scrolls with the page; .paper-sheet lays another anywhere. */
+html,
+.paper-sheet {
   background: var(--paper) var(--paper-tile) 0 0 / 600px 600px repeat;
+}
+
+html {
   scroll-behavior: smooth;
   /* Strokes overshoot their boxes; never let that scroll the page. */
   overflow-x: clip;
@@ -40,24 +65,64 @@ body {
   outline-offset: 4px;
 }
 
-/* Code is set on the paper, not in a box (see components/code-block). A
-   typewriter mono: typed onto the page, then annotated in pen. */
-.code-block .code pre,
-.code-block .code code {
+/* Code: Recursive at full Mono and full Casual. */
+.code-block pre,
+.code-block code,
+:not(pre) > code.inline-code {
   font-family: var(--font-code), ui-monospace, monospace;
-}
-
-.code-block .code pre {
-  overflow-x: auto;
-  padding: 0.25rem 0 0.5rem;
-  background: transparent !important;
-  font-size: 0.9375rem;
-  line-height: 1.65;
+  font-variation-settings: "MONO" 1, "CASL" 1;
   -webkit-text-stroke: 0;
 }
 
-.code-block .code pre:focus-visible {
-  outline-offset: 2px;
+.code-block pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 0.25rem 1.25rem 1.1rem;
+  background: transparent !important;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  tab-size: 2;
+  /* Long lines scroll sideways on a thin pencilled bar, never a grey one. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-4) transparent;
+}
+
+.code-block pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-block pre::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: var(--ink-4);
+}
+
+.code-block pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Commands are one line of words: they wrap rather than scroll. */
+.code-block pre.wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Keywords are pressed a little harder; comments lean like pencil notes. */
+.code-block .code span[style*="font-weight:bold"] {
+  font-weight: 600 !important;
+}
+
+.code-block .code span[style*="font-style:italic"] {
+  font-style: normal !important;
+  font-variation-settings: "MONO" 1, "CASL" 1, "slnt" -12;
+}
+
+/* Inline code in prose: the same slip, cut small. */
+:not(pre) > code.inline-code {
+  padding: 0.05em 0.35em;
+  border-radius: var(--hand-radius);
+  background: var(--code-slip);
+  color: var(--code-plain);
+  font-size: 0.82em;
 }
 
 @media (prefers-reduced-motion: reduce) {

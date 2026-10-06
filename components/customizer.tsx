@@ -13,8 +13,10 @@ import { Slider } from "@/registry/ballpoint/ui/slider";
 import { Switch } from "@/registry/ballpoint/ui/switch";
 import { Textarea } from "@/registry/ballpoint/ui/textarea";
 import { InstallCommand } from "@/components/install-command";
+import { PaperSwatch } from "@/components/paper-swatch";
 import { PlainCode } from "@/components/plain-code";
 import { contrast, mix, oklch, over, parseColor } from "@/lib/color";
+import { paperTile } from "@/lib/paper";
 import { cn } from "@/lib/utils";
 import { papers, pens, type PaperName, type PenName } from "@/registry/themes";
 
@@ -108,7 +110,7 @@ export function Customizer() {
           <RadioGroup value={s.paper} onValueChange={(v) => set("paper", v as PaperName)} aria-label="Paper" className="grid-cols-3 gap-2">
             {(Object.keys(papers) as PaperName[]).map((name) => (
               <Label key={name} className="flex-col items-start gap-1.5">
-                <span aria-hidden="true" className="h-8 w-full border border-ink-line" style={{ background: papers[name].paper[mode], borderRadius: "var(--hand-radius)" }} />
+                <PaperSwatch paper={name} mode={mode} className="h-8 w-full" />
                 <span className="flex items-center gap-2">
                   <RadioGroupItem value={name} seed={`paper-${name}`} />
                   {papers[name].title}
@@ -201,8 +203,16 @@ export function Customizer() {
           data-ink-scope=""
           data-customizer-preview=""
           aria-label="Preview"
-          className={cn("relative bg-background px-5 py-8 text-foreground sm:px-8", night && "dark")}
-          style={{ "--ink": colours.ink, "--paper": colours.paper, "--pen-red": colours.red, borderRadius: "var(--hand-radius)" } as CSSProperties}
+          className={cn("paper-sheet relative px-5 py-8 text-foreground sm:px-8", night && "dark")}
+          style={
+            {
+              "--ink": colours.ink,
+              "--paper": colours.paper,
+              "--pen-red": colours.red,
+              "--paper-tile": paperTile(s.paper, mode),
+              borderRadius: "var(--hand-radius)",
+            } as CSSProperties
+          }
         >
           <InkProvider key={salt} salt={salt || undefined} {...pen}>
             <Sheet />
