@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    path { fill: none; stroke: #2a3fb0; stroke-linecap: round; stroke-linejoin: round; }
+    @media (prefers-color-scheme: dark) { path { stroke: #d4dcf5; } }
+  </style>
+  <!-- A ballpoint loop, gone over twice. -->
+  <path d="M9 23C5 16 8 7 16 6s13 5 11 12-10 10-15 7-5-9 0-12 10-1 10 4" stroke-width="2.6" />
+  <path d="M10 22c-3-6 0-13 7-14" stroke-width="1.4" opacity="0.6" />
+</svg>

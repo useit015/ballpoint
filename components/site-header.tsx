@@ -14,6 +14,9 @@ export function SiteHeader() {
         <Link href="/docs/button" className="text-ink-2 transition-colors hover:text-ink">
           Components
         </Link>
+        <Link href="/customize" className="text-ink-2 transition-colors hover:text-ink">
+          Customize
+        </Link>
         <ThemeToggle />
       </nav>
     </header>

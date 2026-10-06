@@ -13,6 +13,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import postcss, { type ChildNode, type Container } from "postcss";
 import { homepage, items } from "../registry/manifest.ts";
+import { papers, pens, type PenTheme } from "../registry/themes.ts";
 
 type CssObject = { [key: string]: string | CssObject };
 
@@ -45,7 +46,8 @@ function add(out: CssObject, child: ChildNode) {
   if (child.type === "decl") {
     out[child.prop] = child.important ? `${child.value} !important` : child.value;
   } else if (child.type === "rule") {
-    out[child.selector] = merge(out[child.selector], toObject(child));
+    const selector = child.selector.replace(/\s+/g, " ");
+    out[selector] = merge(out[selector], toObject(child));
   } else if (child.type === "atrule") {
     const key = `@${child.name}${child.params ? ` ${child.params}` : ""}`;
     out[key] = merge(out[key], child.nodes ? toObject(child) : {});
@@ -67,11 +69,37 @@ root.each((node) => {
   add(css, node);
 });
 
+// Pens and papers: each a registry:theme that sets only what it changes.
+// The ink fill is a plain number, so it goes in css rather than cssVars.
+const author = items[0].author;
+const themes = [
+  ...Object.entries(pens as Record<string, PenTheme>).map(([name, pen]) => ({
+    name: `pen-${name}`,
+    type: "registry:theme",
+    title: pen.title,
+    description: pen.description,
+    author,
+    cssVars: { light: { ink: pen.ink.light }, dark: { ink: pen.ink.dark } },
+    ...(pen.fill ? { css: { ":root": { "--ink-fill": String(pen.fill.light) }, ".dark": { "--ink-fill": String(pen.fill.dark) } } } : {}),
+  })),
+  ...Object.entries(papers).map(([name, paper]) => ({
+    name: `paper-${name}`,
+    type: "registry:theme",
+    title: paper.title,
+    description: paper.description,
+    author,
+    cssVars: {
+      light: { paper: paper.paper.light, "pen-red": paper.red.light },
+      dark: { paper: paper.paper.dark, "pen-red": paper.red.dark },
+    },
+  })),
+];
+
 const registry = {
   $schema: "https://ui.shadcn.com/schema/registry.json",
   name: "ballpoint",
   homepage,
-  items: items.map((item) => (item.type === "registry:base" ? { ...item, cssVars: vars, css } : item)),
+  items: [...items.map((item) => (item.type === "registry:base" ? { ...item, cssVars: vars, css } : item)), ...themes],
 };
 
 writeFileSync(new URL("../registry.json", import.meta.url), `${JSON.stringify(registry, null, 2)}\n`);

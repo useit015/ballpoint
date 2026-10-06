@@ -32,6 +32,7 @@ function Textarea({ className, style, variant = "box", seed, roughness, passes, 
         pen={pen}
         seed={seed}
         estimate={[320, 112]}
+        maxRadius={18}
         focusPass
         className={cn(
           "text-ink-line transition-colors duration-(--dur-hover)",

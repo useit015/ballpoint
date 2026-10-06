@@ -2,7 +2,14 @@ import { DocsNav, type NavGroup } from "@/components/docs-nav";
 import { allDocs } from "@/lib/docs";
 
 const groups: NavGroup[] = [
-  { title: "Start", links: [{ href: "/docs", title: "Installation" }] },
+  {
+    title: "Start",
+    links: [
+      { href: "/docs", title: "Installation" },
+      { href: "/docs/themes", title: "Pens and papers" },
+      { href: "/customize", title: "Customize" },
+    ],
+  },
   ...(["Components", "Drawn"] as const)
     .map((group) => ({
       title: group,

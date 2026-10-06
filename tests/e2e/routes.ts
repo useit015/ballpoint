@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { allDocs } from "../../lib/docs";
 
 export const docs = allDocs.map((doc) => doc.name);
-export const routes = ["/", "/docs", ...docs.map((name) => `/docs/${name}`)];
+export const routes = ["/", "/docs", "/docs/themes", "/customize", ...docs.map((name) => `/docs/${name}`)];
 export const themes = ["light", "dark"] as const;
 
 /** Open a page in a theme, with its fonts loaded and its strokes measured. */

@@ -26,6 +26,7 @@ export function InkOutline({
   passes: defaultPasses = 2,
   pad = 8,
   focusPass = false,
+  maxRadius = Infinity,
   className,
   children,
 }: {
@@ -36,6 +37,12 @@ export function InkOutline({
   passes?: 1 | 2 | 3;
   pad?: number;
   focusPass?: boolean;
+  /**
+   * The roundest this outline gets. "full" means a pill for single-line
+   * controls; a checkbox drawn as a circle would read as a radio, and a
+   * multi-line box as a stadium, so those cap it.
+   */
+  maxRadius?: number;
   className?: string;
   children?: (box: { w: number; h: number; r: number; s: number }) => ReactNode;
 }) {
@@ -45,7 +52,8 @@ export function InkOutline({
   const roughness = pen.roughness ?? 1;
   const passes = pen.passes ?? defaultPasses;
   const corners = pen.corners ?? "crossed";
-  const r = shape === "ring" ? Math.min(w, h) / 2 : pen.radius === "full" ? h / 2 : Math.min(pen.radius ?? 0, h / 2);
+  const r =
+    shape === "ring" ? Math.min(w, h) / 2 : Math.min(pen.radius === "full" ? h / 2 : (pen.radius ?? 0), h / 2, maxRadius);
 
   const strokes = useMemo(() => {
     const make = (seed: number, n: number) => {

@@ -105,6 +105,7 @@ function FieldLabel({
           pen={pen}
           seed={seed}
           estimate={[260, 76]}
+          maxRadius={18}
           className="text-ink-line transition-colors duration-(--dur-hover) group-[:hover:not(:has([data-checked]))]/field-label:text-ink-3 group-has-data-checked/field-label:text-ink"
         />
       )}

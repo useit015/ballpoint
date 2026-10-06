@@ -1,6 +1,6 @@
 # Ballpoint UI — a shadcn-style registry drawn in ballpoint
 
-Status: **approved 2026-10-06 · Phases 0–3 done · next: Customizer + pens and papers (3.5)** · Owner: Oussama · Drafted 2026-10-06
+Status: **approved 2026-10-06 · Phases 0–3.5 done · next: Wave B (display)** · Owner: Oussama · Drafted 2026-10-06
 
 A copy-in component library (installed with `shadcn add`, the way shadcn/ui
 works) that brings the portfolio's look to other projects. It covers the
@@ -148,6 +148,10 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D34 | Orientation styling uses `data-[orientation=…]`, not shadcn's `data-horizontal:` / `data-vertical:` | Those shorthands come from shadcn's own stylesheet, which Ballpoint doesn't ship; the vertical slider collapsed without them |
 | D35 | Screenshot tolerance tightened from 0.2% to 0.01% of pixels | 0.2% let a real change (a paper patch behind a label, a resize grip) pass. Renders are deterministic, so strict costs nothing |
 | D36 | Choice cards (a FieldLabel wrapping a Field) are detected from the DOM after mount; their layout comes from CSS `:has()` | Server-rendered children reach the client as references, so comparing element types never matched |
+| D37 | Papers are cream, white and **legal pad** (each with its own night shade), not "night" | Night is already every paper's dark mode. A night-only paper would put a pen's dark-blue day ink on navy, which breaks the rule that any pen goes on any paper |
+| D38 | Derived tokens live in one rule, `:root, .dark, [data-ink-scope]`; any element with `data-ink-scope` and its own `--ink`/`--paper` gets a fully re-inked subtree | A custom property computed on :root is inherited as a finished colour, so overriding `--ink` on a container wouldn't reach `--ink-3` and friends. This is what lets the customizer preview a pen without repainting the site; users get it too |
+| D39 | `radius="full"` is a pill only for single-line controls; checkboxes cap at 6px, textareas and choice cards at 18px (`InkOutline maxRadius`) | Seen in the customizer: a round checkbox reads as a radio, and a multi-line stadium looks wrong |
+| D40 | The docs site has its own drawn icon | Without one Chrome sometimes asked for /favicon.ico before a test finished, failing the console check on a 404 at random |
 
 ## Always / Never
 
@@ -168,4 +172,5 @@ portfolio onto the library.
 | 2 | ✅ done 2026-10-06 | Docs site: home, Installation (init, add, tokens, drawing), `/docs/[item]` with Preview/Code tabs and Redraw, package-manager install tabs, collapsible source, usage, API table; phone layout with folded contents and no sideways scroll. `pnpm test:e2e` 17/17: axe WCAG 2.2 AA on every page × both themes, no console errors or hydration warnings, keyboard focus/Enter/Space/disabled, strokes match measured boxes, screenshots (stable 3/3). `test:install` ✔, `bench` cold median 42.4ms |
 | 2.5 | ✅ done 2026-10-06 | `InkProvider` + pen props (roughness, passes, radius/pill, corners, fill, shadow, draw, weight, speed, salt); auto-draw on first view; `roundedBoxStroke`/`roundedRectPath`. Docs: "Pen settings" example and table, installation section. `pnpm test` 37/37 (snapshot: only capsule changed + rounded box added). `pnpm test:e2e` 19/19, including pending-until-in-view and reduced-motion-finished; main button screenshot unchanged pixel for pixel. Caught and fixed: outline/destructive faces were getting a fill. `test:install` ✔. **Bench inconclusive**: the machine was under load (load avg ≈ 5, `mobileassetd` at 100%) and even the previous commit measured 43–47ms; re-run on a quiet machine |
 | 3 | ✅ done 2026-10-06 | input (box/line), textarea (box/lined, grows), label, separator, field (+ set, legend, group, content, title, description, separator, error, drawn choice cards), checkbox (tick/dash), radio-group (spiral dot), switch (shaded track, 4 fills), slider (single/range/steps/vertical). `pnpm test:e2e` 72/72: axe on every page × both themes, console clean, 8 behaviour tests (keyboard tick/untick, indeterminate→checked, radio arrows, card click, switch Space, slider arrows incl. range labels, input focus pass, red-pen invalid), screenshots at 0.01%. Caught: slider thumbs unlabelled, vertical slider collapsed, choice cards undetected, hover washing out checked controls. `test:install` 13 items ✔. `bench` ✔ none 48.3 / auto 53.8ms (under load avg 6.8) |
-| 3.5–9 | not started | |
+| 3.5 | ✅ done 2026-10-06 | 4 pens (blue, black fineliner, pencil, green) and 3 papers (cream, white, legal pad) as `registry:theme` items; contrast gate now checks all 24 pen × paper × day/night pairs (it caught green being too light on cream and legal); base.css defaults asserted equal to blue on cream. `/customize`: pen (incl. your own hue), paper, night, roughness, weight, speed, passes, corners, fill, shadow; live sheet in a scoped theme; live WCAG readout; install command, InkProvider and CSS output. `/docs/themes` page. `test:e2e` 86/86 (6 customizer behaviours, screenshots unchanged pixel-for-pixel by the token refactor). `test:install` 20 items, asserts the last-added themes are the ones in force ✔ |
+| 4–9 | not started | |

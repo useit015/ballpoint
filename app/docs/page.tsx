@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock } from "@/components/code-block";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
@@ -57,6 +58,18 @@ export default function Installation() {
           <code className="font-mono text-sm">--ink</code> and <code className="font-mono text-sm">--paper</code> and the rest follows. The
           usual shadcn names (<code className="font-mono text-sm">--background</code>, <code className="font-mono text-sm">--primary</code>,{" "}
           <code className="font-mono text-sm">--border</code>, …) are mapped onto these, so shadcn blocks sit on the same page.
+        </p>
+        <p className="text-ink-2">
+          Other pens and papers install the same way, for example{" "}
+          <code className="font-mono text-sm">add @ballpoint/pen-black @ballpoint/paper-white</code>. See{" "}
+          <Link href="/docs/themes" className="underline decoration-ink-4 underline-offset-4 hover:decoration-ink">
+            pens and papers
+          </Link>
+          , or try them together in the{" "}
+          <Link href="/customize" className="underline decoration-ink-4 underline-offset-4 hover:decoration-ink">
+            customizer
+          </Link>
+          .
         </p>
         <dl className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-[auto_1fr]">
           {tokens.map(([name, what]) => (

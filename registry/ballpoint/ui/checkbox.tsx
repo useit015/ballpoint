@@ -39,7 +39,7 @@ function Checkbox({
       )}
       {...props}
     >
-      <InkOutline pen={pen} seed={seed} estimate={[20, 20]} pad={6}>
+      <InkOutline pen={pen} seed={seed} estimate={[20, 20]} pad={6} maxRadius={6}>
         {({ w, h, s }) => (
           <>
             <Stroke d={tickStroke(s + 40, w)} draw="checked" duration={280} width={1.9} />

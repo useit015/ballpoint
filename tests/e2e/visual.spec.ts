@@ -22,3 +22,10 @@ for (const theme of themes) {
     await expect(page.locator("main")).toHaveScreenshot(`home-${theme}.png`);
   });
 }
+
+for (const theme of themes) {
+  test(`visual customizer (${theme})`, async ({ page }) => {
+    await open(page, "/customize", theme);
+    await expect(page.locator("[data-customizer-preview]")).toHaveScreenshot(`customizer-${theme}.png`);
+  });
+}

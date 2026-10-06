@@ -13,6 +13,7 @@ import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { papers, pens } from "../registry/themes.ts";
 
 const repo = join(dirname(fileURLToPath(import.meta.url)), "..");
 const port = 4400;
@@ -101,8 +102,14 @@ ${names.map((n) => `          <${ident(n)} />`).join("\n")}
   await run("pnpm", ["exec", "tsc", "--noEmit"], app);
   await run("pnpm", ["exec", "next", "build"], app);
 
-  // 4. The stylesheet init wrote should read like one a person wrote.
+  // 4. The stylesheet init wrote should read like one a person wrote, and
+  //    the themes added last should be the ones in force.
   const css = readFileSync(join(app, "app/globals.css"), "utf8");
+  const lastPen = Object.values(pens).at(-1)!;
+  const lastPaper = Object.values(papers).at(-1)!;
+  for (const expected of [`--ink: ${lastPen.ink.light}`, `--paper: ${lastPaper.paper.light}`, `--pen-red: ${lastPaper.red.light}`]) {
+    if (!css.includes(expected)) throw new Error(`globals.css should have "${expected}" after adding the themes`);
+  }
   const selfRefs = [...css.matchAll(/^\s*--([\w-]+):\s*var\(--\1\);/gm)].map((m) => m[1]).filter((n) => n !== "font-sans");
   if (selfRefs.length) throw new Error(`globals.css has self-referencing variables: ${selfRefs.join(", ")}`);
 

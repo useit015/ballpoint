@@ -11,6 +11,42 @@
   --paper: #ede8df;
   --ink: oklch(0.4 0.185 267);
   --pen-red: oklch(0.5 0.19 27);
+
+  --hand-radius: 14px 5px 12px 6px / 6px 12px 5px 14px;
+  /* How solid a pen-shaded fill is under its shading strokes. The paper
+     shows through a little; labels on it still clear 4.5:1. */
+  --ink-fill: 0.78;
+
+  /* Pen settings any CSS can change: line weight and drawing speed, as
+     multipliers. Components also set them from InkProvider and props. */
+  --ink-weight: 1;
+  --ink-speed: 1;
+
+  /* Motion: exponential ease-outs for arrivals, a quicker ease-in for
+     exits, and a pen curve (accelerate, then settle) for strokes. */
+  --dur-press: 90ms;
+  --dur-hover: 220ms;
+  --dur-state: 300ms;
+  --dur-enter: 560ms;
+}
+
+/* Night: pale ink on navy paper. */
+.dark {
+  --paper: oklch(0.215 0.038 266);
+  --ink: oklch(0.9 0.045 258);
+  --pen-red: oklch(0.74 0.14 25);
+  /* Pale ink on navy has contrast to spare, so the shading reads through more. */
+  --ink-fill: 0.72;
+}
+
+/* Everything derived from the pen and the paper. A custom property computed
+   on :root reaches descendants as a finished colour, so these are declared
+   again wherever the pen or paper can change: at night, and in any
+   [data-ink-scope] that sets its own --ink or --paper. (Being written after
+   them also replaces an existing shadcn theme's values on install.) */
+:root,
+.dark,
+[data-ink-scope] {
   --ink-2: color-mix(in oklab, var(--ink) 86%, var(--paper));
   --ink-3: color-mix(in oklab, var(--ink) 77%, var(--paper));
   /* Control boundaries: the lightest pressure that still clears WCAG
@@ -39,57 +75,6 @@
   --border: var(--ink-4);
   --input: var(--ink-line);
   --ring: var(--ink);
-
-  --hand-radius: 14px 5px 12px 6px / 6px 12px 5px 14px;
-  /* How solid a pen-shaded fill is under its shading strokes. The paper
-     shows through a little; labels on it still clear 4.5:1. */
-  --ink-fill: 0.78;
-
-  /* Motion: exponential ease-outs for arrivals, a quicker ease-in for
-     exits, and a pen curve (accelerate, then settle) for strokes. */
-  /* Pen settings any CSS can change: line weight and drawing speed, as
-     multipliers. Components also set them from InkProvider and props. */
-  --ink-weight: 1;
-  --ink-speed: 1;
-
-  --dur-press: 90ms;
-  --dur-hover: 220ms;
-  --dur-state: 300ms;
-  --dur-enter: 560ms;
-}
-
-/* Night: pale ink on navy paper. Everything derived is repeated, so a .dark
-   subtree recomputes from its own ink and paper, and so installing over an
-   existing shadcn theme replaces its dark values too. */
-.dark {
-  --paper: oklch(0.215 0.038 266);
-  --ink: oklch(0.9 0.045 258);
-  --pen-red: oklch(0.74 0.14 25);
-  --ink-2: color-mix(in oklab, var(--ink) 86%, var(--paper));
-  --ink-3: color-mix(in oklab, var(--ink) 77%, var(--paper));
-  --ink-line: color-mix(in oklab, var(--ink) 60%, var(--paper));
-  --ink-4: color-mix(in oklab, var(--ink) 40%, var(--paper));
-  --ink-5: color-mix(in oklab, var(--ink) 16%, var(--paper));
-  --background: var(--paper);
-  --foreground: var(--ink);
-  --card: var(--paper);
-  --card-foreground: var(--ink);
-  --popover: var(--paper);
-  --popover-foreground: var(--ink);
-  --primary: var(--ink);
-  --primary-foreground: var(--paper);
-  --secondary: var(--ink-5);
-  --secondary-foreground: var(--ink);
-  --muted: var(--ink-5);
-  --muted-foreground: var(--ink-3);
-  --accent: var(--ink-5);
-  --accent-foreground: var(--ink);
-  --destructive: var(--pen-red);
-  --border: var(--ink-4);
-  --input: var(--ink-line);
-  --ring: var(--ink);
-  /* Pale ink on navy has contrast to spare, so the shading reads through more. */
-  --ink-fill: 0.72;
 }
 
 @theme inline {
@@ -311,7 +296,9 @@
 
 /* Asked for more contrast: drop the lighter pen pressures. */
 @media (prefers-contrast: more) {
-  :root {
+  :root,
+  .dark,
+  [data-ink-scope] {
     --ink-2: var(--ink);
     --ink-3: var(--ink);
     --ink-line: var(--ink);
