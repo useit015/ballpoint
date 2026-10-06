@@ -51,3 +51,20 @@ test("table: rows are ruled with drawn masks, not borders", async ({ page }) => 
   });
   expect(after).toEqual({ mask: true, border: "0px" });
 });
+
+test("progress: the indicator moves inside a clip shaped like the track", async ({ page }) => {
+  await open(page, "/docs/progress", "light");
+  const indicator = page.locator("[data-preview]").first().locator('[data-slot="progress-indicator"]').nth(3);
+  const clip = await indicator.evaluate((el) => {
+    const parent = el.parentElement!;
+    const track = parent.closest('[data-slot="progress-track"]')!.getBoundingClientRect();
+    const box = parent.getBoundingClientRect();
+    return {
+      slot: parent.dataset.slot,
+      overflow: getComputedStyle(parent).overflow,
+      fits: Math.abs(box.left - track.left) < 1 && Math.abs(box.width - track.width) < 1,
+      indeterminate: el.hasAttribute("data-indeterminate"),
+    };
+  });
+  expect(clip).toEqual({ slot: "progress-clip", overflow: "hidden", fits: true, indeterminate: true });
+});
