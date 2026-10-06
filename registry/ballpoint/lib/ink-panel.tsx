@@ -19,7 +19,7 @@ export function InkPanel({
   pen,
   seed,
   estimate,
-  passes: defaultPasses = 2,
+  passes: defaultPasses = 1,
   offset = 6,
   maxRadius = 18,
   className,

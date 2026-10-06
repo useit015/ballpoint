@@ -23,7 +23,7 @@ export function InkOutline({
   seed,
   estimate,
   shape = "box",
-  passes: defaultPasses = 2,
+  passes: defaultPasses = 1,
   pad = 8,
   focusPass = false,
   maxRadius = Infinity,

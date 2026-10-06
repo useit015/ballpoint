@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteNav } from "@/components/site-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteHeader() {
@@ -8,15 +9,7 @@ export function SiteHeader() {
         Ballpoint
       </Link>
       <nav className="flex items-center gap-5 text-lg">
-        <Link href="/docs" className="text-ink-2 transition-colors hover:text-ink">
-          Docs
-        </Link>
-        <Link href="/docs/button" className="text-ink-2 transition-colors hover:text-ink">
-          Components
-        </Link>
-        <Link href="/customize" className="text-ink-2 transition-colors hover:text-ink">
-          Customize
-        </Link>
+        <SiteNav />
         <ThemeToggle />
       </nav>
     </header>

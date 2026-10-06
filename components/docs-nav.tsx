@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import { cn } from "@/lib/utils";
 
 export type NavGroup = { title: string; links: { href: string; title: string }[] };
@@ -13,7 +14,7 @@ export function DocsNav({ groups }: { groups: NavGroup[] }) {
       {groups.map((group) => (
         <div key={group.title} className="flex flex-col gap-1.5">
           <h2 className="text-sm font-bold tracking-wider text-ink-3 uppercase">{group.title}</h2>
-          <ul className="flex flex-col gap-1">
+          <ul className="flex flex-col gap-1.5">
             {group.links.map((link) => {
               const active = pathname === link.href;
               return (
@@ -21,9 +22,11 @@ export function DocsNav({ groups }: { groups: NavGroup[] }) {
                   <Link
                     href={link.href}
                     aria-current={active ? "page" : undefined}
-                    className={cn("transition-colors", active ? "font-bold text-ink" : "text-ink-2 hover:text-ink")}
+                    className={cn("relative inline-block transition-colors", active ? "font-bold text-ink" : "text-ink-2 hover:text-ink")}
                   >
                     {link.title}
+                    {/* The current page gets a dot in the margin, not another underline. */}
+                    {active && <InkGlyph name="dot" className="absolute top-1/2 -left-3.5 size-2 -translate-y-1/2" />}
                   </Link>
                 </li>
               );

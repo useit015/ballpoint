@@ -156,17 +156,19 @@
 }
 
 /* ─── Strokes ──────────────────────────────────────────────────────────
-   Every drawn part is an SVG overlay (.ink-sketch). Strokes run on
+   Every drawn part is an SVG overlay (.ink-sketch), or a small drawn icon
+   (.ink-glyph) that sits in the flow like any other icon. Strokes run on
    pathLength=1, so one dash pattern draws any of them in. */
 
 @layer components {
-  .ink-sketch {
+  .ink-sketch,
+  .ink-glyph {
     pointer-events: none;
     overflow: visible;
     color: inherit;
   }
 
-  .ink-sketch path {
+  :is(.ink-sketch, .ink-glyph) path {
     fill: none;
     stroke: currentColor;
     stroke-width: calc(var(--ink-weight, 1) * var(--ink-w) * 1px);
@@ -191,12 +193,12 @@
   }
 
   /* Draw in: the pen runs once, from its delay (--ink-dd) over --ink-d. */
-  .ink-sketch .ink-draw {
+  :is(.ink-sketch, .ink-glyph) .ink-draw {
     stroke-dasharray: 1.05 1.05;
     animation: ink-draw calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-pen) calc(var(--ink-dd) / var(--ink-speed, 1)) both;
   }
 
-  .ink-sketch .ink-draw.ink-drawn {
+  :is(.ink-sketch, .ink-glyph) .ink-draw.ink-drawn {
     stroke-dasharray: none;
     animation: none;
   }
@@ -218,7 +220,7 @@
      - focus:   focus is anywhere inside the nearest .ink-within
      - checked / indeterminate: the drawing's own element carries Base UI's
        data-checked / data-indeterminate */
-  .ink-sketch :is(.ink-hover-draw, .ink-focus-draw, .ink-checked-draw, .ink-indeterminate-draw) {
+  :is(.ink-sketch, .ink-glyph) :is(.ink-hover-draw, .ink-focus-draw, .ink-checked-draw, .ink-indeterminate-draw) {
     --out: calc(var(--ink-d) * 0.65 / var(--ink-speed, 1));
     stroke-dasharray: 1.05 1.05;
     stroke-dashoffset: 1.05;
@@ -230,8 +232,8 @@
 
   .ink-hover:focus-visible .ink-hover-draw,
   .ink-within:focus-within .ink-focus-draw,
-  [data-checked] > .ink-sketch .ink-checked-draw,
-  [data-indeterminate] > .ink-sketch .ink-indeterminate-draw {
+  [data-checked] > :is(.ink-sketch, .ink-glyph) .ink-checked-draw,
+  [data-indeterminate] > :is(.ink-sketch, .ink-glyph) .ink-indeterminate-draw {
     stroke-dashoffset: 0;
     opacity: 1;
     transition:
@@ -323,12 +325,12 @@
 
 /* Reduced motion: the drawing is already finished. */
 @media (prefers-reduced-motion: reduce) {
-  .ink-sketch .ink-draw {
+  :is(.ink-sketch, .ink-glyph) .ink-draw {
     animation: none;
     stroke-dashoffset: 0;
   }
 
-  .ink-sketch :is(.ink-hover-draw, .ink-focus-draw, .ink-checked-draw, .ink-indeterminate-draw) {
+  :is(.ink-sketch, .ink-glyph) :is(.ink-hover-draw, .ink-focus-draw, .ink-checked-draw, .ink-indeterminate-draw) {
     transition: none;
   }
 

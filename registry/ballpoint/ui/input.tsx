@@ -45,8 +45,8 @@ function Input({
         shape={variant === "line" ? "line" : "box"}
         focusPass
         className={cn(
-          "text-ink-line transition-colors duration-(--dur-hover)",
-          "group-hover/input:text-ink-3 group-focus-within/input:text-ink",
+          "text-ink-3 transition-colors duration-(--dur-hover)",
+          "group-hover/input:text-ink group-focus-within/input:text-ink",
           "group-has-[[aria-invalid=true]]/input:text-destructive group-has-[[data-invalid]]/input:text-destructive",
           "group-has-disabled/input:opacity-50",
         )}

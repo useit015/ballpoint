@@ -17,7 +17,6 @@ export async function CodeBlock({
   const html = await highlight(code, lang);
   return (
     <CodeFrame
-      seed={title ?? code.slice(0, 32)}
       className={className}
       header={
         <>

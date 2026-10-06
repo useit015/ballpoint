@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { InkProvider } from "@/registry/ballpoint/hooks/use-ink-box";
 import { Button } from "@/registry/ballpoint/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/ballpoint/ui/tabs";
 import { DrawnFrame } from "@/components/drawn-frame";
 import { cn } from "@/lib/utils";
 
@@ -11,47 +12,31 @@ import { cn } from "@/lib/utils";
  * remounts it, so every stroke is drawn in again by a slightly different hand.
  */
 export function Preview({ children, code, className }: { children: ReactNode; code: ReactNode; className?: string }) {
-  const [tab, setTab] = useState<"preview" | "code">("preview");
+  const [tab, setTab] = useState("preview");
   const [salt, setSalt] = useState(0);
-  const id = useId();
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
+    <Tabs value={tab} onValueChange={(v) => setTab(v as string)} className={cn("gap-4", className)}>
       <div className="flex items-center justify-between gap-4">
-        <div role="tablist" aria-label="Example" className="flex gap-5">
-          {(["preview", "code"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              role="tab"
-              id={`${id}-${t}-tab`}
-              aria-selected={tab === t}
-              aria-controls={`${id}-${t}`}
-              onClick={() => setTab(t)}
-              className={cn(
-                "cursor-pointer border-b-2 pb-0.5 capitalize transition-colors",
-                tab === t ? "border-ink text-ink" : "border-transparent text-ink-3 hover:text-ink",
-              )}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
+        <TabsList variant="line" aria-label="Example">
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="code">Code</TabsTrigger>
+        </TabsList>
         {tab === "preview" && (
-          <Button variant="ghost" size="sm" onClick={() => setSalt((s) => s + 1)}>
+          <Button variant="ghost" size="sm" seed="redraw" onClick={() => setSalt((s) => s + 1)}>
             Redraw
           </Button>
         )}
       </div>
-      <div id={`${id}-preview`} role="tabpanel" aria-labelledby={`${id}-preview-tab`} hidden={tab !== "preview"}>
+      <TabsContent value="preview" keepMounted>
         <DrawnFrame seed="preview" className="px-6 py-10 sm:px-10" data-preview="">
           <InkProvider key={salt} salt={salt === 0 ? undefined : salt}>
             {children}
           </InkProvider>
         </DrawnFrame>
-      </div>
-      <div id={`${id}-code`} role="tabpanel" aria-labelledby={`${id}-code-tab`} hidden={tab !== "code"}>
+      </TabsContent>
+      <TabsContent value="code" keepMounted>
         {code}
-      </div>
-    </div>
+      </TabsContent>
+    </Tabs>
   );
 }

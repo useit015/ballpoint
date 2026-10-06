@@ -478,7 +478,7 @@ export function penBoxStrokes(
   const r = Math.max(0, Math.min(radius, w / 2, h / 2));
   return Array.from({ length: Math.max(1, Math.min(3, passes)) }, (_, i) => {
     const shift: Pt = [passShifts[i][0] * k * q, passShifts[i][1] * k * q];
-    if (r > 0) return roundedBoxStroke(seed + i, w, h, r, { jitter: 0.45 * q, overrun: 0.03 + 0.05 * q, shift });
+    if (r > 0) return roundedBoxStroke(seed + i, w, h, r, { jitter: 0.25 * q, overrun: 0.03 + 0.05 * q, shift });
     if (corners === "joined") return boxStroke(seed + i, w, h, { overshoot: [2.4, 2.6, 2.2][i] * k * q, jitter: [0.7, 1.5, 1.8][i] * q, bow: q });
     return crossedBoxStroke(seed + i, w, h, { overshoot: [4, 7, 5][i] * k * q, jitter: [1.2, 1.6, 1.8][i] * q, bow: 1.1 * q, shift });
   });
@@ -831,4 +831,24 @@ export function inkPulls(
     at += pass.dur * (again ? 0.9 : 0.6) + gap;
     return pass;
   });
+}
+
+/**
+ * A highlighter swipe across a w×h row: a filled band whose long edges
+ * wander a little and whose ends are left ragged, the way a marker starts
+ * and stops. Closed, for fills and masks.
+ */
+export function swipePath(seed: number, w: number, h: number, { inset = 1.5 } = {}) {
+  const r = createRng(seed);
+  const along = (x: number) => (x / Math.max(w, 1)) * Math.PI * (1 + r() * 0.6);
+  const top = (x: number) => inset + spread(r, 0.9) + Math.sin(along(x)) * 0.6;
+  const bottom = (x: number) => h - inset + spread(r, 0.9) - Math.sin(along(x)) * 0.6;
+  const steps = 6;
+  const xs = Array.from({ length: steps + 1 }, (_, i) => (w * i) / steps);
+  const upper = xs.map((x, i): Pt => [i === 0 ? 2 + r() * 2 : i === steps ? w - 2 - r() * 2 : x, top(x)]);
+  const lower = xs.map((x, i): Pt => [i === 0 ? 1 + r() * 3 : i === steps ? w - 1 - r() * 3 : x, bottom(x)]).reverse();
+  // Ragged ends: the marker bites in a little before lifting.
+  const end: Pt = [w + spread(r, 1.2), h / 2 + spread(r, 2)];
+  const start: Pt = [spread(r, 1.2), h / 2 + spread(r, 2)];
+  return `${smooth([start, ...upper, end])}${smooth([end, ...lower, start]).replace(/^M/, "L")}Z`;
 }

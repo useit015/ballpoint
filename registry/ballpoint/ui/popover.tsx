@@ -49,7 +49,7 @@ function PopoverContent({
           )}
           {...props}
         >
-          <InkPanel pen={pen} seed={seed} estimate={[288, 140]} offset={5} className="text-ink-line" />
+          <InkPanel pen={pen} seed={seed} estimate={[288, 140]} offset={5} className="text-ink-3" />
           {children}
         </PopoverPrimitive.Popup>
       </PopoverPrimitive.Positioner>

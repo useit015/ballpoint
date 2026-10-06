@@ -15,7 +15,7 @@ const itemClass = cn(
   "relative isolate flex cursor-default items-center gap-2 px-2.5 py-1 text-base outline-none select-none data-inset:pl-9",
   "before:pointer-events-none before:absolute before:inset-x-0.5 before:inset-y-0 before:-z-10 before:bg-current before:opacity-0 before:transition-opacity before:duration-(--dur-press)",
   "before:[mask-image:var(--ink-wash-1)] before:[mask-size:100%_100%] before:[mask-repeat:no-repeat] nth-[3n+2]:before:[mask-image:var(--ink-wash-2)] nth-[3n]:before:[mask-image:var(--ink-wash-3)]",
-  "data-highlighted:before:opacity-(--ink-wash-opacity) [--ink-wash-opacity:0.18]",
+  "data-highlighted:before:opacity-(--ink-wash-opacity) [--ink-wash-opacity:0.13]",
   "data-disabled:pointer-events-none data-disabled:opacity-50",
   "[&_svg:not(.ink-sketch)]:pointer-events-none [&_svg:not(.ink-sketch)]:shrink-0 [&_svg:not(.ink-sketch):not([class*='size-'])]:size-4",
 );
@@ -73,7 +73,7 @@ function DropdownMenuContent({
           style={typeof style === "function" ? (state) => ({ ...marks, ...style(state) }) : { ...marks, ...style }}
           {...props}
         >
-          <InkPanel pen={pen} seed={seed} estimate={[200, 180]} offset={5} maxRadius={12} className="text-ink-line" />
+          <InkPanel pen={pen} seed={seed} estimate={[200, 180]} offset={5} maxRadius={12} className="text-ink-3" />
           <div data-slot="dropdown-menu-list" className="max-h-[calc(var(--available-height)-1rem)] overflow-y-auto overscroll-contain p-1.5">
             {children}
           </div>

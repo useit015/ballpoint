@@ -35,7 +35,7 @@ function Card({
       )}
       {...props}
     >
-      <InkOutline pen={pen} seed={seed} estimate={[360, 220]} maxRadius={18} className="text-ink-4" />
+      <InkOutline pen={pen} seed={seed} estimate={[360, 220]} maxRadius={18} className="text-ink-line" />
       {children}
     </div>
   );

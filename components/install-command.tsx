@@ -77,7 +77,6 @@ export function InstallCommand({ what, className }: { what: string; className?: 
   return (
     <Tabs value={current} onValueChange={(v) => choose(v as Manager)} className="gap-0">
       <CodeFrame
-        seed={`install-${what}`}
         className={className}
         header={
           <>

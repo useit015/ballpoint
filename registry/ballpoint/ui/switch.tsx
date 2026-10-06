@@ -42,7 +42,7 @@ function Switch({
       className={cn(
         "peer group/switch relative inline-flex shrink-0 cursor-pointer items-center rounded-full outline-none",
         "after:absolute after:-inset-x-3 after:-inset-y-2",
-        "text-ink-line transition-colors duration-(--dur-hover) not-data-checked:hover:text-ink-3 data-checked:text-ink",
+        "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:hover:text-ink data-checked:text-ink",
         "aria-invalid:text-destructive data-invalid:text-destructive",
         "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring",
         "data-disabled:cursor-not-allowed data-disabled:opacity-50",

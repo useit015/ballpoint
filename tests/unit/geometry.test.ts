@@ -49,6 +49,7 @@ const generators: Record<string, (s: number) => unknown> = {
   signaturePulls: (s) => ink.signaturePulls(s, 760),
   underlineInk: (s) => ink.underlineInk(s, 140),
   inkPulls: (s) => ink.inkPulls(s, ink.starPulls(s, 40, 40), { retrace: 0.5 }),
+  swipePath: (s) => ink.swipePath(s, 200, 32),
 };
 
 // Pure helpers with no seed to vary.
@@ -88,6 +89,7 @@ describe("ink-sketch", () => {
         ink.chevronStroke(seed, w, h),
         ink.tickStroke(seed, w),
         ink.cornerTicks(seed, w, h),
+        ink.swipePath(seed, w, h),
       ]);
       assert.doesNotMatch(out, /NaN|Infinity/, `${w}×${h}`);
     }

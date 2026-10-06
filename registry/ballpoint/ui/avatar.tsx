@@ -5,6 +5,7 @@ import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
 import { cn } from "@/lib/utils";
 import { penStyle, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { dotStroke, ringStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
 const sizes = { sm: 24, default: 32, lg: 40 } as const;
@@ -41,7 +42,7 @@ function Avatar({
 
 function AvatarRing({ seed, size, pen }: { seed?: string | number; size: number; pen: Pen }) {
   const s = useInkSeed(seed);
-  const passes = pen.passes ?? 2;
+  const passes = pen.passes ?? 1;
   const rings = useMemo(() => Array.from({ length: passes }, (_, i) => ringStroke(s + i, size + 4, { turns: 1.05 + i * 0.06 })), [s, size, passes]);
   const draw = pen.draw === "none" ? "none" : "mount";
   return (
@@ -95,22 +96,29 @@ function AvatarGroup({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="avatar-group"
-      className={cn("group/avatar-group flex -space-x-1.5 *:data-[slot=avatar]:bg-background *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background", className)}
+      // Overlapping like coins on the page: each one's paper rim hides the
+      // ring of the one before it, so the drawn rings never cross.
+      className={cn("group/avatar-group flex -space-x-1 *:data-[slot=avatar]:bg-background *:data-[slot=avatar]:ring-[3px] *:data-[slot=avatar]:ring-background", className)}
       {...props}
     />
   );
 }
 
-function AvatarGroupCount({ className, ...props }: ComponentProps<"div">) {
+/** How many more, ringed like the rest but lighter. */
+function AvatarGroupCount({ className, children, seed, ...props }: ComponentProps<"div"> & { seed?: string | number }) {
+  const pen = usePen({});
   return (
     <div
       data-slot="avatar-group-count"
       className={cn(
-        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-ink-5 text-sm text-ink ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6",
+        "relative flex size-8 shrink-0 items-center justify-center rounded-full bg-background text-sm text-ink-2 ring-[3px] ring-background group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 group-has-data-[size=sm]/avatar-group:text-xs",
         className,
       )}
       {...props}
-    />
+    >
+      <InkOutline pen={pen} seed={seed} shape="ring" estimate={[32, 32]} pad={4} className="text-ink-line" />
+      {children}
+    </div>
   );
 }
 

@@ -57,8 +57,8 @@ function SelectTrigger({
         estimate={[160, 40]}
         focusPass
         className={cn(
-          "text-ink-line transition-colors duration-(--dur-hover)",
-          "group-hover/select-trigger:text-ink-3 group-data-popup-open/select-trigger:text-ink group-focus-visible/select-trigger:text-ink",
+          "text-ink-3 transition-colors duration-(--dur-hover)",
+          "group-hover/select-trigger:text-ink group-data-popup-open/select-trigger:text-ink group-focus-visible/select-trigger:text-ink",
           "group-aria-invalid/select-trigger:text-destructive group-data-invalid/select-trigger:text-destructive",
         )}
       />
@@ -120,7 +120,7 @@ function SelectContent({
           style={typeof style === "function" ? (state) => ({ ...marks, ...style(state) }) : { ...marks, ...style }}
           {...props}
         >
-          <InkPanel pen={pen} seed={seed} estimate={[180, 200]} offset={5} maxRadius={12} className="text-ink-line" />
+          <InkPanel pen={pen} seed={seed} estimate={[180, 200]} offset={5} maxRadius={12} className="text-ink-3" />
           <SelectScrollUpButton />
           <SelectPrimitive.List data-slot="select-list" className="relative max-h-(--available-height) scroll-py-7 overflow-y-auto overscroll-contain p-1.5">
             {children}
@@ -145,7 +145,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
         "relative isolate flex w-full cursor-default items-center gap-2 py-1 pr-9 pl-2.5 text-base outline-none select-none",
         "before:pointer-events-none before:absolute before:inset-x-0.5 before:inset-y-0 before:-z-10 before:bg-current before:opacity-0 before:transition-opacity before:duration-(--dur-press)",
         "before:[mask-image:var(--ink-wash-1)] before:[mask-size:100%_100%] before:[mask-repeat:no-repeat] nth-[3n+2]:before:[mask-image:var(--ink-wash-2)] nth-[3n]:before:[mask-image:var(--ink-wash-3)]",
-        "data-highlighted:before:opacity-18",
+        "data-highlighted:before:opacity-13",
         "data-disabled:pointer-events-none data-disabled:opacity-50",
         "[&_svg:not(.ink-sketch)]:pointer-events-none [&_svg:not(.ink-sketch)]:shrink-0 [&_svg:not(.ink-sketch):not([class*='size-'])]:size-4",
         className,

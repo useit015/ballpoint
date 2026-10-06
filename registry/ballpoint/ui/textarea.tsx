@@ -35,8 +35,8 @@ function Textarea({ className, style, variant = "box", seed, roughness, passes, 
         maxRadius={18}
         focusPass
         className={cn(
-          "text-ink-line transition-colors duration-(--dur-hover)",
-          "group-hover/textarea:text-ink-3 group-focus-within/textarea:text-ink",
+          "text-ink-3 transition-colors duration-(--dur-hover)",
+          "group-hover/textarea:text-ink group-focus-within/textarea:text-ink",
           "group-has-[[aria-invalid=true]]/textarea:text-destructive",
           "group-has-disabled/textarea:opacity-50",
         )}

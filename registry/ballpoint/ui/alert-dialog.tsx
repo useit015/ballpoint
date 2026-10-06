@@ -72,7 +72,7 @@ function AlertDialogContent({
           )}
           {...props}
         >
-          <InkPanel pen={pen} seed={seed} estimate={size === "sm" ? [320, 220] : [448, 200]} offset={7} className="text-ink-line" />
+          <InkPanel pen={pen} seed={seed} estimate={size === "sm" ? [320, 220] : [448, 200]} offset={7} className="text-ink-3" />
           {children}
         </AlertDialogPrimitive.Popup>
       </AlertDialogPrimitive.Viewport>

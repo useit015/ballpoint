@@ -79,7 +79,7 @@ function DialogContent({
           )}
           {...props}
         >
-          <InkPanel pen={pen} seed={seed} estimate={[448, 240]} offset={7} className="text-ink-line" />
+          <InkPanel pen={pen} seed={seed} estimate={[448, 240]} offset={7} className="text-ink-3" />
           {children}
           {showCloseButton && (
             <DialogPrimitive.Close data-slot="dialog-close" render={<Button variant="ghost" size="icon-sm" className="absolute top-3 right-3" />}>

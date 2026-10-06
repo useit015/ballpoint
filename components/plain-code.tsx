@@ -5,7 +5,6 @@ import { CopyButton } from "@/components/copy-button";
 export function PlainCode({ code, title, className }: { code: string; title?: string; className?: string }) {
   return (
     <CodeFrame
-      seed={title ?? "plain"}
       className={className}
       header={
         <>

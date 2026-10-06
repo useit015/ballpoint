@@ -70,7 +70,7 @@ function TabMark({ variant, pen, seed }: { variant: "default" | "line"; pen: Pen
   const { ref, w, h, frame } = useInkFrame([96, 36], { pad: 8 });
   const r = pen.radius === "full" ? h / 2 : Math.min(pen.radius ?? 0, h / 2);
   const paths = useMemo(
-    () => (variant === "line" ? [linkStroke(s, w)] : penBoxStrokes(s, w, h, { roughness: pen.roughness ?? 1, passes: pen.passes ?? 2, corners: pen.corners ?? "crossed", radius: r })),
+    () => (variant === "line" ? [linkStroke(s, w)] : penBoxStrokes(s, w, h, { roughness: pen.roughness ?? 1, passes: pen.passes ?? 1, corners: pen.corners ?? "crossed", radius: r })),
     [variant, s, w, h, pen.roughness, pen.passes, pen.corners, r],
   );
   if (variant === "line") {

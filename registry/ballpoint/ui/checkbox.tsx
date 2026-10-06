@@ -31,7 +31,7 @@ function Checkbox({
         "peer group/checkbox relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center outline-none",
         // A finger-sized hit area around the small box.
         "after:absolute after:-inset-x-3 after:-inset-y-2",
-        "text-ink-line transition-colors duration-(--dur-hover) not-data-checked:not-data-indeterminate:hover:text-ink-3 data-checked:text-ink data-indeterminate:text-ink",
+        "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:not-data-indeterminate:hover:text-ink data-checked:text-ink data-indeterminate:text-ink",
         "aria-invalid:text-destructive data-invalid:text-destructive",
         "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
         "data-disabled:cursor-not-allowed data-disabled:opacity-50",

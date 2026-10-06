@@ -28,7 +28,7 @@ function Kbd({
       )}
       {...props}
     >
-      <InkOutline pen={pen} seed={seed} estimate={[24, 24]} pad={5} className="text-ink-line">
+      <InkOutline pen={pen} seed={seed} estimate={[24, 24]} pad={5} className="text-ink-3">
         {({ w, h, s }) => <Stroke d={lineStroke(s + 30, [1.5, h + 1.4], [w - 1, h + 1.2], { bow: 0.4, jitter: 0.2 })} draw={pen.draw ?? "auto"} delay={260} duration={200} width={1.6} />}
       </InkOutline>
       {props.children}

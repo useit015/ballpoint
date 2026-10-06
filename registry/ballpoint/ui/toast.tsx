@@ -116,7 +116,7 @@ function Toasts({ pen, seed }: { pen: Pen; seed?: string | number }) {
           seed={seed}
           estimate={[360, 72]}
           offset={5}
-          className="text-ink-line group-data-[type=error]/toast:text-destructive"
+          className="text-ink-3 group-data-[type=error]/toast:text-destructive"
         />
         <ToastPrimitive.Content className="flex h-full items-start gap-3 overflow-hidden py-3.5 pr-11 pl-4 transition-opacity duration-(--dur-hover) data-behind:opacity-0 data-expanded:opacity-100">
           {glyph && (

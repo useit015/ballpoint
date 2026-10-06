@@ -13,7 +13,10 @@ const groups: NavGroup[] = [
   ...(["Components", "Drawn"] as const)
     .map((group) => ({
       title: group,
-      links: allDocs.filter((doc) => doc.group === group).map((doc) => ({ href: `/docs/${doc.name}`, title: doc.title })),
+      links: allDocs
+        .filter((doc) => doc.group === group)
+        .map((doc) => ({ href: `/docs/${doc.name}`, title: doc.title }))
+        .sort((a, b) => a.title.localeCompare(b.title)),
     }))
     .filter((group) => group.links.length),
 ];
@@ -28,7 +31,8 @@ export default function DocsLayout({ children }: LayoutProps<"/docs">) {
           <DocsNav groups={groups} />
         </div>
       </details>
-      <aside className="hidden md:sticky md:top-8 md:block md:w-48 md:shrink-0 md:self-start">
+      {/* Sticky, and scrolls on its own when the list is taller than the window. */}
+      <aside className="hidden md:sticky md:top-6 md:-mt-2 md:-ml-4 md:block md:max-h-[calc(100dvh-3rem)] md:w-52 md:shrink-0 md:self-start md:overflow-y-auto md:overscroll-contain md:pt-2 md:pb-6 md:pl-4 md:[scrollbar-color:var(--ink-4)_transparent] md:[scrollbar-width:thin]">
         <DocsNav groups={groups} />
       </aside>
       <main id="main" className="min-w-0 max-w-3xl flex-1">
