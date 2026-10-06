@@ -46,8 +46,9 @@ export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {
   const [size, setSize] = useState<InkSize>(estimate);
 
   useLayoutEffect(() => {
-    const el = ref.current?.parentElement;
-    if (!el) return;
+    const svg = ref.current;
+    const el = svg?.parentElement;
+    if (!svg || !el) return;
     const snap = (v: number) => Math.max(step, Math.round(v / step) * step);
     const update = ([w, h]: InkSize) => {
       if (!w || !h) return;
@@ -55,8 +56,40 @@ export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {
       setSize((prev) => (prev[0] === next[0] && prev[1] === next[1] ? prev : next));
     };
     update([el.offsetWidth, el.offsetHeight]);
-    return observe(el, update);
+    // Once a stroke has drawn itself in, drop its dash pattern: it looks the
+    // same, but guarantees a fresh paint (Chrome can leave a small SVG on an
+    // early frame of a dash animation) and stops paying for dash geometry.
+    const settle = (e: AnimationEvent) => {
+      if (e.animationName === "ink-draw" && e.target instanceof SVGElement) e.target.classList.add("ink-drawn");
+    };
+    svg.addEventListener("animationend", settle);
+    const unobserve = observe(el, update);
+    return () => {
+      unobserve();
+      svg.removeEventListener("animationend", settle);
+    };
   }, [step]);
 
   return [ref, size] as const;
+}
+
+/**
+ * An overlay frame for useInkBox: the measured size, plus the props that
+ * place an InkSvg `pad` px outside its element on every side (room for
+ * overshooting corners and shadows), stretched so it always covers it:
+ *   <InkSvg ref={ref} {...frame}>
+ */
+export function useInkFrame(estimate: InkSize, { pad = 10, step = 2 }: { pad?: number; step?: number } = {}) {
+  const [ref, [w, h]] = useInkBox(estimate, { step });
+  return {
+    ref,
+    w,
+    h,
+    /** Spread onto the InkSvg alongside `ref`. */
+    frame: {
+      box: [-pad, -pad, w + pad * 2, h + pad * 2] as const,
+      stretch: true,
+      style: { left: -pad, top: -pad, width: `calc(100% + ${pad * 2}px)`, height: `calc(100% + ${pad * 2}px)` },
+    },
+  };
 }

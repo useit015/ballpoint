@@ -41,6 +41,9 @@
   --ring: var(--ink);
 
   --hand-radius: 14px 5px 12px 6px / 6px 12px 5px 14px;
+  /* How solid a pen-shaded fill is under its shading strokes. The paper
+     shows through a little; labels on it still clear 4.5:1. */
+  --ink-fill: 0.78;
 
   /* Motion: exponential ease-outs for arrivals, a quicker ease-in for
      exits, and a pen curve (accelerate, then settle) for strokes. */
@@ -80,6 +83,8 @@
   --border: var(--ink-4);
   --input: var(--ink-line);
   --ring: var(--ink);
+  /* Pale ink on navy has contrast to spare, so the shading reads through more. */
+  --ink-fill: 0.72;
 }
 
 @theme inline {
@@ -186,6 +191,11 @@
     stroke: none;
   }
 
+  /* A solid area shaded in: see --ink-fill. */
+  .ink-sketch .ink-fill {
+    opacity: var(--ink-fill);
+  }
+
   .ink-sketch .ink-guide {
     stroke: #fff;
   }
@@ -194,6 +204,11 @@
   .ink-sketch .ink-draw {
     stroke-dasharray: 1.05 1.05;
     animation: ink-draw var(--d, 500ms) var(--ease-pen) var(--dd, 0ms) both;
+  }
+
+  .ink-sketch .ink-draw.ink-drawn {
+    stroke-dasharray: none;
+    animation: none;
   }
 
   /* Draw on hover/focus of the nearest .ink-hover, pulled back out faster

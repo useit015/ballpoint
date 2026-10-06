@@ -1,6 +1,6 @@
 # Ballpoint UI — a shadcn-style registry drawn in ballpoint
 
-Status: **approved 2026-10-06 · Phase 0 done** · Owner: Oussama · Drafted 2026-10-06
+Status: **approved 2026-10-06 · Phases 0–1 done** · Owner: Oussama · Drafted 2026-10-06
 
 A copy-in component library (installed with `shadcn add`, the way shadcn/ui
 works) that brings the portfolio's look to other projects. It covers the
@@ -125,6 +125,10 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D13 | The base item carries `config.registries` | `shadcn init <base url>` writes the `@ballpoint` namespace into components.json, so `add @ballpoint/x` works with no manual setup and before any directory listing |
 | D14 | Env var is `BALLPOINT_REGISTRY_URL` | `REGISTRY_URL` is read by the shadcn CLI itself and redirects its default registry |
 | D15 | Pinned to releases older than 7 days (shadcn 4.21.0, Base UI 1.8.0, Next 16.3.6) | Matches your npm `min-release-age=7` policy |
+| D16 | `--ink-fill` is 0.78 in light, 0.72 at night | The contrast gate measured the portfolio's 0.72 at 4.22:1 for a paper label on light shading. 0.78 gives 4.87:1; night has room to spare (7.28:1) |
+| D17 | Components generate only the strokes their variant shows, and cache by (variant, seed, size) | Shading and hatching were ~70% of path cost and were computed for every variant |
+| D18 | `useInkFrame` returns `ref` separately from the spreadable `frame` | The React Compiler lint treats an object holding a ref as a ref |
+| D19 | Benches run in headless Chrome via Playwright (`channel: "chrome"`, no browser download) | The in-app browser pane throttles when hidden, so its timings swung 59–400ms |
 
 ## Always / Never
 
@@ -142,4 +146,5 @@ portfolio onto the library.
 | Phase | State | Evidence |
 |---|---|---|
 | 0 | ✅ done 2026-10-06 | `pnpm test:install`: fresh Next 16.3.6 app → `shadcn init` base (tokens, Gaegu via next/font, engine, namespace) → `add @ballpoint/button` → `tsc` ✔ `next build` ✔, no self-referencing vars. Checked in the browser: 6 variants × 8 sizes in both themes, hover lift and shadow, ghost hover-draw, focus ring, no console errors. Repo: lint ✔ typecheck ✔ build ✔ |
-| 1–9 | not started | |
+| 1 | ✅ done 2026-10-06 | New shapes (tick, cross, dash, plus, chevron, ring, capsule); `useInkFrame` + ink settle; `--ink-fill` token. `pnpm test` 36/36: determinism for all 32 generators, geometry snapshot, degenerate boxes (caught a NaN in `capsuleStroke` at 0×0, fixed). `pnpm contrast` 14/14, wired into `registry:build`. `pnpm bench`: 200 buttons cold median 45.7ms, warm 36.7ms (budget 50; about 10% margin). `test:install` ✔ lint ✔ typecheck ✔ |
+| 2–9 | not started | |

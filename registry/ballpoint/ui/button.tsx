@@ -4,7 +4,7 @@ import { Children, useId, useMemo, type ReactNode } from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { useInkBox, type InkSize } from "@/registry/ballpoint/hooks/use-ink-box";
+import { useInkFrame, type InkSize } from "@/registry/ballpoint/hooks/use-ink-box";
 import { InkSvg, Stroke, type DrawMode } from "@/registry/ballpoint/lib/ink";
 import {
   boxStroke,
@@ -117,6 +117,59 @@ function Button({
   );
 }
 
+type ButtonPaths = {
+  body?: string;
+  passes?: string[];
+  shadow?: string;
+  ticks?: string;
+  shade?: string[];
+  hatch?: string;
+  ghost?: string;
+  underline?: string[];
+};
+
+// Paths depend only on (variant, seed, size), and the same button is drawn
+// again on every re-render and remount, so recent ones are kept.
+const pathCache = new Map<string, ButtonPaths>();
+
+/** Only the strokes this variant shows: shading and hatching are the expensive ones. */
+function buttonPaths(variant: Variant, s: number, w: number, h: number): ButtonPaths {
+  const key = `${variant}|${s}|${w}|${h}`;
+  const hit = pathCache.get(key);
+  if (hit) return hit;
+
+  // Small buttons get shorter overshoots, so the corners stay neat.
+  const k = Math.min(1, h / 40);
+  let paths: ButtonPaths;
+  if (variant === "link") {
+    paths = { underline: [linkStroke(s + 10, w), linkStroke(s + 11, w)] };
+  } else if (variant === "ghost") {
+    paths = { ghost: boxStroke(s + 8, w, h, { overshoot: 2.4 * k, jitter: 1.1, bow: 1.3 }) };
+  } else {
+    paths = {
+      body: `${boxStroke(s + 7, w, h, { overshoot: 0, jitter: 0.9 })}Z`,
+      passes: [
+        crossedBoxStroke(s, w, h, { overshoot: 4 * k }),
+        crossedBoxStroke(s + 1, w, h, { overshoot: 7 * k, jitter: 1.6, shift: [1.8 * k, -1.6 * k] }),
+        // Secondary is gone over twice, not three times: its hatching carries it.
+        ...(variant === "secondary" ? [] : [crossedBoxStroke(s + 2, w, h, { overshoot: 5 * k, jitter: 1.8, shift: [-1.4 * k, 2.2 * k] })]),
+      ],
+      shadow: crossedBoxStroke(s + 9, w, h, { overshoot: 2 * k, jitter: 1 }),
+    };
+    if (variant === "default") {
+      paths.shade = [shadeFill(s + 3, w, h, { gap: 2.3, angle: -14 }), shadeFill(s + 4, w, h, { gap: 4.2, angle: -26 })];
+    } else if (variant === "secondary") {
+      paths.hatch = hatchStrokes(s + 6, w, h, { gap: 4.6, angle: -50, jitter: 0.5, inset: 1.5 }).join("");
+    } else {
+      paths.ticks = cornerTicks(s + 5, w, h, { count: Math.max(3, Math.round(5 * k)), len: 7 * k });
+    }
+  }
+
+  if (pathCache.size >= 500) pathCache.delete(pathCache.keys().next().value!);
+  pathCache.set(key, paths);
+  return paths;
+}
+
 /** The drawn part of a button, regenerated to the button's real size. */
 function ButtonInk({
   variant,
@@ -132,55 +185,33 @@ function ButtonInk({
   const uid = useId();
   const id = uid.replace(/[^\w-]/g, "");
   const s = hashSeed(seed ?? uid);
-  const [ref, [w, h]] = useInkBox(estimate);
-  const pad = 10;
+  const { ref, w, h, frame } = useInkFrame(estimate);
+  const paths = useMemo(() => buttonPaths(variant, s, w, h), [variant, s, w, h]);
+  const at = (delay: number) => ({ draw, delay });
 
-  const paths = useMemo(() => {
-    // Small buttons get shorter overshoots, so the corners stay neat.
-    const k = Math.min(1, h / 40);
-    const body = `${boxStroke(s + 7, w, h, { overshoot: 0, jitter: 0.9 })}Z`;
-    return {
-      body,
-      passes: [
-        crossedBoxStroke(s, w, h, { overshoot: 4 * k }),
-        crossedBoxStroke(s + 1, w, h, { overshoot: 7 * k, jitter: 1.6, shift: [1.8 * k, -1.6 * k] }),
-        crossedBoxStroke(s + 2, w, h, { overshoot: 5 * k, jitter: 1.8, shift: [-1.4 * k, 2.2 * k] }),
-      ],
-      shadow: crossedBoxStroke(s + 9, w, h, { overshoot: 2 * k, jitter: 1 }),
-      ticks: cornerTicks(s + 5, w, h, { count: Math.max(3, Math.round(5 * k)), len: 7 * k }),
-      shade: [shadeFill(s + 3, w, h, { gap: 2.3, angle: -14 }), shadeFill(s + 4, w, h, { gap: 4.2, angle: -26 })],
-      hatch: hatchStrokes(s + 6, w, h, { gap: 4.6, angle: -50, jitter: 0.5, inset: 1.5 }).join(""),
-      ghost: boxStroke(s + 8, w, h, { overshoot: 2.4 * k, jitter: 1.1, bow: 1.3 }),
-      underline: [linkStroke(s + 10, w), linkStroke(s + 11, w)],
-    };
-  }, [s, w, h]);
-
-  const at = (delay: number): { draw: Exclude<DrawMode, "hover">; delay: number } => ({ draw, delay });
-
-  if (variant === "link") {
+  if (paths.underline) {
     return (
       <InkSvg ref={ref} box={[0, -2, w, 6]} stretch className="-z-10 inset-x-0 top-full -mt-1 h-1.5 w-full">
+        {/* Lightly underlined at rest, inked over on hover. */}
         <Stroke d={paths.underline[0]} {...at(0)} duration={320} width={1.4} opacity={0.5} />
         <Stroke d={paths.underline[1]} draw="hover" duration={280} width={1.5} />
       </InkSvg>
     );
   }
 
-  const boxStyle = { left: -pad, top: -pad, width: `calc(100% + ${pad * 2}px)`, height: `calc(100% + ${pad * 2}px)` };
-  const box = [-pad, -pad, w + pad * 2, h + pad * 2] as const;
-
-  if (variant === "ghost") {
+  if (paths.ghost) {
     return (
-      <InkSvg ref={ref} box={box} stretch className="-z-10" style={boxStyle}>
+      <InkSvg ref={ref} {...frame} className="-z-10">
         <Stroke d={paths.ghost} draw="hover" duration={340} width={1.2} />
       </InkSvg>
     );
   }
 
-  const solid = variant === "default";
+  const { body = "", passes = [], shadow, shade, hatch, ticks } = paths;
+  const { box } = frame;
   return (
-    // The solid face is shaded in ink; its label is paper-coloured.
-    <InkSvg ref={ref} box={box} stretch className={cn("-z-10", solid && "text-primary")} style={boxStyle}>
+    // A shaded face is drawn in ink; its label is paper-coloured.
+    <InkSvg ref={ref} {...frame} className={cn("-z-10", shade && "text-primary")}>
       <defs>
         <pattern id={`${id}-hatch`} patternUnits="userSpaceOnUse" width={3.2} height={3.2} patternTransform="rotate(-45)">
           <path d="M0 -1V4.2" style={{ strokeWidth: 1.05 }} />
@@ -189,11 +220,13 @@ function ButtonInk({
             it, so the face stays the paper itself. */}
         <mask id={`${id}-under`} maskUnits="userSpaceOnUse" x={box[0] - 20} y={box[1] - 20} width={box[2] + 40} height={box[3] + 40}>
           <rect x={box[0] - 20} y={box[1] - 20} width={box[2] + 40} height={box[3] + 40} fill="#fff" />
-          <path d={paths.body} style={{ fill: "#000", stroke: "#000", strokeWidth: 1.5 }} />
+          <path d={body} style={{ fill: "#000", stroke: "#000", strokeWidth: 1.5 }} />
         </mask>
-        <clipPath id={`${id}-clip`}>
-          <rect x={-1.5} y={-1.5} width={w + 3} height={h + 3} rx={1.5} />
-        </clipPath>
+        {(shade || hatch) && (
+          <clipPath id={`${id}-clip`}>
+            <rect x={-1.5} y={-1.5} width={w + 3} height={h + 3} rx={1.5} />
+          </clipPath>
+        )}
       </defs>
 
       <g mask={`url(#${id}-under)`}>
@@ -205,33 +238,40 @@ function ButtonInk({
             "group-active/button:translate-0 group-active/button:duration-(--dur-press)",
           )}
         >
-          <path d={paths.body} style={{ fill: `url(#${id}-hatch)`, stroke: "none" }} />
-          <path d={paths.shadow} style={{ strokeWidth: 1 }} />
+          <path d={body} style={{ fill: `url(#${id}-hatch)`, stroke: "none" }} />
+          <path d={shadow} style={{ strokeWidth: 1 }} />
         </g>
       </g>
 
-      {solid && (
+      {shade && (
         <>
           {/* Shaded solid with the pen; the shading reads through the fill. */}
-          <path d={paths.body} className="ink-fill" style={{ opacity: 0.72 }} />
+          <path d={body} className="ink-fill" />
           <g clipPath={`url(#${id}-clip)`}>
-            <Stroke d={paths.shade[0]} {...at(120)} duration={620} width={1.2} />
-            <Stroke d={paths.shade[1]} {...at(300)} duration={520} width={1} opacity={0.7} />
+            <Stroke d={shade[0]} {...at(120)} duration={620} width={1.2} />
+            <Stroke d={shade[1]} {...at(300)} duration={520} width={1} opacity={0.7} />
           </g>
         </>
       )}
-      {variant === "secondary" && (
+      {hatch && (
         <g clipPath={`url(#${id}-clip)`}>
-          <Stroke d={paths.hatch} {...at(200)} duration={480} width={0.9} opacity={0.45} />
+          <Stroke d={hatch} {...at(200)} duration={480} width={0.9} opacity={0.45} />
         </g>
       )}
 
       {/* Passes that never quite line up, each running past its corners,
           the way a box gets gone over when it matters. */}
-      <Stroke d={paths.passes[0]} {...at(0)} duration={480} width={1.4} />
-      <Stroke d={paths.passes[1]} {...at(300)} duration={420} width={1.1} opacity={variant === "secondary" ? 0.6 : 0.8} />
-      {variant !== "secondary" && <Stroke d={paths.passes[2]} {...at(520)} duration={380} width={1} opacity={0.55} />}
-      {(variant === "outline" || variant === "destructive") && <Stroke d={paths.ticks} {...at(760)} duration={260} width={1} opacity={0.7} />}
+      {passes.map((d, i) => (
+        <Stroke
+          key={i}
+          d={d}
+          {...at([0, 300, 520][i])}
+          duration={[480, 420, 380][i]}
+          width={[1.4, 1.1, 1][i]}
+          opacity={i === 0 ? undefined : hatch ? 0.6 : [1, 0.8, 0.55][i]}
+        />
+      ))}
+      {ticks && <Stroke d={ticks} {...at(760)} duration={260} width={1} opacity={0.7} />}
     </InkSvg>
   );
 }

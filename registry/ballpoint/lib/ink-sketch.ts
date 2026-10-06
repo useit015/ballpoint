@@ -334,6 +334,106 @@ export function cornerTicks(seed: number, w: number, h: number, { count = 5, len
   return d;
 }
 
+// ─── Marks for controls ───────────────────────────────────────────────
+// Small shapes drawn inside a box of side `s` (or w×h): ticks, crosses,
+// chevrons, rings and tracks. Each is one path the pen draws in order, so
+// it can draw itself in.
+
+/** A tick: a short drop into the corner, then a long pull up and out past the box. */
+export function tickStroke(seed: number, s: number) {
+  const r = createRng(seed);
+  const a: Pt = [s * (0.1 + spread(r, 0.03)), s * (0.5 + spread(r, 0.04))];
+  const b: Pt = [s * (0.4 + spread(r, 0.03)), s * (0.84 + spread(r, 0.03))];
+  const c: Pt = [s * (1 + r() * 0.1), s * (-0.06 + spread(r, 0.05))];
+  const down = strokeSegment(r, a, b, { bow: 0.3, jitter: 0 });
+  const up = strokeSegment(r, b, c, { bow: 0.9, jitter: 0 });
+  return `M${pt(a)}C${pt(down.c1)} ${pt(down.c2)} ${pt(b)}C${pt(up.c1)} ${pt(up.c2)} ${pt(c)}`;
+}
+
+/** A cross: two pulls, the second a touch shorter, crossing a little off centre. */
+export function crossStroke(seed: number, s: number, { inset = 0.16 } = {}) {
+  const r = createRng(seed);
+  const i = s * inset;
+  const one = strokeSegment(r, [i, i], [s - i, s - i], { bow: 0.6, jitter: s * 0.03 });
+  const two = strokeSegment(r, [s - i * 1.1, i * 1.2], [i * 1.2, s - i * 1.05], { bow: 0.6, jitter: s * 0.03 });
+  return `M${pt(one.s)}C${pt(one.c1)} ${pt(one.c2)} ${pt(one.e)}M${pt(two.s)}C${pt(two.c1)} ${pt(two.c2)} ${pt(two.e)}`;
+}
+
+/** A short level dash across a box of width w (minus, indeterminate). */
+export function dashStroke(seed: number, w: number, y = 0) {
+  const r = createRng(seed);
+  const seg = strokeSegment(r, [w * 0.12, y + spread(r, 0.4)], [w * 0.88, y + spread(r, 0.4)], { bow: 0.5, jitter: 0.2 });
+  return `M${pt(seg.s)}C${pt(seg.c1)} ${pt(seg.c2)} ${pt(seg.e)}`;
+}
+
+/** A plus: a dash across, then one down through it. Fits 0…s. */
+export function plusStroke(seed: number, s: number) {
+  const r = createRng(seed);
+  const across = strokeSegment(r, [s * 0.1, s * 0.5], [s * 0.9, s * 0.5], { bow: 0.5, jitter: s * 0.03 });
+  const down = strokeSegment(r, [s * 0.5, s * 0.1], [s * 0.5, s * 0.9], { bow: 0.5, jitter: s * 0.03 });
+  return `M${pt(across.s)}C${pt(across.c1)} ${pt(across.c2)} ${pt(across.e)}M${pt(down.s)}C${pt(down.c1)} ${pt(down.c2)} ${pt(down.e)}`;
+}
+
+export type Direction = "down" | "up" | "left" | "right";
+
+/** A chevron: two legs meeting in a point, the second pulled a touch longer. Fits 0…w × 0…h. */
+export function chevronStroke(seed: number, w: number, h: number, dir: Direction = "down") {
+  const r = createRng(seed);
+  // Drawn pointing down in a unit square, then turned to face `dir`.
+  const unit: Pt[] = [
+    [0.04 + spread(r, 0.03), 0.22 + spread(r, 0.04)],
+    [0.5 + spread(r, 0.03), 0.8 + spread(r, 0.03)],
+    [0.98 + spread(r, 0.03), 0.16 + spread(r, 0.04)],
+  ];
+  const turn = ([x, y]: Pt): Pt =>
+    dir === "down" ? [x * w, y * h] : dir === "up" ? [x * w, (1 - y) * h] : dir === "right" ? [y * w, x * h] : [(1 - y) * w, x * h];
+  const [a, tip, b] = unit.map(turn);
+  const one = strokeSegment(r, a, tip, { bow: 0.4, jitter: 0 });
+  const two = strokeSegment(r, tip, b, { bow: 0.4, jitter: 0 });
+  return `M${pt(a)}C${pt(one.c1)} ${pt(one.c2)} ${pt(tip)}C${pt(two.c1)} ${pt(two.c2)} ${pt(b)}`;
+}
+
+/** A ring drawn in one go, closing a little past where it started. Fits 0…d. */
+export function ringStroke(seed: number, d: number, { turns = 1.1 } = {}) {
+  return loopStroke(seed, d, d, { turns, pad: 0 });
+}
+
+/**
+ * A capsule (a switch track): two straight runs joined by round ends, pulled
+ * in one motion that runs on past where it started. Fits 0…w × 0…h.
+ */
+export function capsuleStroke(seed: number, w: number, h: number, { overrun = 0.1, jitter = 0.45 } = {}) {
+  const r = createRng(seed);
+  const rad = h / 2;
+  const run = Math.max(0, w - h);
+  const arc = Math.PI * rad;
+  const total = 2 * run + 2 * arc;
+  if (!total) return "";
+  // A point `l` along the outline, clockwise from the top-left of the run.
+  const at = (l: number): Pt => {
+    l = ((l % total) + total) % total;
+    if (l < run) return [rad + l, 0];
+    l -= run;
+    if (l < arc) {
+      const a = -Math.PI / 2 + (l / arc) * Math.PI;
+      return [rad + run + Math.cos(a) * rad, rad + Math.sin(a) * rad];
+    }
+    l -= arc;
+    if (l < run) return [rad + run - l, h];
+    l -= run;
+    const a = Math.PI / 2 + (l / arc) * Math.PI;
+    return [rad + Math.cos(a) * rad, rad + Math.sin(a) * rad];
+  };
+  const steps = Math.max(16, Math.round(total / 7));
+  const start = -total * (0.02 + r() * 0.04);
+  const points: Pt[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const [x, y] = at(start + (i / steps) * total * (1 + overrun));
+    points.push([x + spread(r, jitter), y + spread(r, jitter)]);
+  }
+  return smooth(points);
+}
+
 /**
  * Margin scrawls as pen pulls (feed to inkPulls). The kinds of marks a page
  * collects while someone gets a ballpoint going.
