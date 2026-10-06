@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Pens and papers" };
 export default function ThemesPage() {
   return (
     <article className="flex flex-col gap-14">
-      <header className="flex flex-col gap-5">
+      <header className="flex flex-col gap-4">
         <Heading as="h1" id="themes" className="text-3xl">
           Pens and papers
         </Heading>

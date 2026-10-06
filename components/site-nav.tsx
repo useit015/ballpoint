@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/docs", title: "Docs", current: (p: string) => p === "/docs" || p === "/docs/themes" },
-  { href: "/docs/button", title: "Components", current: (p: string) => p.startsWith("/docs/") && p !== "/docs/themes" },
+  // Phones reach components from the docs' contents instead.
+  { href: "/docs/button", title: "Components", current: (p: string) => p.startsWith("/docs/") && p !== "/docs/themes", wide: true },
   { href: "/customize", title: "Customize", current: (p: string) => p === "/customize" },
 ];
 
@@ -19,7 +20,7 @@ export function SiteNav() {
         key={link.href}
         href={link.href}
         aria-current={current ? "page" : undefined}
-        className={cn("transition-colors", current ? "text-ink" : "text-ink-3 hover:text-ink")}
+        className={cn("transition-colors", current ? "text-ink" : "text-ink-3 hover:text-ink", link.wide && "max-sm:hidden")}
       >
         {link.title}
       </Link>

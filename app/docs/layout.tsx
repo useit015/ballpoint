@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/disclosure";
 import { DocsNav, type NavGroup } from "@/components/docs-nav";
 import { allDocs } from "@/lib/docs";
 
@@ -25,12 +26,11 @@ export default function DocsLayout({ children }: LayoutProps<"/docs">) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-4 pt-6 pb-24 sm:px-8 md:flex-row md:gap-16">
       {/* Phones get the contents folded away above the page. */}
-      <details className="md:hidden">
-        <summary className="cursor-pointer text-ink-2">Contents</summary>
-        <div className="pt-4">
+      <div className="md:hidden">
+        <Disclosure summary="Contents">
           <DocsNav groups={groups} />
-        </div>
-      </details>
+        </Disclosure>
+      </div>
       {/* Sticky, and scrolls on its own when the list is taller than the window. */}
       <aside className="hidden md:sticky md:top-6 md:-mt-2 md:-ml-4 md:block md:max-h-[calc(100dvh-3rem)] md:w-52 md:shrink-0 md:self-start md:overflow-y-auto md:overscroll-contain md:pt-2 md:pb-6 md:pl-4 md:[scrollbar-color:var(--ink-4)_transparent] md:[scrollbar-width:thin]">
         <DocsNav groups={groups} />

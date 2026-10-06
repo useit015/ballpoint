@@ -175,6 +175,9 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D61 | Paper textures model real paper: soft formation (pulp cloudiness), a fine lit tooth and a few fibres, mapped onto the paper's own colour around the filter's measured mean (0.5964), so every tile averages to its paper within 0.1/255 | Your feedback: the crinkle relief didn't look like real paper. Five prototypes compared at 2×; heavy tooth read as stucco, strong mottling as camouflage |
 | D62 | Sheets of paper laid on the page (code slips, swatches, the customizer preview, the Pens and papers sheets) get their own texture, a soft paper shadow and 2px corners, never a drawn border | Your feedback: "all bgs" should look like paper. Code colours re-checked on the new slips (all ≥ 5:1) |
 | D63 | Pens and papers is shown on real sheets: each pen writes live components on cream, each paper is a sheet of itself with the blue and red pens; both follow day and night through --pen-day/--pen-night and --paper-day/--paper-night scopes | The old page was swatches and seven install blocks |
+| D64 | Every component page has the same parts in the same order: title, description, Base UI link; centred preview; Installation; Usage; Examples (when there are more); API reference; previous/next. Pages that had no props table now have one | Your feedback: component pages should be consistent. Five pages had no API section at all |
+| D65 | Props are a ruled list (name and type, default on the right, description below), not a three-column table; each page lists its pen settings in one line and links to the full reference on Installation | The table crushed descriptions into a narrow column, and the same eight pen settings were repeated on every page |
+| D66 | Docs chrome: drawn disclosure chevrons, a footer, a header that fits a phone (Components moves into the docs contents below `sm`) | At 390px the header pushed the page to 493px wide |
 
 ## Always / Never
 

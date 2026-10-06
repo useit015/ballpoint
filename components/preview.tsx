@@ -28,7 +28,8 @@ export function Preview({ children, code, className }: { children: ReactNode; co
         )}
       </div>
       <TabsContent value="preview" keepMounted>
-        <DrawnFrame seed="preview" className="px-6 py-10 sm:px-10" data-preview="">
+        {/* Every example sits centred on the same size of frame. */}
+        <DrawnFrame seed="preview" className="flex min-h-72 items-center justify-center px-6 py-12 sm:px-10" data-preview="">
           <InkProvider key={salt} salt={salt === 0 ? undefined : salt}>
             {children}
           </InkProvider>

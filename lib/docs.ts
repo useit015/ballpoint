@@ -77,6 +77,10 @@ export function Actions() {
     usage: `import { Label } from "@/components/ui/label"
 
 <Label htmlFor="email">Email</Label>`,
+    props: [
+      { name: "htmlFor", type: "string", description: "The id of the control it names. Or wrap the control instead: the label lays it out beside the text." },
+      { name: "className", type: "string", description: "A plain <label>: every prop goes to it." },
+    ],
   },
   separator: {
     group: "Components",
@@ -234,6 +238,11 @@ import { Switch } from "@/components/ui/switch"
   <Kbd>⌘</Kbd>
   <Kbd>K</Kbd>
 </KbdGroup>`,
+    props: [
+      { name: "children", type: "ReactNode", description: "The key: a letter, a word, or an icon." },
+      { name: "KbdGroup", type: "component", description: "Sets keys pressed together side by side, in the hand." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
     pen: ["draw", "roughness", "radius", "weight", "speed"],
   },
   alert: {
@@ -257,6 +266,10 @@ import { Switch } from "@/components/ui/switch"
     usage: `import { Skeleton } from "@/components/ui/skeleton"
 
 <Skeleton className="h-4 w-48" />`,
+    props: [
+      { name: "className", type: "string", description: "Size and shape it: rounded-full makes a round placeholder." },
+      { name: "seed", type: "string | number", description: "Pins the hatching." },
+    ],
   },
   progress: {
     group: "Components",
@@ -293,6 +306,11 @@ import { Switch } from "@/components/ui/switch"
     </TableRow>
   </TableBody>
 </Table>`,
+    props: [
+      { name: "TableRow", type: "component", description: "Each row is ruled off underneath by hand, three different lines so neighbours never match." },
+      { name: "TableFooter", type: "component", description: "Totals, set in bold under the rows." },
+      { name: "TableCaption", type: "component", description: "A note under the table, in lighter ink." },
+    ],
   },
   tabs: {
     group: "Components",
@@ -325,6 +343,11 @@ import { Switch } from "@/components/ui/switch"
     <AccordionContent>Yes.</AccordionContent>
   </AccordionItem>
 </Accordion>`,
+    props: [
+      { name: "multiple", type: "boolean", default: "false", description: "On Accordion: lets more than one item stay open." },
+      { name: "defaultValue", type: "string[]", description: "On Accordion: the items open to begin with." },
+      { name: "AccordionTrigger seed", type: "string | number", description: "Pins the chevron's drawing." },
+    ],
     primitive: { name: "Accordion", href: "https://base-ui.com/react/components/accordion" },
   },
   dialog: {

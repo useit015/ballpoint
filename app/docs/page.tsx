@@ -3,6 +3,8 @@ import Link from "next/link";
 import { CodeBlock } from "@/components/code-block";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
+import { PropsTable } from "@/components/props-table";
+import { penProps } from "@/lib/docs";
 import { homepage } from "@/registry/manifest";
 
 export const metadata: Metadata = { title: "Installation" };
@@ -19,8 +21,8 @@ const tokens = [
 
 export default function Installation() {
   return (
-    <article className="flex flex-col gap-8">
-      <header className="flex flex-col gap-5">
+    <article className="flex flex-col gap-14">
+      <header className="flex flex-col gap-4">
         <Heading as="h1" id="installation" className="text-3xl">
           Installation
         </Heading>
@@ -30,7 +32,7 @@ export default function Installation() {
         </p>
       </header>
 
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-5">
         <Heading id="init">1. Set up the paper and ink</Heading>
         <p className="text-ink-2">
           In an app that already has Tailwind CSS 4, run init with the Ballpoint base. It writes the colour, type and motion tokens into your
@@ -41,7 +43,7 @@ export default function Installation() {
         <InstallCommand what={`init ${homepage}/r/ballpoint.json`} />
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-5">
         <Heading id="add">2. Add components</Heading>
         <InstallCommand what="add @ballpoint/button" />
         <CodeBlock
@@ -51,7 +53,7 @@ export default function Installation() {
         />
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-5">
         <Heading id="theming">Theming</Heading>
         <p className="text-ink-2">
           Everything is one ink at different pressures, mixed toward the paper in oklab so the hue never drifts. Change{" "}
@@ -81,7 +83,7 @@ export default function Installation() {
         </dl>
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-5">
         <Heading id="pen">Pen settings</Heading>
         <p className="text-ink-2">
           Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser; pass{" "}
@@ -109,6 +111,7 @@ export default function RootLayout({ children }) {
   )
 }`}
         />
+        <PropsTable props={penProps} />
         <p className="text-ink-2">Weight and speed are plain CSS variables too:</p>
         <CodeBlock
           lang="css"

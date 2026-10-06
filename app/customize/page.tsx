@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function CustomizePage() {
   return (
-    <main id="main" className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 pt-6 pb-24 sm:px-8">
+    <main id="main" className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-12 px-4 pt-6 pb-24 sm:px-8">
       <header className="flex max-w-3xl flex-col gap-4">
         <Heading as="h1" id="customize" className="text-3xl">
           Customize
