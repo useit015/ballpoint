@@ -4,7 +4,6 @@ import { useState, type ReactNode } from "react";
 import { InkProvider } from "@/registry/ballpoint/hooks/use-ink-box";
 import { Button } from "@/registry/ballpoint/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/ballpoint/ui/tabs";
-import { DrawnFrame } from "@/components/drawn-frame";
 import { cn } from "@/lib/utils";
 
 /**
@@ -28,12 +27,13 @@ export function Preview({ children, code, className }: { children: ReactNode; co
         )}
       </div>
       <TabsContent value="preview" keepMounted>
-        {/* Every example sits centred on the same size of frame. */}
-        <DrawnFrame seed="preview" className="flex min-h-72 items-center justify-center px-6 py-12 sm:px-10" data-preview="">
+        {/* Every example sits centred on the same cream slip as the code,
+            and draws on it as its paper. */}
+        <div data-preview="" data-ink-scope="" className="slip flex min-h-72 items-center justify-center px-6 py-12 text-foreground sm:px-10">
           <InkProvider key={salt} salt={salt === 0 ? undefined : salt}>
             {children}
           </InkProvider>
-        </DrawnFrame>
+        </div>
       </TabsContent>
       <TabsContent value="code" keepMounted>
         {code}

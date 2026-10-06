@@ -17,12 +17,14 @@
    clears 5:1 on its slip, on every paper, by day and by night. */
 :root {
   --paper-tile: url("/paper/cream-light.svg");
-  /* Code is written on a lighter slip of paper laid on the page
+  /* Code and examples sit on a slip of cream a shade lighter than the page
      (scripts/paper-tiles.ts makes its texture from the same mix). */
-  --code-slip: color-mix(in oklab, var(--paper) 55%, white);
-  --code-slip-tile: url("/paper/slip-light.svg");
+  --slip: color-mix(in oklab, var(--paper) 80%, white);
+  --slip-tile: url("/paper/slip-light.svg");
   /* A sheet lying on the page: a contact shadow and a soft one under it. */
   --sheet-shadow: 0 0.5px 1px oklch(0.35 0.03 70 / 0.16), 0 3px 10px -3px oklch(0.35 0.03 70 / 0.2);
+  /* A slip lies flatter still. */
+  --slip-shadow: 0 0.5px 1px oklch(0.35 0.03 70 / 0.1), 0 2px 6px -3px oklch(0.35 0.03 70 / 0.12);
   --code-plain: oklch(0.26 0.012 265);
   --code-string: oklch(0.38 0.1 158);
   --code-pencil: oklch(0.37 0.012 255);
@@ -31,9 +33,10 @@
 .dark {
   --paper-tile: url("/paper/cream-dark.svg");
   /* At night the slip catches a little of the pen's light instead. */
-  --code-slip: color-mix(in oklab, var(--paper) 90%, var(--ink));
-  --code-slip-tile: url("/paper/slip-dark.svg");
+  --slip: color-mix(in oklab, var(--paper) 94%, var(--ink));
+  --slip-tile: url("/paper/slip-dark.svg");
   --sheet-shadow: 0 0.5px 1px oklch(0 0 0 / 0.5), 0 4px 12px -3px oklch(0 0 0 / 0.55);
+  --slip-shadow: 0 0.5px 1px oklch(0 0 0 / 0.4), 0 2px 8px -3px oklch(0 0 0 / 0.4);
   --code-plain: oklch(0.94 0.006 265);
   --code-string: oklch(0.88 0.08 158);
   --code-pencil: oklch(0.86 0.01 255);
@@ -72,8 +75,15 @@ html,
   box-shadow: var(--sheet-shadow);
 }
 
-.code-slip {
-  background: var(--code-slip) var(--code-slip-tile) 0 0 / 600px 600px repeat;
+/* A slip of cream laid on the page, for code and examples. It is their
+   paper: components on it take their paper colour from it. Add
+   data-ink-scope where the ink's lighter tones should follow too. */
+.slip {
+  --paper: var(--slip);
+  --paper-tile: var(--slip-tile);
+  background: var(--paper) var(--paper-tile) 0 0 / 600px 600px repeat;
+  border-radius: 2px;
+  box-shadow: var(--slip-shadow);
 }
 
 /* Pens and papers shown side by side, each following day and night:
@@ -172,7 +182,7 @@ body {
 :not(pre) > code.inline-code {
   padding: 0.05em 0.35em;
   border-radius: var(--hand-radius);
-  background: var(--code-slip);
+  background: var(--slip);
   color: var(--code-plain);
   font-size: 0.82em;
 }

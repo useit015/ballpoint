@@ -86,13 +86,13 @@ function tile(paper: string | Rgb, mode: "light" | "dark") {
 `;
 }
 
-// The docs' code slips: a lighter sheet laid on the cream page. Keep in step
-// with --code-slip in app/globals.css (the same mixes, in oklab).
+// The docs' slips (code and examples): cream a shade lighter than the page.
+// Keep in step with --slip in app/globals.css (the same mixes, in oklab).
 const white = parseColor("#ffffff");
 const ink = { light: parseColor("oklch(0.4 0.185 267)"), dark: parseColor("oklch(0.9 0.045 258)") };
 const slip = {
-  light: mix(parseColor(papers.cream.paper.light), 0.55, white),
-  dark: mix(parseColor(papers.cream.paper.dark), 0.9, ink.dark),
+  light: mix(parseColor(papers.cream.paper.light), 0.8, white),
+  dark: mix(parseColor(papers.cream.paper.dark), 0.94, ink.dark),
 };
 
 const dir = new URL("../public/paper/", import.meta.url);
