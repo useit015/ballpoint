@@ -1,6 +1,7 @@
 # Ballpoint
 
-A shadcn-style component registry drawn in blue ballpoint. Components are
+A shadcn-style component registry drawn in blue ballpoint: docs, live
+examples and a customizer at **https://ballpoint.st9wd.com**. Components are
 copied into your project with the shadcn CLI, built on Base UI, and every
 line in them is a seeded pen stroke. The same seed draws the same wobble on
 the server and the client, the strokes regenerate to fit the real box, and
@@ -17,8 +18,6 @@ pnpm dlx shadcn@latest add @ballpoint/button
 (`lib/ink-sketch.ts`, `lib/ink.tsx`, `hooks/use-ink-box.ts`) and registers
 the `@ballpoint` namespace in `components.json`. After that, each `add`
 copies one component.
-
-> The registry isn't deployed yet. Until it is, run it locally (below).
 
 ## Develop
 
@@ -49,7 +48,11 @@ installed Google Chrome (`channel: "chrome"`). Screenshot baselines live in
 - `registry/ballpoint/lib/ink-sketch.ts`: seeded stroke geometry (boxes,
   hatching, shading, pressured ballpoint ribbons).
 - `registry/ballpoint/lib/ink.tsx`: server-safe SVG primitives (`InkSvg`,
-  `Stroke`, `InkMarks`) with three draw modes: `mount`, `hover`, `none`.
+  `Stroke`, `InkMarks`) and their draw modes: `auto` (when first in view),
+  `mount`, `hover`, `focus`, `checked`, `indeterminate` and `none`.
+- `registry/ballpoint/lib/ink-outline.tsx`, `ink-panel.tsx`,
+  `ink-glyphs.tsx`: a pen outline for controls, a lifted sheet of paper
+  for overlays, and small drawn icons.
 - `registry/ballpoint/hooks/use-ink-box.ts`: sizes a drawing to its element
   with one shared `ResizeObserver`, snapping to 2px so resizes redraw
   sparingly.
@@ -61,6 +64,14 @@ installed Google Chrome (`channel: "chrome"`). Screenshot baselines live in
 `BALLPOINT_REGISTRY_URL` sets the host written into the base item's
 `@ballpoint` namespace (default `http://localhost:4400`). Don't use
 `REGISTRY_URL`: the shadcn CLI reads that one itself.
+
+## Deploy
+
+The site is a Vercel project (`ballpoint`). Every push to `main` deploys
+to production at https://ballpoint.st9wd.com; other branches get preview
+URLs. The build runs `pnpm build` with
+`BALLPOINT_REGISTRY_URL=https://ballpoint.st9wd.com`, so the published
+registry points at itself.
 
 ## Plan
 
