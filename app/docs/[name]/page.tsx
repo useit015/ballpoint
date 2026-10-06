@@ -80,7 +80,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
               <p className="text-ink-2">
                 Every drawn component takes these, as props or from the nearest <code className="font-mono text-sm">InkProvider</code>. Props win.
               </p>
-              <PropsTable props={penProps} />
+              <PropsTable props={penProps.filter((prop) => doc.pen?.includes(prop.name))} />
             </>
           )}
           {doc.primitive && (

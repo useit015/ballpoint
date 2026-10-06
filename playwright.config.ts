@@ -15,7 +15,7 @@ export default defineConfig({
     viewport: { width: 1280, height: 900 },
   },
   expect: {
-    toHaveScreenshot: { maxDiffPixelRatio: 0.002, animations: "disabled" },
+    toHaveScreenshot: { maxDiffPixelRatio: 0.0001, animations: "disabled" },
   },
   webServer: {
     command: "pnpm exec next start -p 4420",

@@ -22,6 +22,7 @@ import {
   crossedBoxStroke,
   hatchStrokes,
   linkStroke,
+  penBoxStrokes,
   roundedBoxStroke,
   roundedRectPath,
   scribbleFill,
@@ -172,13 +173,6 @@ type ButtonPaths = {
 // again on every re-render and remount, so recent ones are kept.
 const pathCache = new Map<string, ButtonPaths>();
 
-// Where each re-traced outline lands relative to the first.
-const shifts = [
-  [0, 0],
-  [1.8, -1.6],
-  [-1.4, 2.2],
-] as const;
-
 /** Only the strokes this look shows: fills are the expensive ones. */
 function buttonPaths(look: Look, s: number, w: number, h: number): ButtonPaths {
   const key = `${Object.values(look).join("|")}|${s}|${w}|${h}`;
@@ -188,12 +182,6 @@ function buttonPaths(look: Look, s: number, w: number, h: number): ButtonPaths {
   const { variant, roughness: q, passes: n, corners, fill, shadow, r } = look;
   // Small buttons get shorter overshoots, so the corners stay neat.
   const k = Math.min(1, h / 40);
-  const outline = (seed: number, i: number) => {
-    const shift: [number, number] = [shifts[i][0] * k * q, shifts[i][1] * k * q];
-    if (r > 0) return roundedBoxStroke(seed, w, h, r, { jitter: 0.45 * q, overrun: 0.03 + 0.05 * q, shift });
-    if (corners === "joined") return boxStroke(seed, w, h, { overshoot: [2.4, 2.6, 2.2][i] * k * q, jitter: [0.7, 1.5, 1.8][i] * q, bow: q });
-    return crossedBoxStroke(seed, w, h, { overshoot: [4, 7, 5][i] * k * q, jitter: [1.2, 1.6, 1.8][i] * q, bow: 1.1 * q, shift });
-  };
 
   let paths: ButtonPaths;
   if (variant === "link") {
@@ -205,7 +193,7 @@ function buttonPaths(look: Look, s: number, w: number, h: number): ButtonPaths {
   } else {
     paths = {
       body: r > 0 ? roundedRectPath(w, h, r) : `${boxStroke(s + 7, w, h, { overshoot: 0, jitter: 0.9 * q })}Z`,
-      passes: Array.from({ length: n }, (_, i) => outline(s + i, i)),
+      passes: penBoxStrokes(s, w, h, { roughness: q, passes: n, corners, radius: r }),
     };
     if (shadow !== "none") {
       paths.shadow =

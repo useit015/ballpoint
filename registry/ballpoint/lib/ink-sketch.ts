@@ -454,6 +454,36 @@ export function roundedBoxStroke(
   return smooth(points);
 }
 
+// Where each re-traced outline lands relative to the first.
+const passShifts: readonly Pt[] = [
+  [0, 0],
+  [1.8, -1.6],
+  [-1.4, 2.2],
+];
+
+/**
+ * A box outline the way the pen settings describe it, gone over `passes`
+ * times: sides pulled separately past each other ("crossed"), one joined
+ * motion ("joined"), or rounded when `radius` > 0. `roughness` scales every
+ * wobble (0 is ruler-neat); small boxes get shorter overshoots. Fits 0…w × 0…h.
+ */
+export function penBoxStrokes(
+  seed: number,
+  w: number,
+  h: number,
+  { roughness = 1, passes = 2, corners = "crossed" as "crossed" | "joined", radius = 0 } = {},
+): string[] {
+  const q = roughness;
+  const k = Math.min(1, Math.min(w, h) / 40);
+  const r = Math.max(0, Math.min(radius, w / 2, h / 2));
+  return Array.from({ length: Math.max(1, Math.min(3, passes)) }, (_, i) => {
+    const shift: Pt = [passShifts[i][0] * k * q, passShifts[i][1] * k * q];
+    if (r > 0) return roundedBoxStroke(seed + i, w, h, r, { jitter: 0.45 * q, overrun: 0.03 + 0.05 * q, shift });
+    if (corners === "joined") return boxStroke(seed + i, w, h, { overshoot: [2.4, 2.6, 2.2][i] * k * q, jitter: [0.7, 1.5, 1.8][i] * q, bow: q });
+    return crossedBoxStroke(seed + i, w, h, { overshoot: [4, 7, 5][i] * k * q, jitter: [1.2, 1.6, 1.8][i] * q, bow: 1.1 * q, shift });
+  });
+}
+
 /** The exact outline of a rounded box, closed: for fills, masks and clips. */
 export function roundedRectPath(w: number, h: number, r: number) {
   const rad = Math.max(0, Math.min(r, w / 2, h / 2));

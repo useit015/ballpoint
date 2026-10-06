@@ -8,15 +8,22 @@ import type { InkStroke } from "@/registry/ballpoint/lib/ink-sketch";
 //            (the InkSvg is rendered `pending`; useInkBox releases it)
 // - "mount": the pen runs once, as soon as the stroke renders
 // - "hover": drawn while the nearest .ink-hover is hovered or focused
+// - "focus": drawn while focus is inside the nearest .ink-within
+// - "checked" / "indeterminate": drawn while the SVG's parent carries
+//            data-checked / data-indeterminate (Base UI's state attributes)
 // - "none":  always fully drawn
+// State strokes draw in on the pen curve and pull back out quicker.
 // Widths and timings scale with --ink-weight and --ink-speed.
 
-export type DrawMode = "auto" | "mount" | "hover" | "none";
+export type DrawMode = "auto" | "mount" | "hover" | "focus" | "checked" | "indeterminate" | "none";
 
 const drawClass: Record<DrawMode, string> = {
   auto: "ink-draw",
   mount: "ink-draw",
   hover: "ink-hover-draw",
+  focus: "ink-focus-draw",
+  checked: "ink-checked-draw",
+  indeterminate: "ink-indeterminate-draw",
   none: "",
 };
 

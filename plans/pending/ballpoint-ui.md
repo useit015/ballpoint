@@ -1,6 +1,6 @@
 # Ballpoint UI — a shadcn-style registry drawn in ballpoint
 
-Status: **approved 2026-10-06 · Phases 0–2.5 done · next: Wave A** · Owner: Oussama · Drafted 2026-10-06
+Status: **approved 2026-10-06 · Phases 0–3 done · next: Customizer + pens and papers (3.5)** · Owner: Oussama · Drafted 2026-10-06
 
 A copy-in component library (installed with `shadcn add`, the way shadcn/ui
 works) that brings the portfolio's look to other projects. It covers the
@@ -142,6 +142,12 @@ shadcn's registry directory (`ui.shadcn.com/r/registries.json`, currently
 | D28 | Fill styles: `shade` (solid's default), `hatch` (secondary's default), `scribble`, `flat`; shadows: `hatch` (default), `solid`, `none` (no lift either) | One vocabulary for how any area is coloured in, shared by every component that fills |
 | D29 | Bench budget split by draw mode: `draw="none"` < 50ms (the components' own cost), `draw="auto"` < 60ms | Auto-draw is the default by your call and costs real work (an observer per drawing, animations on release). Interleaved A/B against the pre-pen commit under identical load: ≈ +5ms per 200 buttons |
 | D30 | Strokes carry plain `--ink-w` / `--ink-d` / `--ink-dd` (registered `@property`, not inherited); the weight/speed `calc()` lives once in base.css. Waiting strokes have no animation at all until released | Per-path `calc()` strings and 1,200 paused animations were the measurable part of the pen-settings cost (auto went 63.8 → 51.7ms in the same session) |
+| D31 | Input and Textarea render a wrapper that holds the drawing; `className` styles that box, every other prop goes to the control | An `<input>` can't hold an SVG. Type classes still reach the text through inheritance. The one deliberate API difference from shadcn, documented on both pages |
+| D32 | Separator pulled forward from Wave B into Wave A | shadcn's Field depends on it |
+| D33 | Ticks, dots, dashes, switch shading and the input focus pass draw in and out with CSS transitions keyed off Base UI's `data-checked` / `data-indeterminate` / `:focus-within`; one shared `InkOutline` draws every control's box, ring or writing line | No remounting, so state changes animate both ways and work with auto-draw. Hover lightens only unchecked controls (it was washing out checked ones) |
+| D34 | Orientation styling uses `data-[orientation=…]`, not shadcn's `data-horizontal:` / `data-vertical:` | Those shorthands come from shadcn's own stylesheet, which Ballpoint doesn't ship; the vertical slider collapsed without them |
+| D35 | Screenshot tolerance tightened from 0.2% to 0.01% of pixels | 0.2% let a real change (a paper patch behind a label, a resize grip) pass. Renders are deterministic, so strict costs nothing |
+| D36 | Choice cards (a FieldLabel wrapping a Field) are detected from the DOM after mount; their layout comes from CSS `:has()` | Server-rendered children reach the client as references, so comparing element types never matched |
 
 ## Always / Never
 
@@ -161,4 +167,5 @@ portfolio onto the library.
 | 1 | ✅ done 2026-10-06 | New shapes (tick, cross, dash, plus, chevron, ring, capsule); `useInkFrame` + ink settle; `--ink-fill` token. `pnpm test` 36/36: determinism for all 32 generators, geometry snapshot, degenerate boxes (caught a NaN in `capsuleStroke` at 0×0, fixed). `pnpm contrast` 14/14, wired into `registry:build`. `pnpm bench`: 200 buttons cold median 45.7ms, warm 36.7ms (budget 50; about 10% margin). `test:install` ✔ lint ✔ typecheck ✔ |
 | 2 | ✅ done 2026-10-06 | Docs site: home, Installation (init, add, tokens, drawing), `/docs/[item]` with Preview/Code tabs and Redraw, package-manager install tabs, collapsible source, usage, API table; phone layout with folded contents and no sideways scroll. `pnpm test:e2e` 17/17: axe WCAG 2.2 AA on every page × both themes, no console errors or hydration warnings, keyboard focus/Enter/Space/disabled, strokes match measured boxes, screenshots (stable 3/3). `test:install` ✔, `bench` cold median 42.4ms |
 | 2.5 | ✅ done 2026-10-06 | `InkProvider` + pen props (roughness, passes, radius/pill, corners, fill, shadow, draw, weight, speed, salt); auto-draw on first view; `roundedBoxStroke`/`roundedRectPath`. Docs: "Pen settings" example and table, installation section. `pnpm test` 37/37 (snapshot: only capsule changed + rounded box added). `pnpm test:e2e` 19/19, including pending-until-in-view and reduced-motion-finished; main button screenshot unchanged pixel for pixel. Caught and fixed: outline/destructive faces were getting a fill. `test:install` ✔. **Bench inconclusive**: the machine was under load (load avg ≈ 5, `mobileassetd` at 100%) and even the previous commit measured 43–47ms; re-run on a quiet machine |
-| 3–9 | not started | |
+| 3 | ✅ done 2026-10-06 | input (box/line), textarea (box/lined, grows), label, separator, field (+ set, legend, group, content, title, description, separator, error, drawn choice cards), checkbox (tick/dash), radio-group (spiral dot), switch (shaded track, 4 fills), slider (single/range/steps/vertical). `pnpm test:e2e` 72/72: axe on every page × both themes, console clean, 8 behaviour tests (keyboard tick/untick, indeterminate→checked, radio arrows, card click, switch Space, slider arrows incl. range labels, input focus pass, red-pen invalid), screenshots at 0.01%. Caught: slider thumbs unlabelled, vertical slider collapsed, choice cards undetected, hover washing out checked controls. `test:install` 13 items ✔. `bench` ✔ none 48.3 / auto 53.8ms (under load avg 6.8) |
+| 3.5–9 | not started | |
