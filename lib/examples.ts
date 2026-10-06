@@ -12,6 +12,16 @@ import CheckboxDemo from "@/registry/ballpoint/examples/checkbox-demo";
 import RadioGroupDemo from "@/registry/ballpoint/examples/radio-group-demo";
 import SwitchDemo from "@/registry/ballpoint/examples/switch-demo";
 import SliderDemo from "@/registry/ballpoint/examples/slider-demo";
+import CardDemo from "@/registry/ballpoint/examples/card-demo";
+import BadgeDemo from "@/registry/ballpoint/examples/badge-demo";
+import AvatarDemo from "@/registry/ballpoint/examples/avatar-demo";
+import KbdDemo from "@/registry/ballpoint/examples/kbd-demo";
+import AlertDemo from "@/registry/ballpoint/examples/alert-demo";
+import SkeletonDemo from "@/registry/ballpoint/examples/skeleton-demo";
+import ProgressDemo from "@/registry/ballpoint/examples/progress-demo";
+import TableDemo from "@/registry/ballpoint/examples/table-demo";
+import TabsDemo from "@/registry/ballpoint/examples/tabs-demo";
+import AccordionDemo from "@/registry/ballpoint/examples/accordion-demo";
 
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
@@ -25,6 +35,16 @@ export const examples: Record<string, ComponentType> = {
   "radio-group-demo": RadioGroupDemo,
   "switch-demo": SwitchDemo,
   "slider-demo": SliderDemo,
+  "card-demo": CardDemo,
+  "badge-demo": BadgeDemo,
+  "avatar-demo": AvatarDemo,
+  "kbd-demo": KbdDemo,
+  "alert-demo": AlertDemo,
+  "skeleton-demo": SkeletonDemo,
+  "progress-demo": ProgressDemo,
+  "table-demo": TableDemo,
+  "tabs-demo": TabsDemo,
+  "accordion-demo": AccordionDemo,
 };
 
 /** An example's source, with registry imports written the way they land in an app. */

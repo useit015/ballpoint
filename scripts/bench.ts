@@ -33,7 +33,8 @@ try {
   for (const mode of modes) {
     const url = `http://localhost:${port}/dev/bench?draw=${mode}`;
     const cold: number[] = [];
-    for (let i = 0; i < 7; i++) {
+    // 11 loads: this machine's background load swings single runs by ±10ms.
+    for (let i = 0; i < 11; i++) {
       await page.goto(url, { waitUntil: "networkidle" });
       cold.push(await commit());
     }

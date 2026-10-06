@@ -48,19 +48,23 @@ const server = createServer((req, res) => {
 await new Promise<void>((resolve) => server.listen(port, resolve));
 
 try {
-  // 2. A fresh app. The scaffold is cached between runs; the install is not.
-  const pristine = join(work, `pristine-next-${nextVersion}`);
-  if (!existsSync(pristine)) {
+  // 2. A fresh app. Only the scaffold is cached between runs: a cached
+  //    node_modules in the temp folder was found missing files, so every run
+  //    installs its own (offline from the pnpm store, so it's quick).
+  const pristine = join(work, `scaffold-next-${nextVersion}`);
+  if (!existsSync(join(pristine, "package.json"))) {
+    rmSync(pristine, { recursive: true, force: true });
     mkdirSync(work, { recursive: true });
     await run(
       "pnpm",
       ["dlx", `create-next-app@${nextVersion}`, pristine, "--ts", "--tailwind", "--eslint", "--app", "--no-src-dir",
-        "--import-alias", "@/*", "--use-pnpm", "--yes", "--disable-git", "--no-react-compiler"],
+        "--import-alias", "@/*", "--use-pnpm", "--yes", "--disable-git", "--no-react-compiler", "--skip-install"],
       work,
     );
   }
   rmSync(app, { recursive: true, force: true });
-  cpSync(pristine, app, { recursive: true, verbatimSymlinks: true });
+  cpSync(pristine, app, { recursive: true, filter: (src) => !src.includes("/node_modules") });
+  await run("pnpm", ["install", "--prefer-offline"], app);
 
   const registry = JSON.parse(readFileSync(join(repo, "registry.json"), "utf8")) as { items: { name: string; type: string }[] };
   const base = registry.items.find((item) => item.type === "registry:base");
@@ -99,6 +103,8 @@ ${names.map((n) => `          <${ident(n)} />`).join("\n")}
 }
 `,
   );
+  // Route types (LayoutProps & co.) first, as `next build` would.
+  await run("pnpm", ["exec", "next", "typegen"], app);
   await run("pnpm", ["exec", "tsc", "--noEmit"], app);
   await run("pnpm", ["exec", "next", "build"], app);
 

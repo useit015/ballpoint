@@ -175,6 +175,158 @@ import { Switch } from "@/components/ui/switch"
     primitive: { name: "Slider", href: "https://base-ui.com/react/components/slider" },
     pen: ["draw", "weight", "speed"],
   },
+  card: {
+    group: "Components",
+    examples: ["card-demo"],
+    usage: `import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+
+<Card>
+  <CardHeader>
+    <CardTitle>Ink refill</CardTitle>
+    <CardDescription>Medium point, blue.</CardDescription>
+  </CardHeader>
+  <CardContent>Fits most clicky pens.</CardContent>
+  <CardFooter>…</CardFooter>
+</Card>`,
+    props: [
+      { name: "size", type: '"default" | "sm"', default: '"default"', description: "Inner spacing." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "weight", "speed"],
+  },
+  badge: {
+    group: "Components",
+    examples: ["badge-demo"],
+    usage: `import { Badge } from "@/components/ui/badge"
+
+<Badge>New</Badge>
+<Badge variant="outline">v1.2</Badge>
+<Badge variant="link" render={<a href="/changelog" />}>Changelog</Badge>`,
+    props: [
+      { name: "variant", type: '"default" | "secondary" | "destructive" | "outline" | "ghost" | "link"', default: '"default"', description: "Coloured in, hatched, red pen, circled, circled on hover, or underlined." },
+      { name: "render", type: "ReactElement", description: "Render as another element, e.g. a link." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "radius", "fill", "weight", "speed"],
+  },
+  avatar: {
+    group: "Components",
+    examples: ["avatar-demo"],
+    usage: `import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
+<Avatar>
+  <AvatarImage src="/me.jpg" alt="Me" />
+  <AvatarFallback>ON</AvatarFallback>
+</Avatar>`,
+    props: [
+      { name: "size", type: '"default" | "sm" | "lg"', default: '"default"', description: "24, 32 or 40px." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    primitive: { name: "Avatar", href: "https://base-ui.com/react/components/avatar" },
+    pen: ["draw", "passes", "weight", "speed"],
+  },
+  kbd: {
+    group: "Components",
+    examples: ["kbd-demo"],
+    usage: `import { Kbd, KbdGroup } from "@/components/ui/kbd"
+
+<KbdGroup>
+  <Kbd>⌘</Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>`,
+    pen: ["draw", "roughness", "radius", "weight", "speed"],
+  },
+  alert: {
+    group: "Components",
+    examples: ["alert-demo"],
+    usage: `import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+<Alert variant="destructive">
+  <AlertTitle>The page couldn't be saved</AlertTitle>
+  <AlertDescription>The connection dropped halfway.</AlertDescription>
+</Alert>`,
+    props: [
+      { name: "variant", type: '"default" | "destructive"', default: '"default"', description: "Pencil, or red pen." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "weight", "speed"],
+  },
+  skeleton: {
+    group: "Components",
+    examples: ["skeleton-demo"],
+    usage: `import { Skeleton } from "@/components/ui/skeleton"
+
+<Skeleton className="h-4 w-48" />`,
+  },
+  progress: {
+    group: "Components",
+    examples: ["progress-demo"],
+    usage: `import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
+
+<Progress value={40}>
+  <ProgressLabel>Uploading</ProgressLabel>
+  <ProgressValue />
+</Progress>`,
+    props: [
+      { name: "value", type: "number | null", description: "null for indeterminate: a patch of shading slides along." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    primitive: { name: "Progress", href: "https://base-ui.com/react/components/progress" },
+    pen: ["draw", "roughness", "passes", "radius", "fill", "weight", "speed"],
+  },
+  table: {
+    group: "Components",
+    examples: ["table-demo"],
+    usage: `import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Invoice</TableHead>
+      <TableHead>Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>INV-001</TableCell>
+      <TableCell>£12.50</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>`,
+  },
+  tabs: {
+    group: "Components",
+    examples: ["tabs-demo"],
+    usage: `import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+<Tabs defaultValue="account">
+  <TabsList>
+    <TabsTrigger value="account">Account</TabsTrigger>
+    <TabsTrigger value="password">Password</TabsTrigger>
+  </TabsList>
+  <TabsContent value="account">…</TabsContent>
+  <TabsContent value="password">…</TabsContent>
+</Tabs>`,
+    props: [
+      { name: "TabsList variant", type: '"default" | "line"', default: '"default"', description: "Box the chosen tab, or underline it." },
+      { name: "TabsList seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    primitive: { name: "Tabs", href: "https://base-ui.com/react/components/tabs" },
+    pen: ["roughness", "passes", "radius", "corners", "weight", "speed"],
+  },
+  accordion: {
+    group: "Components",
+    examples: ["accordion-demo"],
+    usage: `import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+
+<Accordion>
+  <AccordionItem value="a">
+    <AccordionTrigger>Is it accessible?</AccordionTrigger>
+    <AccordionContent>Yes.</AccordionContent>
+  </AccordionItem>
+</Accordion>`,
+    primitive: { name: "Accordion", href: "https://base-ui.com/react/components/accordion" },
+  },
 };
 
 /** The pen settings every drawn component takes, as props or from InkProvider. */

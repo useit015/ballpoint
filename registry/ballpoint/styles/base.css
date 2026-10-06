@@ -271,6 +271,32 @@
   initial-value: 0ms;
 }
 
+/* Skeleton: the pen goes back over its shading while you wait. */
+@keyframes ink-scribble {
+  0% {
+    stroke-dashoffset: 1.05;
+  }
+  45%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Indeterminate progress: a patch of shading slides along the track. */
+.ink-progress[data-indeterminate] {
+  width: 25%;
+  animation: ink-progress 1.6s ease-in-out infinite;
+}
+
+@keyframes ink-progress {
+  from {
+    translate: -110% 0;
+  }
+  to {
+    translate: 320% 0;
+  }
+}
+
 @keyframes ink-draw {
   from {
     stroke-dashoffset: 1.05;
@@ -291,6 +317,16 @@
 
   .ink-sketch :is(.ink-hover-draw, .ink-focus-draw, .ink-checked-draw, .ink-indeterminate-draw) {
     transition: none;
+  }
+
+  .ink-sketch .ink-scribble {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .ink-progress[data-indeterminate] {
+    animation: none;
+    translate: 100% 0;
   }
 }
 
