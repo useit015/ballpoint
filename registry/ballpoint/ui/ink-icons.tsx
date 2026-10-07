@@ -1,8 +1,9 @@
 import { GlyphSvg, glyphs, shiftPath, type Glyph, type GlyphProps } from "@/registry/ballpoint/lib/ink-glyphs";
-import { dotStroke, handCurve, hashSeed, lineStroke, ringStroke, roundedBoxStroke, tickStroke } from "@/registry/ballpoint/lib/ink-sketch";
+import { createRng, dotStroke, handCurve, hashSeed, ringStroke, roundedBoxStroke, tickStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
 // Everyday UI icons drawn with the pen on a 16px grid, the same grid as
-// the glyphs inside the components (all of which are here too). Every
+// the glyphs inside the components (all of which are here too, redrawn
+// with the same lean as the rest). Every
 // stroke is seeded by the icon's name, so an icon is the same drawing
 // wherever it appears, on the server and in the browser.
 //
@@ -16,28 +17,54 @@ type P = readonly [number, number];
 
 const k = (id: string) => hashSeed(`icon-${id}`);
 
-/** One straight pull. */
-const line = (id: string, a: P, b: P, bow = 0.4) => lineStroke(k(id), a, b, { bow, jitter: 0.12 });
+/** A vertex nudged a little, the same way wherever it's used, so pulls that meet still meet. */
+function wobble(id: string, [x, y]: P, amount: number): P {
+  const r = createRng(hashSeed(`${id}-${x}-${y}`));
+  return [x + (r() - 0.5) * 2 * amount, y + (r() - 0.5) * 2 * amount];
+}
 
-/** Pulls joined without lifting the pen: sharp corners, each leg bowed a little. */
+/** One pull from a to b as a hand makes it: it leans to one side, a little more through one half. */
+function pull(id: string, a: P, b: P, bow: number) {
+  const r = createRng(k(id));
+  const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
+  const len = Math.hypot(dx, dy) || 1;
+  const [nx, ny] = [-dy / len, dx / len];
+  // About 6% of its length, kept between a hair and most of a unit, so a short tick still has a lean and a long pull doesn't sag.
+  const amp = Math.min(0.8, Math.max(0.2, len * 0.06)) * bow;
+  const lean = (r() - 0.5) * 2 * amp;
+  const at = (t: number, extra: number): P => {
+    const off = lean * Math.sin(Math.PI * t) + (r() - 0.5) * amp * extra;
+    return [a[0] + dx * t + nx * off, a[1] + dy * t + ny * off];
+  };
+  const [c1, c2] = [at(0.3, 0.7), at(0.7, 0.7)];
+  const f = (p: P) => `${Math.round(p[0] * 100) / 100} ${Math.round(p[1] * 100) / 100}`;
+  return `M${f(a)}C${f(c1)} ${f(c2)} ${f(b)}`;
+}
+
+/** One straight pull, not quite straight. */
+// `bow` is how much it leans: 0.1 for a short tick, 0.4 (the default) for a long pull.
+const line = (id: string, a: P, b: P, bow = 0.4) => pull(id, wobble(`${id}-a`, a, 0.2), wobble(`${id}-b`, b, 0.2), 0.55 + bow * 1.2);
+
+/** Pulls joined without lifting the pen: each corner a little off, each leg leaning its own way. */
 function poly(id: string, pts: P[]) {
+  const v = pts.map((p) => wobble(id, p, 0.24));
   let d = "";
-  for (let i = 1; i < pts.length; i++) {
-    const leg = lineStroke(k(`${id}-${i}`), pts[i - 1], pts[i], { bow: 0.45, jitter: 0 });
+  for (let i = 1; i < v.length; i++) {
+    const leg = pull(`${id}-${i}`, v[i - 1], v[i], 1);
     d += i === 1 ? leg : leg.replace(/^M[^C]*/, "");
   }
   return d;
 }
 
 /** A smooth pen line through points. */
-const curve = (id: string, pts: P[], closed = false) => handCurve(k(id), pts, { jitter: 0.1, closed });
+const curve = (id: string, pts: P[], closed = false) => handCurve(k(id), pts, { jitter: 0.16, closed });
 
 /** A ring of diameter d centred on (cx, cy). */
 const ring = (id: string, cx: number, cy: number, d: number, turns = 1.06) => shiftPath(ringStroke(k(id), d, { turns }), cx - d / 2, cy - d / 2);
 
 /** A rounded box, pulled in one motion. */
 const box = (id: string, x: number, y: number, w: number, h: number, r: number) =>
-  shiftPath(roundedBoxStroke(k(id), w, h, r, { jitter: 0.1, overrun: 0.04 }), x, y);
+  shiftPath(roundedBoxStroke(k(id), w, h, r, { jitter: 0.17, overrun: 0.05 }), x, y);
 
 /** A small inked dot. */
 const dot = (id: string, x: number, y: number, r = 0.9) => shiftPath(dotStroke(k(id), r), x, y);
@@ -138,29 +165,29 @@ const ic =
 // Grouped the way you'd look for them; the docs list them in this order.
 const icons = {
   // The marks components use inside themselves.
-  close: glyphs.close,
+  close: ic(1.7, () => [line("close-a", [3.4, 3.4], [12.6, 12.6], 0.5), line("close-b", [12.5, 3.6], [3.6, 12.4], 0.5)]),
   check: glyphs.check,
-  plus: glyphs.plus,
-  minus: glyphs.minus,
-  "chevron-down": glyphs["chevron-down"],
-  "chevron-up": glyphs["chevron-up"],
-  "chevron-right": glyphs["chevron-right"],
-  "chevron-left": glyphs["chevron-left"],
+  plus: ic(1.7, () => [line("plus-h", [2.6, 8], [13.4, 8.1], 0.5), line("plus-v", [8, 2.6], [8.1, 13.4], 0.5)]),
+  minus: ic(1.7, () => [line("minus", [2.6, 8], [13.4, 8.1], 0.5)]),
+  "chevron-down": ic(1.6, () => [poly("chev-d", [[3.2, 5.4], [8, 10.6], [12.8, 5.4]])]),
+  "chevron-up": ic(1.6, () => [poly("chev-u", [[3.2, 10.6], [8, 5.4], [12.8, 10.6]])]),
+  "chevron-right": ic(1.6, () => [poly("chev-r", [[5.6, 3.2], [10.6, 8], [5.6, 12.8]])]),
+  "chevron-left": ic(1.6, () => [poly("chev-l", [[10.4, 3.2], [5.4, 8], [10.4, 12.8]])]),
   "chevrons-up-down": ic(1.6, () => [poly("cud-up", [[4.8, 6.2], [8, 2.8], [11.2, 6.2]]), poly("cud-down", [[4.8, 9.8], [8, 13.2], [11.2, 9.8]])]),
   "chevrons-left": ic(1.6, () => [poly("cl-a", [[7.6, 3.4], [3.2, 8], [7.6, 12.6]]), poly("cl-b", [[12.8, 3.4], [8.4, 8], [12.8, 12.6]])]),
   "chevrons-right": ic(1.6, () => [poly("cr-a", [[3.2, 3.4], [7.6, 8], [3.2, 12.6]]), poly("cr-b", [[8.4, 3.4], [12.8, 8], [8.4, 12.6]])]),
   dot: ic(1.5, () => [disc("dot", 8, 8, 2.9)]),
   circle: ic(1.5, () => [ring("circle", 8, 8, 13.2)]),
   "circle-dot": ic(1.5, () => [ring("circle-dot", 8, 8, 13.2), disc("circle-dot-c", 8, 8, 2)]),
-  alert: glyphs.alert,
-  info: glyphs.info,
-  "info-circle": glyphs["info-circle"],
-  "alert-circle": glyphs["alert-circle"],
+  alert: ic(1.8, () => [line("alert", [8, 2.2], [8.2, 9.6], 0.5), disc("alert-dot", 8.2, 13.2, 1.1)]),
+  info: ic(1.8, () => [disc("info-dot", 8, 3.4, 1.1), line("info", [7.9, 6.6], [8.1, 13.8], 0.5)]),
+  "info-circle": ic(1.5, () => [ring("info-ring", 8, 8, 13.4), disc("info-ring-dot", 8, 4.9, 0.9), line("info-ring-i", [7.9, 7.4], [8.1, 11.6], 0.3)]),
+  "alert-circle": ic(1.5, () => [ring("alert-ring", 8, 8, 13.4), line("alert-ring-i", [8, 4.2], [8.1, 9.2], 0.3), disc("alert-ring-dot", 8.1, 11.6, 0.9)]),
   loading: glyphs.loading,
 
   // Arrows and moving about.
-  "arrow-right": glyphs["arrow-right"],
-  "arrow-up-right": glyphs["arrow-up-right"],
+  "arrow-right": ic(1.6, () => [line("arrow-r", [1.8, 8.2], [13.6, 7.9]), poly("arrow-r-head", [[9.4, 3.9], [13.9, 7.9], [9.6, 12.1]])]),
+  "arrow-up-right": ic(1.6, () => [line("arrow-ur", [3.2, 12.9], [12.4, 3.7]), poly("arrow-ur-head", [[6.2, 3.4], [12.7, 3.3], [12.8, 9.9]])]),
   "arrow-left": ic(1.6, () => [line("arrow-l", [14.2, 7.9], [2.4, 8.2]), poly("arrow-l-head", [[6.6, 3.9], [2.2, 8.1], [6.5, 12.2]])]),
   "arrow-up": ic(1.6, () => [line("arrow-u", [8.1, 14.2], [7.9, 2.4]), poly("arrow-u-head", [[3.9, 6.6], [8, 2.2], [12.1, 6.5]])]),
   "arrow-down": ic(1.6, () => [line("arrow-d", [7.9, 1.8], [8.1, 13.6]), poly("arrow-d-head", [[3.9, 9.4], [8, 13.8], [12.1, 9.5]])]),
@@ -371,7 +398,7 @@ const icons = {
   wifi: ic(1.5, () => [curve("wifi-a", arc(8, 12.4, 3.2, -128, -52, 5)), curve("wifi-b", arc(8, 12.4, 6.2, -128, -52, 6)), curve("wifi-c", arc(8, 12.4, 9.3, -128, -52, 7)), disc("wifi-dot", 8, 12.6, 0.8)]),
   cart: ic(1.45, () => [poly("cart-body", [[1.6, 2.6], [3.4, 2.6], [5, 10.4], [12.4, 10.4], [13.8, 5], [4, 5]]), disc("cart-w1", 6, 13.2, 0.9), disc("cart-w2", 11.4, 13.2, 0.9)]),
   "credit-card": ic(1.45, () => [box("cc-box", 1.6, 3.2, 12.8, 9.6, 1.6), line("cc-stripe", [1.8, 6.6], [14.2, 6.5], 0.2), line("cc-num", [3.8, 10], [6.8, 10], 0.1)]),
-  wallet: ic(1.45, () => [box("wallet-box", 1.8, 3.4, 12.4, 9.8, 1.6), box("wallet-clasp", 9, 6.4, 5.2, 3.6, 1.2)]),
+  wallet: ic(1.45, () => [box("wallet-box", 1.8, 3.4, 12.4, 9.8, 1.6), box("wallet-clasp", 8.8, 6.4, 4.6, 3.6, 1.2)]),
   package: ic(1.45, () => [poly("pkg-hex", [[8, 1.8], [13.8, 4.8], [13.8, 11.2], [8, 14.2], [2.2, 11.2], [2.2, 4.8], [8, 1.8]]), poly("pkg-top", [[2.4, 4.9], [8, 8], [13.6, 4.9]]), line("pkg-edge", [8, 8], [8.1, 14], 0.1)]),
   briefcase: ic(1.45, () => [box("brief-box", 1.8, 4.8, 12.4, 8.8, 1.4), poly("brief-handle", [[5.6, 4.8], [5.6, 2.4], [10.4, 2.4], [10.4, 4.8]]), line("brief-band", [1.9, 8.6], [14.1, 8.5], 0.2)]),
   lightbulb: ic(1.45, () => [curve("bulb", [[5.6, 10.4], [4, 8.6], [3.6, 6.2], [5, 3.6], [8, 2.4], [11, 3.6], [12.4, 6.2], [12, 8.6], [10.4, 10.4], [10.2, 11.6], [5.8, 11.6], [5.6, 10.4]]), line("bulb-base", [6, 13.4], [10, 13.4], 0.1)]),
