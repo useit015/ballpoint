@@ -7,6 +7,7 @@ import { inkRules } from "@/registry/ballpoint/lib/ink";
 import { InstallCommand } from "@/components/install-command";
 import { Heading } from "@/components/heading";
 import { ComponentArt } from "@/components/component-art";
+import { IntentLink } from "@/components/intent-link";
 import { Showcase } from "@/components/showcase";
 import { ruledItem } from "@/components/rule";
 import { ordered } from "@/lib/nav";
@@ -81,7 +82,7 @@ export default function Home() {
             <ul className="grid gap-x-12 sm:grid-cols-2 lg:grid-cols-3" style={inkRules}>
               {docs.map((doc) => (
                 <li key={doc.name} className={ruledItem}>
-                  <Link href={`/docs/${doc.name}`} className="group flex h-full items-center gap-4 py-4 pr-2">
+                  <IntentLink href={`/docs/${doc.name}`} className="group flex h-full items-center gap-4 py-4 pr-2">
                     <ComponentArt name={doc.name} className="h-[3.75rem] w-[5.5rem] text-ink-3 transition-colors group-hover:text-ink" />
                     <span className="flex min-w-0 flex-col gap-1">
                       <span className="text-lg font-bold underline decoration-transparent underline-offset-4 transition-colors group-hover:decoration-ink-4">
@@ -89,7 +90,7 @@ export default function Home() {
                       </span>
                       <span className="text-sm text-ink-3">{doc.description}</span>
                     </span>
-                  </Link>
+                  </IntentLink>
                 </li>
               ))}
             </ul>
