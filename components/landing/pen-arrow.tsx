@@ -19,6 +19,7 @@ export function PenArrow({
   bend = 0.35,
   delay = 0,
   seed,
+  draw = "auto",
   className,
   style,
 }: {
@@ -30,6 +31,8 @@ export function PenArrow({
   bend?: number;
   delay?: number;
   seed?: string;
+  /** "auto" draws it when it scrolls into view; "mount" with the page. */
+  draw?: "auto" | "mount";
   className?: string;
   style?: CSSProperties;
 }) {
@@ -52,9 +55,11 @@ export function PenArrow({
   }, [s, from, to, bend]);
 
   return (
-    <InkSvg ref={ref} pending box={[0, 0, size[0], size[1]]} className={className} style={{ width: size[0], height: size[1], ...style }}>
-      <Stroke d={line} draw="auto" delay={delay} duration={420} width={1.3} />
-      <Stroke d={head} draw="auto" delay={delay + 380} duration={160} width={1.3} />
+    <InkSvg ref={ref} pending={draw === "auto"} box={[0, 0, size[0], size[1]]} className={className} style={{ width: size[0], height: size[1], ...style }}>
+      <Stroke d={line} draw={draw} delay={delay} duration={420} width={1.3} />
+      <Stroke d={head} draw={draw} delay={delay + 380} duration={160} width={1.3} />
+      {/* Where a pen following the page's beats should run (writing-pen.tsx). */}
+      <g data-pen-at={delay} data-pen-d={420} data-pen-line={[...from, ...to].join(" ")} />
     </InkSvg>
   );
 }

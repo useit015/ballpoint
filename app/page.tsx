@@ -1,15 +1,16 @@
 import Link from "next/link";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Annotate } from "@/registry/ballpoint/ui/annotate";
 import { Button } from "@/registry/ballpoint/ui/button";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
-import { Scrawl } from "@/registry/ballpoint/ui/scrawl";
 import { ComponentArt } from "@/components/component-art";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
 import { TextLink } from "@/components/text-link";
+import { Correction } from "@/components/landing/correction";
 import { DrawnPage } from "@/components/landing/drawn-page";
-import { HeroLine, heroWritten } from "@/components/landing/hero-line";
+import { InkedBlock } from "@/components/landing/inked-block";
+import { HeroLine } from "@/components/landing/hero-line";
 import { PenPicker } from "@/components/landing/pen-picker";
 import { Redraw } from "@/components/landing/redraw";
 import { Specimen } from "@/components/landing/specimen";
@@ -36,7 +37,7 @@ const code = "font-mono text-sm [font-variation-settings:'MONO'_1,'CASL'_1]";
 /** A section's title: the registry's SectionHeading, in the hand rather than block capitals. */
 function Title({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <Heading id={id} className="text-3xl tracking-normal normal-case sm:text-4xl">
+    <Heading id={id} className="text-4xl tracking-normal text-balance normal-case sm:text-5xl lg:text-6xl">
       {children}
     </Heading>
   );
@@ -52,10 +53,7 @@ export default function Home() {
             Ballpoint: shadcn-style components drawn in blue ballpoint
           </h1>
           <HeroLine />
-          <div
-            className="after-pen pen-at grid items-end gap-8 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)] lg:gap-16"
-            style={{ "--after": `${heroWritten - 200}ms`, "--pen-at": `${heroWritten}ms` } as CSSProperties}
-          >
+          <div className="grid items-end gap-8 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)] lg:gap-16">
             <p className="text-xl text-ink-2">
               The names and props you know from shadcn/ui, built on Base UI and installed with the shadcn CLI. Every line is a seeded pen
               stroke, drawn the same on the server and in the browser.
@@ -72,51 +70,49 @@ export default function Home() {
         </section>
 
         <div className="flex flex-col gap-32 sm:gap-40">
-          <section aria-labelledby="shadcn" className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20">
-            <div className="flex flex-col gap-6">
+          <section aria-labelledby="shadcn" className="flex flex-col gap-12 lg:gap-16">
+            <div className="flex flex-col gap-10">
               <Title id="shadcn">Same names, same props</Title>
-              <p className="max-w-xl text-lg text-ink-2">
-                Ballpoint is a shadcn registry. A component lands in <code className="inline-code">components/ui</code> with the name, props
-                and variants you already use, so an app built on shadcn/ui keeps its code. Only the install changes:
-              </p>
-              <figure className="slip flex max-w-xl flex-col gap-2 px-5 py-4" aria-label="The only line that changes">
-                <p className={`${code} text-[var(--code-plain)]`}>
-                  <Annotate type="strike" color="red" as="del" seed="cmd-old" className="leading-normal">
-                    shadcn add button
-                  </Annotate>
-                </p>
-                <p className={`${code} text-[var(--code-plain)]`}>
-                  shadcn add <span className="text-ink">@ballpoint/button</span>
-                </p>
-              </figure>
-              <p className="max-w-xl text-ink-3">
-                Each one is built on <TextLink href="https://base-ui.com">Base UI</TextLink>, so focus, keyboard and screen readers work the way
-                they do in shadcn/ui. Every page passes axe&apos;s WCAG 2.2 AA checks.
-              </p>
+              <div className="text-[clamp(1.3rem,5.8vw,3.9rem)]">
+                <Correction />
+              </div>
             </div>
-            <figure className="paper-sheet sheet flex flex-col px-6 pt-3 pb-5 sm:px-10 lg:rotate-[0.5deg]">
-              <ul style={inkRules}>
-                {variants.map(({ variant, label }) => (
-                  <li key={variant} className={`${ruledItem} flex min-h-20 items-center justify-between gap-6 py-4`}>
-                    <Button variant={variant} seed={`variant-${variant}`}>
-                      {label}
-                    </Button>
-                    <code className={`${code} text-ink-3`}>
-                      variant=<span className="text-ink">&quot;{variant}&quot;</span>
-                    </code>
-                  </li>
-                ))}
-              </ul>
-              <figcaption className="pt-4 text-sm text-ink-3">
-                The six Button variants from shadcn/ui, each one drawn its own way.
-              </figcaption>
-            </figure>
+            <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-20">
+              <div className="flex flex-col gap-6">
+                <p className="max-w-xl text-lg text-ink-2">
+                  That&apos;s the only line that changes. Ballpoint is a shadcn registry: a component lands in{" "}
+                  <code className="inline-code">components/ui</code> with the name, props and variants you already use, so an app built on
+                  shadcn/ui keeps its code.
+                </p>
+                <p className="max-w-xl text-ink-3">
+                  Each one is built on <TextLink href="https://base-ui.com">Base UI</TextLink>, so focus, keyboard and screen readers work the way
+                  they do in shadcn/ui. Every page passes axe&apos;s WCAG 2.2 AA checks.
+                </p>
+              </div>
+              <figure className="paper-sheet sheet flex flex-col px-6 pt-3 pb-5 sm:px-10 lg:rotate-[0.5deg]">
+                <ul style={inkRules}>
+                  {variants.map(({ variant, label }) => (
+                    <li key={variant} className={`${ruledItem} flex min-h-20 items-center justify-between gap-6 py-4`}>
+                      <Button variant={variant} seed={`variant-${variant}`}>
+                        {label}
+                      </Button>
+                      <code className={`${code} text-ink-3`}>
+                        variant=<span className="text-ink">&quot;{variant}&quot;</span>
+                      </code>
+                    </li>
+                  ))}
+                </ul>
+                <figcaption className="pt-4 text-sm text-ink-3">
+                  The six Button variants from shadcn/ui, each one drawn its own way.
+                </figcaption>
+              </figure>
+            </div>
           </section>
 
           <section aria-labelledby="strokes" className="flex flex-col gap-12">
-            <div className="flex max-w-2xl flex-col gap-6">
+            <div className="flex flex-col gap-6">
               <Title id="strokes">Every line is a pen stroke</Title>
-              <p className="text-lg text-ink-2">
+              <p className="max-w-2xl text-lg text-ink-2">
                 Nothing here is an image or a border. Each line is generated from a seed: pulled a little off straight, run past its corners,
                 gone over twice, the way a hand draws a box in a hurry.
               </p>
@@ -143,38 +139,14 @@ export default function Home() {
           </section>
 
           <section aria-labelledby="pens" className="flex flex-col gap-12">
-            <div className="flex max-w-2xl flex-col gap-6">
+            <div className="flex flex-col gap-6">
               <Title id="pens">Pens and papers, day and night</Title>
-              <p className="text-lg text-ink-2">
+              <p className="max-w-2xl text-lg text-ink-2">
                 Four pens and three papers, each with a night side. Every pair is checked against WCAG AA on every build, so a pale pen never
                 ships on a pale page. <TextLink href="/customize">Mix your own</TextLink> in the customizer.
               </p>
             </div>
             <PenPicker />
-          </section>
-
-          <section aria-labelledby="start" className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:gap-20">
-            <div className="flex flex-col gap-6">
-              <Title id="start">Two commands</Title>
-              <p className="max-w-xl text-lg text-ink-2">
-                The first lays down the paper, the ink, the font and the stroke engine. The second copies a component into your app, where
-                it&apos;s yours to change.
-              </p>
-              <p className="max-w-xl text-ink-3">
-                Working with a coding assistant? Point it at <TextLink href="/llms.txt">llms.txt</TextLink>, or{" "}
-                <TextLink href="/llms-full.txt">llms-full.txt</TextLink> for every component&apos;s props in one file.
-              </p>
-            </div>
-            <ol className="flex min-w-0 flex-col gap-8">
-              <li className="flex flex-col gap-3">
-                <p className="text-lg">Set up the paper and ink, once:</p>
-                <InstallCommand what={`init ${homepage}/r/ballpoint.json`} />
-              </li>
-              <li className="flex flex-col gap-3">
-                <p className="text-lg">Then add a component whenever you need one:</p>
-                <InstallCommand what="add @ballpoint/button" />
-              </li>
-            </ol>
           </section>
 
           <section aria-labelledby="components" className="flex flex-col gap-12">
@@ -196,23 +168,49 @@ export default function Home() {
             </Button>
           </section>
 
-          <section aria-labelledby="pen-down" className="relative flex flex-col items-start gap-10 py-10">
-            <h2 id="pen-down" className="text-5xl font-bold sm:text-7xl">
-              Pick up the{" "}
-              <Annotate type="circle" seed="end-pen" delay={200}>
-                pen
-              </Annotate>
-              .
-            </h2>
-            <div className="flex flex-wrap gap-5">
-              <Button render={<Link href="/docs" />} nativeButton={false} size="lg" seed="end-start">
-                Get started <InkGlyph name="arrow-right" />
-              </Button>
-              <Button render={<Link href="/customize" />} nativeButton={false} variant="outline" size="lg" seed="end-customize">
-                Mix your own pen
-              </Button>
-            </div>
-            <Scrawl kind="star" seed="end-star" className="absolute top-4 left-[34rem] hidden text-ink-3 lg:block" />
+          <section aria-labelledby="pen-down">
+            <InkedBlock seed="pen-down" className="px-7 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-24">
+              <div className="ink-land grid gap-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
+                <div className="flex flex-col items-start gap-8">
+                  <h2 id="pen-down" className="text-6xl leading-[0.95] font-bold sm:text-8xl">
+                    Pick up the{" "}
+                    <Annotate type="circle" seed="end-pen" delay={2100}>
+                      pen
+                    </Annotate>
+                    .
+                  </h2>
+                  <p className="max-w-md text-xl text-ink-2">
+                    Two commands, and the first component is in your app, yours to change.
+                  </p>
+                  <div className="flex flex-wrap gap-5">
+                    <Button render={<Link href="/docs" />} nativeButton={false} size="lg" seed="end-start">
+                      Get started <InkGlyph name="arrow-right" />
+                    </Button>
+                    <Button render={<Link href="/customize" />} nativeButton={false} variant="outline" size="lg" seed="end-customize">
+                      Mix your own pen
+                    </Button>
+                  </div>
+                  <p className="max-w-md text-ink-2">
+                    Working with a coding assistant? Point it at <TextLink href="/llms.txt">llms.txt</TextLink>, or{" "}
+                    <TextLink href="/llms-full.txt">llms-full.txt</TextLink> for every component&apos;s props in one file.
+                  </p>
+                </div>
+                <ol className="flex min-w-0 flex-col gap-9 lg:pt-3">
+                  <li className="flex flex-col gap-3">
+                    <p className="text-lg">Set up the paper and ink, once:</p>
+                    <div data-ink-scope="" className="inked-unturn">
+                      <InstallCommand what={`init ${homepage}/r/ballpoint.json`} />
+                    </div>
+                  </li>
+                  <li className="flex flex-col gap-3">
+                    <p className="text-lg">Then add a component whenever you need one:</p>
+                    <div data-ink-scope="" className="inked-unturn">
+                      <InstallCommand what="add @ballpoint/button" />
+                    </div>
+                  </li>
+                </ol>
+              </div>
+            </InkedBlock>
           </section>
         </div>
       </Redraw>

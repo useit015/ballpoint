@@ -6,6 +6,7 @@ import { Checkbox } from "@/registry/ballpoint/ui/checkbox";
 import { Switch } from "@/registry/ballpoint/ui/switch";
 import { setNight, useNight } from "@/components/landing/night";
 import { PenArrow } from "@/components/landing/pen-arrow";
+import { WritingPen } from "@/components/landing/writing-pen";
 import { useRedraw } from "@/components/landing/redraw";
 
 type Beat = { at: number; d: number };
@@ -23,10 +24,10 @@ function timetable() {
     t += beat.d * 0.74 + 24;
     return beat;
   };
-  const drawn = (takes: number) => {
-    const at = t;
+  const drawn = (takes: number): Beat => {
+    const beat = { at: t, d: takes };
     t += takes;
-    return at;
+    return beat;
   };
   return {
     components: word("Components"),
@@ -44,27 +45,30 @@ function timetable() {
     in: word("in"),
     blue: word("blue"),
     ballpoint: word("ballpoint."),
-    end: t,
+    end: Math.round(t),
   };
 }
 
 const beats = timetable();
-/** When the pen lifts off the sentence, for whatever follows it. */
-export const heroWritten = beats.end;
 
 /** A word written in by the pen at its beat. */
 function W({ beat, children }: { beat: Beat; children: ReactNode }) {
   return (
-    <span className="ink-write inline-block" style={{ "--ink-d": `${beat.d}ms`, "--ink-dd": `${beat.at}ms` } as CSSProperties}>
+    <span
+      className="ink-write inline-block"
+      data-pen-at={beat.at}
+      data-pen-d={beat.d}
+      style={{ "--ink-d": `${beat.d}ms`, "--ink-dd": `${beat.at}ms` } as CSSProperties}
+    >
       {children}
     </span>
   );
 }
 
 /** A control drawn at its beat (see .pen-at in globals.css), scaled to the words around it. */
-function At({ at, className, children }: { at: number; className: string; children: ReactNode }) {
+function At({ beat, className, children }: { beat: Beat; className: string; children: ReactNode }) {
   return (
-    <span className={`pen-at ${className}`} style={{ "--pen-at": `${at}ms` } as CSSProperties}>
+    <span className={`pen-at ${className}`} data-pen-at={beat.at} data-pen-d={beat.d} style={{ "--pen-at": `${beat.at}ms` } as CSSProperties}>
       {children}
     </span>
   );
@@ -91,7 +95,7 @@ export function HeroLine() {
     <p className="hero-line relative font-bold text-balance text-ink">
       <W beat={beats.components}>Components</W> <W beat={beats.you}>you</W> <W beat={beats.can}>can</W> <br className="max-lg:hidden" />
       <span className="whitespace-nowrap">
-        <At at={beats.press} className="hero-press">
+        <At beat={beats.press} className="hero-press">
           <Button ref={press} size="lg" draw="mount" seed="hero-press" onClick={redraw} aria-label="Press: redraw the page in a fresh hand">
             <W beat={beats.pressLabel}>press</W>
           </Button>
@@ -99,14 +103,14 @@ export function HeroLine() {
         <W beat={beats.comma}>,</W>
       </span>{" "}
       <span className="whitespace-nowrap">
-        <At at={beats.tick} className="hero-tick">
+        <At beat={beats.tick} className="hero-tick">
           <Checkbox draw="mount" seed="hero-tick" aria-label="Tick" />
         </At>{" "}
         <W beat={beats.tickWord}>tick</W>
       </span>{" "}
       <W beat={beats.and}>and</W>{" "}
       <span className="whitespace-nowrap">
-        <At at={beats.flip} className="hero-flip">
+        <At beat={beats.flip} className="hero-flip">
           <span ref={flip} className="inline-flex">
             <Switch
               draw="mount"
@@ -125,8 +129,9 @@ export function HeroLine() {
       {/* An aside in the margin, once the sentence is down. */}
       <span aria-hidden="true" className="absolute top-[1.3em] right-0 hidden w-52 -rotate-3 text-xl leading-snug font-normal tracking-normal text-ink-3 [word-spacing:normal] xl:block">
         <W beat={{ at: beats.end + 350, d: 700 }}>they work, by the way</W>
-        <PenArrow seed="hero-aside" from={[186, 18]} to={[22, 78]} size={[200, 92]} bend={-0.45} delay={beats.end + 900} className="top-5 -left-48" />
+        <PenArrow seed="hero-aside" from={[186, 18]} to={[22, 78]} size={[200, 92]} bend={-0.45} delay={beats.end + 900} draw="mount" className="top-5 -left-48" />
       </span>
+      <WritingPen />
     </p>
   );
 }
