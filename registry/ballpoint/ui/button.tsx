@@ -71,7 +71,10 @@ const buttonVariants = cva(
 
 // Boxed buttons lift off their shadow on hover and focus; pressing flattens
 // them back onto the paper.
-const lift = "hover:-translate-[1.5px] focus-visible:-translate-[1.5px] active:translate-0 active:duration-(--dur-press)";
+// A trigger stays flat while its popup is open, so the popup (anchored to
+// the trigger) doesn't shift when the pointer moves over it.
+const lift =
+  "hover:-translate-[1.5px] focus-visible:-translate-[1.5px] active:translate-0 active:duration-(--dur-press) aria-expanded:hover:translate-0 aria-expanded:focus-visible:translate-0 data-popup-open:hover:translate-0 data-popup-open:focus-visible:translate-0";
 
 type Variant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
 type Size = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
