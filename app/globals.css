@@ -8,22 +8,12 @@
 
 /* ─── Docs site only ─────────────────────────────────────────────────── */
 
-/* Scrollbars: the page keeps the system's own (on a Mac that is the slim
-   overlay bar that appears while you scroll), and the places that scroll as
-   furniture (the sidebar, the menus, code) have none, because a bar parked
-   on the paper is clutter. Code that runs past its slip fades out at the
-   edge instead, which is the cue to scroll it. Timeline and Hatch Grid keep
-   the thin ink bar their own component sets. */
-.no-scrollbar-docs,
-.code-block pre,
-aside {
-  scrollbar-width: none;
-}
-
-.no-scrollbar-docs::-webkit-scrollbar,
-.code-block pre::-webkit-scrollbar,
-aside::-webkit-scrollbar {
-  display: none;
+/* Scrollbars are the browser's own, automatic: the slim overlay bar on a Mac,
+   the standard one elsewhere. Timeline and Hatch Grid ask for a thin ink bar
+   in the registry; the docs put those back on the default too. */
+* {
+  scrollbar-width: auto !important;
+  scrollbar-color: auto !important;
 }
 
 @theme inline {
@@ -321,11 +311,8 @@ body {
 
 .code-block pre {
   overflow-x: auto;
-  /* The right edge fades out; the padding is room for that to land on empty paper. */
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
   margin: 0;
-  padding: 0.25rem 2.25rem 1.1rem 1.25rem;
+  padding: 0.25rem 1.25rem 1.1rem;
   background: transparent !important;
   font-size: 0.9375rem;
   line-height: 1.7;

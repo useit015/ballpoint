@@ -107,7 +107,7 @@ export function Search({ entries }: { entries: SearchEntry[] }) {
           seed="search-input"
         />
         {results.length ? (
-          <ul id={listId} role="listbox" aria-label="Results" className="-mx-2 no-scrollbar-docs flex max-h-72 flex-col gap-0.5 overflow-y-auto overscroll-contain px-2 py-1">
+          <ul id={listId} role="listbox" aria-label="Results" className="-mx-2 flex max-h-72 flex-col gap-0.5 overflow-y-auto overscroll-contain px-2 py-1">
             {results.map((entry, i) => (
               <li key={entry.href} role="presentation">
                 <Link
