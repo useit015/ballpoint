@@ -1,7 +1,6 @@
 import { Button } from "@/registry/ballpoint/ui/button";
 import { InkIcon } from "@/registry/ballpoint/ui/ink-icons";
 
-// and "focus" ink the icon in as its button is hovered or focused.
 export default function InkIconsButtons() {
   return (
     <div className="flex flex-wrap items-center gap-5">
