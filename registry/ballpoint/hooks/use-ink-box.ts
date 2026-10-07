@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, createElement, useContext, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, createElement, startTransition, useContext, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { hashSeed } from "@/registry/ballpoint/lib/ink-sketch";
 
 export type InkSize = readonly [number, number];
@@ -32,6 +32,64 @@ function observe(el: Element, onSize: (size: InkSize) => void) {
     if (set.size) return;
     listeners.delete(el);
     resizes?.unobserve(el);
+  };
+}
+
+// Drawings far down (or up) the page are redrawn to their real size when
+// one IntersectionObserver sees them come within a screen of the viewport.
+// The rest are woken a few at a time while the page is idle, as a transition
+// React can interrupt, so a jump down the page doesn't find them unsized.
+const approaching = new Map<Element, Set<() => void>>();
+let nearby: IntersectionObserver | undefined;
+let draining = false;
+
+function wake(el: Element) {
+  const set = approaching.get(el);
+  approaching.delete(el);
+  nearby?.unobserve(el);
+  set?.forEach((fn) => fn());
+}
+
+function whenIdle(fn: () => void) {
+  if (typeof requestIdleCallback === "function") requestIdleCallback(fn);
+  else setTimeout(fn, 50);
+}
+
+function drain() {
+  startTransition(() => {
+    let n = 0;
+    for (const el of approaching.keys()) {
+      if (n++ === 8) break;
+      wake(el);
+    }
+  });
+  draining = approaching.size > 0;
+  if (draining) whenIdle(drain);
+}
+
+function approach(el: Element, onNear: () => void) {
+  nearby ??= new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) if (entry.isIntersecting) wake(entry.target);
+    },
+    { rootMargin: "100% 0px" },
+  );
+  let set = approaching.get(el);
+  if (!set) {
+    set = new Set();
+    approaching.set(el, set);
+    nearby.observe(el);
+  }
+  set.add(onNear);
+  if (!draining) {
+    draining = true;
+    whenIdle(drain);
+  }
+  return () => {
+    set.delete(onNear);
+    if (set.size || approaching.get(el) !== set) return;
+    approaching.delete(el);
+    nearby?.unobserve(el);
   };
 }
 
@@ -76,7 +134,10 @@ function release(el: Element, svg: SVGSVGElement) {
  * The server and the first client render use `estimate`, stretched to fit,
  * so there is never an empty frame. Sizes snap to `step` px, so a box that
  * is animating its size redraws every few pixels rather than every frame.
- * A `pending` InkSvg is released to draw once it scrolls into view.
+ * A box more than a screen away from the viewport is redrawn to its real
+ * size once it comes that close, or once the page is idle, so a long page
+ * hydrates without redrawing what nobody can see yet. A `pending` InkSvg is
+ * released to draw once it scrolls into view.
  */
 export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {}) {
   const ref = useRef<SVGSVGElement | null>(null);
@@ -92,7 +153,17 @@ export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {
       const next: InkSize = [snap(w), snap(h)];
       setSize((prev) => (prev[0] === next[0] && prev[1] === next[1] ? prev : next));
     };
-    update([el.offsetWidth, el.offsetHeight]);
+    let measured: InkSize = [el.offsetWidth, el.offsetHeight];
+    const { top, bottom } = el.getBoundingClientRect();
+    let near = bottom >= -innerHeight && top <= innerHeight * 2;
+    const resize = (size: InkSize) => (near ? update(size) : void (measured = size));
+    const unapproach = near
+      ? undefined
+      : approach(el, () => {
+          near = true;
+          update(measured);
+        });
+    if (near) update(measured);
     // Once a stroke has drawn itself in, drop its dash pattern: it looks the
     // same, but guarantees a fresh paint (Chrome can leave a small SVG on an
     // early frame of a dash animation) and stops paying for dash geometry.
@@ -105,10 +176,11 @@ export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {
       for (const ribbon of svg.querySelectorAll(".ink-reveal")) if (ribbon.getAttribute("mask") === `url(#${mask.id})`) ribbon.classList.add("ink-drawn");
     };
     svg.addEventListener("animationend", settle);
-    const unobserve = observe(el, update);
+    const unobserve = observe(el, resize);
     const unrelease = svg.hasAttribute("data-ink-pending") ? release(el, svg) : undefined;
     return () => {
       unobserve();
+      unapproach?.();
       unrelease?.();
       svg.removeEventListener("animationend", settle);
     };
