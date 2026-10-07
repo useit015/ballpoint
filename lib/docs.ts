@@ -101,7 +101,10 @@ export function Actions() {
   },
   separator: {
     group: "Components",
-    examples: ["separator-demo"],
+    examples: ["separator-demo", "separator-sections"],
+    exampleTitles: {
+      "separator-sections": { title: "Between sections", description: "Rules that divide a settings page, with the danger zone last." },
+    },
     usage: `import { Separator } from "@/components/ui/separator"
 
 <Separator />
@@ -215,7 +218,11 @@ import { Switch } from "@/components/ui/switch"
   },
   card: {
     group: "Components",
-    examples: ["card-demo"],
+    examples: ["card-demo", "card-form", "card-stats"],
+    exampleTitles: {
+      "card-form": { title: "Login form", description: "A card holding a form, with a full-width action and a quiet link underneath." },
+      "card-stats": { title: "Stats", description: "Small cards in a grid, for numbers with a note." },
+    },
     usage: `import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 <Card>
@@ -234,7 +241,11 @@ import { Switch } from "@/components/ui/switch"
   },
   badge: {
     group: "Components",
-    examples: ["badge-demo"],
+    examples: ["badge-demo", "badge-icons", "badge-status"],
+    exampleTitles: {
+      "badge-icons": { title: "With icons", description: "Glyphs and counts inside the pill." },
+      "badge-status": { title: "Status in a list", description: "One variant per state, aligned to the right of each row." },
+    },
     usage: `import { Badge } from "@/components/ui/badge"
 
 <Badge>New</Badge>
@@ -249,7 +260,10 @@ import { Switch } from "@/components/ui/switch"
   },
   avatar: {
     group: "Components",
-    examples: ["avatar-demo"],
+    examples: ["avatar-demo", "avatar-list"],
+    exampleTitles: {
+      "avatar-list": { title: "User list", description: "Avatars with a name, an email and an online dot." },
+    },
     usage: `import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 <Avatar>
@@ -265,7 +279,11 @@ import { Switch } from "@/components/ui/switch"
   },
   kbd: {
     group: "Components",
-    examples: ["kbd-demo"],
+    examples: ["kbd-demo", "kbd-shortcuts", "kbd-in-button"],
+    exampleTitles: {
+      "kbd-shortcuts": { title: "Shortcut list", description: "Each action with the keys that trigger it." },
+      "kbd-in-button": { title: "In a button", description: "A hint inside a button for its shortcut." },
+    },
     usage: `import { Kbd, KbdGroup } from "@/components/ui/kbd"
 
 <KbdGroup>
@@ -281,7 +299,10 @@ import { Switch } from "@/components/ui/switch"
   },
   alert: {
     group: "Components",
-    examples: ["alert-demo"],
+    examples: ["alert-demo", "alert-simple"],
+    exampleTitles: {
+      "alert-simple": { title: "Without an icon", description: "Title only, description only, and with an action." },
+    },
     usage: `import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 <Alert variant="destructive">
@@ -296,7 +317,10 @@ import { Switch } from "@/components/ui/switch"
   },
   skeleton: {
     group: "Components",
-    examples: ["skeleton-demo"],
+    examples: ["skeleton-demo", "skeleton-card"],
+    exampleTitles: {
+      "skeleton-card": { title: "Card placeholder", description: "The shape of a card while its content loads." },
+    },
     usage: `import { Skeleton } from "@/components/ui/skeleton"
 
 <Skeleton className="h-4 w-48" />`,
@@ -307,7 +331,10 @@ import { Switch } from "@/components/ui/switch"
   },
   progress: {
     group: "Components",
-    examples: ["progress-demo"],
+    examples: ["progress-demo", "progress-controlled"],
+    exampleTitles: {
+      "progress-controlled": { title: "Controlled", description: "Drive the value from state and watch the shading follow." },
+    },
     usage: `import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
 
 <Progress value={40}>
@@ -323,7 +350,10 @@ import { Switch } from "@/components/ui/switch"
   },
   table: {
     group: "Components",
-    examples: ["table-demo"],
+    examples: ["table-demo", "table-selectable"],
+    exampleTitles: {
+      "table-selectable": { title: "Selectable rows", description: "Checkboxes select rows; the header one is mixed when only some are picked." },
+    },
     usage: `import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 <Table>
@@ -348,7 +378,11 @@ import { Switch } from "@/components/ui/switch"
   },
   tabs: {
     group: "Components",
-    examples: ["tabs-demo"],
+    examples: ["tabs-demo", "tabs-vertical", "tabs-icons"],
+    exampleTitles: {
+      "tabs-vertical": { title: "Vertical", description: "Tabs stacked beside their panel." },
+      "tabs-icons": { title: "With icons", description: "Icons beside the labels." },
+    },
     usage: `import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 <Tabs defaultValue="account">
@@ -368,7 +402,10 @@ import { Switch } from "@/components/ui/switch"
   },
   accordion: {
     group: "Components",
-    examples: ["accordion-demo"],
+    examples: ["accordion-demo", "accordion-multiple"],
+    exampleTitles: {
+      "accordion-multiple": { title: "Several open", description: "With multiple, items open independently." },
+    },
     usage: `import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 <Accordion>
