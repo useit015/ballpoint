@@ -95,6 +95,27 @@ export function InkSvg({
   );
 }
 
+/** Tight user-space box around a path's coordinates (absolute M/L/C/Q pairs), grown by `pad`. */
+function pathBounds(paths: string[], pad: number) {
+  let x0 = Infinity;
+  let y0 = Infinity;
+  let x1 = -Infinity;
+  let y1 = -Infinity;
+  for (const d of paths) {
+    const nums = d.match(/-?\d*\.?\d+(?:e-?\d+)?/g) ?? [];
+    for (let i = 0; i + 1 < nums.length; i += 2) {
+      const x = +nums[i];
+      const y = +nums[i + 1];
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+    }
+  }
+  if (!Number.isFinite(x0)) return { x: -2000, y: -2000, width: 6000, height: 6000 };
+  return { x: x0 - pad, y: y0 - pad, width: x1 - x0 + pad * 2, height: y1 - y0 + pad * 2 };
+}
+
 /**
  * Pressured ink ribbons drawn on in order: each pass is revealed by a mask
  * stroke running along its centreline, one mask per pass so crossing
@@ -117,7 +138,7 @@ export function InkMarks({
     <>
       <defs>
         {strokes.map((k, i) => (
-          <mask key={i} id={`${id}-${i}`} maskUnits="userSpaceOnUse" x={-2000} y={-2000} width={6000} height={6000}>
+          <mask key={i} id={`${id}-${i}`} maskUnits="userSpaceOnUse" {...pathBounds([k.ink, k.guide], guide + 4)}>
             <Stroke d={k.guide} draw={draw} delay={delay + k.at} duration={k.dur} width={guide} className="ink-guide" />
           </mask>
         ))}
