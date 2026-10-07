@@ -41,8 +41,10 @@
 :root {
   /* The paper's texture, in three layers (scripts/paper-tiles.ts): fibres
      (slips only), a fine tooth, and the lit relief. --paper-tile-size sizes
-     them, in the same order. */
-  --paper-tile: none, url("/paper/tooth-light.svg"), url("/paper/cream-light.png");
+     them, in the same order. Images here are linked by relative path, so
+     the build gives them hashed URLs the browser keeps (files linked from
+     /public are asked for again on every visit). */
+  --paper-tile: none, url("../public/paper/tooth-light.svg"), url("../public/paper/cream-light.png");
   --paper-tile-size: 600px 600px, 128px 128px, 600px 600px;
   /* What the sheet picked up on a desk (components/paper-marks.tsx): a dried
      coffee ring and age spots, pressed into the paper by day. */
@@ -53,7 +55,7 @@
   /* Code and examples sit on a slip of cream a shade lighter than the page
      (scripts/paper-tiles.ts makes its texture from the same mix). */
   --slip: color-mix(in oklab, var(--paper) 80%, white);
-  --slip-tile: url("/paper/slip-fibres-light.svg"), url("/paper/tooth-light.svg"), url("/paper/slip-light.png");
+  --slip-tile: url("../public/paper/slip-fibres-light.svg"), url("../public/paper/tooth-light.svg"), url("../public/paper/slip-light.png");
   /* A sheet lying on the page: a contact shadow and a soft one under it. */
   --sheet-shadow: 0 0.5px 1px oklch(0.35 0.03 70 / 0.16), 0 3px 10px -3px oklch(0.35 0.03 70 / 0.2);
   /* A slip lies flatter still. */
@@ -64,7 +66,7 @@
 }
 
 .dark {
-  --paper-tile: none, url("/paper/tooth-dark.svg"), url("/paper/cream-dark.png");
+  --paper-tile: none, url("../public/paper/tooth-dark.svg"), url("../public/paper/cream-dark.png");
   /* At night a dried coffee ring catches the light: a faint warm tide line
      on the navy rather than a dark mark. A desk lamp lights the sheet a touch
      warmer near the top, falling off toward the edges, fixed to the viewport. */
@@ -76,7 +78,7 @@
     radial-gradient(130% 100% at 50% 40%, transparent 55%, oklch(0.1 0.03 266 / 0.55) 100%);
   /* At night the slip catches a little of the pen's light instead. */
   --slip: color-mix(in oklab, var(--paper) 94%, var(--ink));
-  --slip-tile: url("/paper/slip-fibres-dark.svg"), url("/paper/tooth-dark.svg"), url("/paper/slip-dark.png");
+  --slip-tile: url("../public/paper/slip-fibres-dark.svg"), url("../public/paper/tooth-dark.svg"), url("../public/paper/slip-dark.png");
   --sheet-shadow: 0 0.5px 1px oklch(0 0 0 / 0.5), 0 4px 12px -3px oklch(0 0 0 / 0.55);
   --slip-shadow: inset 0 1px 0 oklch(1 0 0 / 0.07), inset 0 -1px 0 oklch(0 0 0 / 0.18), 0 0.5px 1px oklch(0 0 0 / 0.4), 0 2px 8px -3px oklch(0 0 0 / 0.4);
   --code-plain: oklch(0.94 0.006 265);
@@ -170,8 +172,8 @@ html,
   opacity: calc(var(--stain-strength) * 0.7);
   mix-blend-mode: var(--stain-blend);
   pointer-events: none;
-  -webkit-mask: url("/stain-ring.svg") center / contain no-repeat;
-  mask: url("/stain-ring.svg") center / contain no-repeat;
+  -webkit-mask: url("../public/stain-ring.svg") center / contain no-repeat;
+  mask: url("../public/stain-ring.svg") center / contain no-repeat;
 }
 
 /* A dog-ear: the corner is cut away and its flap lies folded back over the sheet. */
@@ -280,8 +282,8 @@ html,
 
 .paper-stain {
   translate: -50% -50%;
-  -webkit-mask: url("/stain-ring.svg") center / contain no-repeat;
-  mask: url("/stain-ring.svg") center / contain no-repeat;
+  -webkit-mask: url("../public/stain-ring.svg") center / contain no-repeat;
+  mask: url("../public/stain-ring.svg") center / contain no-repeat;
 }
 
 .paper-stain.opacity-55 {
@@ -291,8 +293,8 @@ html,
 .paper-foxing {
   inset: 0;
   opacity: calc(var(--stain-strength) * 0.8);
-  -webkit-mask: url("/stain-foxing.svg") 0 0 / 900px 1300px repeat;
-  mask: url("/stain-foxing.svg") 0 0 / 900px 1300px repeat;
+  -webkit-mask: url("../public/stain-foxing.svg") 0 0 / 900px 1300px repeat;
+  mask: url("../public/stain-foxing.svg") 0 0 / 900px 1300px repeat;
 }
 
 @media print {
