@@ -62,7 +62,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
         </div>
       </header>
 
-      <Preview seed={main} code={<CodeBlock code={exampleSource(main)} />}>
+      <Preview code={<CodeBlock code={exampleSource(main)} />}>
         <Example />
       </Preview>
 
@@ -93,7 +93,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
                   {meta?.title ?? name}
                 </h3>
                 {meta && <p className="text-ink-2">{meta.description}</p>}
-                <Preview seed={name} code={<CodeBlock code={exampleSource(name)} />}>
+                <Preview code={<CodeBlock code={exampleSource(name)} />}>
                   <More />
                 </Preview>
               </div>

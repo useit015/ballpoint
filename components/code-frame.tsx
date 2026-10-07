@@ -7,9 +7,9 @@ import { slipProps } from "@/lib/slip";
  * soft shadow, no drawn border. `header` sits above the code (a file name,
  * tabs, a copy button).
  */
-export function CodeFrame({ header, children, className, seed }: { header?: ReactNode; children: ReactNode; className?: string; seed?: string }) {
+export function CodeFrame({ header, children, className }: { header?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <figure className={cn("code-block slip relative isolate min-w-0", className)} {...slipProps(seed ?? "code")}>
+    <figure className={cn("code-block slip relative isolate min-w-0", className)} {...slipProps("ruled")}>
       {header && <figcaption className="flex min-h-11 items-center justify-between gap-4 pr-2 pl-5">{header}</figcaption>}
       <div className={cn("code", !header && "pt-4")}>{children}</div>
     </figure>

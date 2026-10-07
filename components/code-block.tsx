@@ -18,7 +18,6 @@ export async function CodeBlock({
   return (
     <CodeFrame
       className={className}
-      seed={`${title ?? lang}-${code.length}-${code.slice(0, 40)}`}
       header={
         <>
           <span className="truncate text-sm text-ink-3">{title ?? lang}</span>

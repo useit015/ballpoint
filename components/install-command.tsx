@@ -84,7 +84,6 @@ export function InstallCommand({ what, className }: { what: string; className?: 
     <Tabs value={current} onValueChange={(v) => choose(v as Manager)} className="gap-0">
       <CodeFrame
         className={className}
-        seed={`install-${what}`}
         header={
           <>
             <TabsList variant="line" aria-label="Package manager" className="-ml-1 gap-1 text-sm">
