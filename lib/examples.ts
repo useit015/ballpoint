@@ -67,6 +67,22 @@ import RadioGroupStates from "@/registry/ballpoint/examples/radio-group-states";
 import SwitchSettings from "@/registry/ballpoint/examples/switch-settings";
 import SliderControlled from "@/registry/ballpoint/examples/slider-controlled";
 
+import CardForm from "@/registry/ballpoint/examples/card-form";
+import CardStats from "@/registry/ballpoint/examples/card-stats";
+import BadgeIcons from "@/registry/ballpoint/examples/badge-icons";
+import BadgeStatus from "@/registry/ballpoint/examples/badge-status";
+import SeparatorSections from "@/registry/ballpoint/examples/separator-sections";
+import AvatarList from "@/registry/ballpoint/examples/avatar-list";
+import KbdShortcuts from "@/registry/ballpoint/examples/kbd-shortcuts";
+import KbdInButton from "@/registry/ballpoint/examples/kbd-in-button";
+import AlertSimple from "@/registry/ballpoint/examples/alert-simple";
+import SkeletonCard from "@/registry/ballpoint/examples/skeleton-card";
+import ProgressControlled from "@/registry/ballpoint/examples/progress-controlled";
+import TableSelectable from "@/registry/ballpoint/examples/table-selectable";
+import TabsVertical from "@/registry/ballpoint/examples/tabs-vertical";
+import TabsIcons from "@/registry/ballpoint/examples/tabs-icons";
+import AccordionMultiple from "@/registry/ballpoint/examples/accordion-multiple";
+
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
   "button-pens": ButtonPens,
@@ -107,6 +123,21 @@ export const examples: Record<string, ComponentType> = {
   "table-demo": TableDemo,
   "tabs-demo": TabsDemo,
   "accordion-demo": AccordionDemo,
+  "card-form": CardForm,
+  "card-stats": CardStats,
+  "badge-icons": BadgeIcons,
+  "badge-status": BadgeStatus,
+  "separator-sections": SeparatorSections,
+  "avatar-list": AvatarList,
+  "kbd-shortcuts": KbdShortcuts,
+  "kbd-in-button": KbdInButton,
+  "alert-simple": AlertSimple,
+  "skeleton-card": SkeletonCard,
+  "progress-controlled": ProgressControlled,
+  "table-selectable": TableSelectable,
+  "tabs-vertical": TabsVertical,
+  "tabs-icons": TabsIcons,
+  "accordion-multiple": AccordionMultiple,
   "dialog-demo": DialogDemo,
   "alert-dialog-demo": AlertDialogDemo,
   "sheet-demo": SheetDemo,
