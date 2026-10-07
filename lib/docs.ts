@@ -677,7 +677,11 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "ink-icons": {
     group: "Drawn",
-    examples: ["ink-icons-demo"],
+    examples: ["ink-icons-demo", "ink-icons-buttons", "ink-icons-sizes"],
+    exampleTitles: {
+      "ink-icons-buttons": { title: "In buttons", description: "Icons take the button's colour and size, beside a label or on their own." },
+      "ink-icons-sizes": { title: "Sizes and colour", description: "Size with a class; the icon takes the text colour." },
+    },
     usage: `import { InkIcon } from "@/components/ui/ink-icons"
 
 <Button variant="ghost" size="icon" aria-label="Search">
@@ -693,10 +697,11 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   annotate: {
     group: "Drawn",
-    examples: ["annotate-demo", "annotate-types", "annotate-active"],
+    examples: ["annotate-demo", "annotate-types", "annotate-active", "annotate-review"],
     exampleTitles: {
       "annotate-types": { title: "Seven marks", description: "Underline, circle, box, strike, scribble, bracket and highlight, in the ink or the red pen." },
       "annotate-active": { title: "On and off", description: "With active, a mark draws in when it turns true and pulls back out when it turns false." },
+      "annotate-review": { title: "In running text", description: "Marks mixed through a changelog: a title underline, a highlight, a red strike and a boxed link." },
     },
     usage: `import { Annotate } from "@/components/ui/annotate"
 
@@ -716,7 +721,10 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "section-heading": {
     group: "Drawn",
-    examples: ["section-heading-demo"],
+    examples: ["section-heading-demo", "section-heading-levels"],
+    exampleTitles: {
+      "section-heading-levels": { title: "Levels and sizes", description: "The element sets the level; className sets the size. A delay lets the pen land after the page does." },
+    },
     usage: `import { SectionHeading } from "@/components/ui/section-heading"
 
 <section aria-labelledby="projects">
@@ -733,7 +741,11 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   paper: {
     group: "Drawn",
-    examples: ["paper-demo"],
+    examples: ["paper-demo", "paper-letter", "paper-textures"],
+    exampleTitles: {
+      "paper-letter": { title: "A letter", description: "Ruled paper with a margin and a coffee ring, set with a letter." },
+      "paper-textures": { title: "Texture, stains, age", description: "Turn the grain off, add up to three coffee rings, or scatter age spots." },
+    },
     usage: `import { Paper } from "@/components/ui/paper"
 
 <Paper variant="ruled" margin lifted stains={1}>
@@ -753,7 +765,10 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   frame: {
     group: "Drawn",
-    examples: ["frame-demo"],
+    examples: ["frame-demo", "frame-gallery"],
+    exampleTitles: {
+      "frame-gallery": { title: "Passes", description: "The more passes, the more it looks gone over." },
+    },
     usage: `import { Frame } from "@/components/ui/frame"
 
 <Frame caption="Drawn on a Tuesday">
@@ -768,7 +783,11 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "copy-button": {
     group: "Drawn",
-    examples: ["copy-button-demo"],
+    examples: ["copy-button-demo", "copy-button-states", "copy-button-dynamic"],
+    exampleTitles: {
+      "copy-button-states": { title: "Variants and sizes", description: "Any button variant, a custom copied label, and the icon size." },
+      "copy-button-dynamic": { title: "Read at click time", description: "Pass a function and the value is read when it's clicked." },
+    },
     usage: `import { CopyButton } from "@/components/ui/copy-button"
 
 <CopyButton value="hello@example.com">Copy email</CopyButton>`,
