@@ -1,6 +1,8 @@
 @import "tailwindcss";
 /* The registry's own base stylesheet, exactly as @ballpoint/ballpoint ships it. */
 @import "../registry/ballpoint/styles/base.css";
+/* Components that ship a stylesheet of their own. */
+@import "../registry/ballpoint/styles/ink-theme-toggle.css";
 
 @custom-variant dark (&:is(.dark *));
 

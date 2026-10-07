@@ -21,6 +21,8 @@ export type Item = {
   files?: { path: string; type: string; target?: string }[];
   categories?: string[];
   docs?: string;
+  /** A stylesheet of the component's own, shipped as the item's css (scripts/build-registry.ts). */
+  styles?: string;
 };
 
 export const items: Item[] = [
@@ -393,5 +395,79 @@ export const items: Item[] = [
     author,
     registryDependencies: ["utils", "@ballpoint/ink-core", "@ballpoint/button", "@ballpoint/ink-icons"],
     files: [{ path: "registry/ballpoint/ui/copy-button.tsx", type: "registry:ui" }],
+  },
+  {
+    name: "signature-pad",
+    type: "registry:ui",
+    title: "Signature Pad",
+    description: "A line to sign on with a mouse, a finger or a stylus, inked like a ballpoint. Submits with its form; exports SVG or PNG.",
+    author,
+    registryDependencies: ["utils", "@ballpoint/ink-core", "@ballpoint/button"],
+    files: [{ path: "registry/ballpoint/ui/signature-pad.tsx", type: "registry:ui" }],
+  },
+  {
+    name: "hatch-grid",
+    type: "registry:ui",
+    title: "Hatch Grid",
+    description: "A year of days as hand-drawn squares, one column a week, shaded in five levels from an empty box to solid ink.",
+    author,
+    registryDependencies: ["utils", "@ballpoint/ink-core"],
+    files: [{ path: "registry/ballpoint/ui/hatch-grid.tsx", type: "registry:ui" }],
+  },
+  {
+    name: "timeline",
+    type: "registry:ui",
+    title: "Timeline",
+    description: "Stops along a hand-drawn arrow; each one lands as the pen passes its dot. Across the top, or down the side.",
+    author,
+    registryDependencies: ["utils", "@ballpoint/ink-core"],
+    files: [{ path: "registry/ballpoint/ui/timeline.tsx", type: "registry:ui" }],
+  },
+  {
+    name: "ink-theme-toggle",
+    type: "registry:ui",
+    title: "Ink Theme Toggle",
+    description: "Switches day and night: the new theme spreads from the button like a drop of ink, and the pen swaps sun for moon.",
+    author,
+    registryDependencies: ["utils", "@ballpoint/ink-core", "@ballpoint/button"],
+    files: [{ path: "registry/ballpoint/ui/ink-theme-toggle.tsx", type: "registry:ui" }],
+    styles: "registry/ballpoint/styles/ink-theme-toggle.css",
+  },
+  {
+    name: "margin-note",
+    type: "registry:ui",
+    title: "Margin Note",
+    description: "A handwritten aside out in the margin, with an arrow drawn to the words it's about; under the line on narrow screens.",
+    author,
+    registryDependencies: ["utils", "@ballpoint/ink-core"],
+    files: [{ path: "registry/ballpoint/ui/margin-note.tsx", type: "registry:ui" }],
+  },
+  {
+    name: "checklist",
+    type: "registry:ui",
+    title: "Checklist",
+    description: "A to-do list: tick an item and it's struck through with the pen; untick it and the line pulls back out.",
+    author,
+    dependencies: ["@base-ui/react"],
+    registryDependencies: ["utils", "@ballpoint/ink-core", "@ballpoint/checkbox"],
+    files: [{ path: "registry/ballpoint/ui/checklist.tsx", type: "registry:ui" }],
+  },
+  {
+    name: "redact",
+    type: "registry:ui",
+    title: "Redact",
+    description: "Words scribbled out with the pen, shown when clicked and scribbled over again on the next.",
+    author,
+    registryDependencies: ["utils", "@ballpoint/ink-core"],
+    files: [{ path: "registry/ballpoint/ui/redact.tsx", type: "registry:ui" }],
+  },
+  {
+    name: "scrawl",
+    type: "registry:ui",
+    title: "Scrawl",
+    description: "The scratches a ballpoint leaves in a margin while it gets going: a zigzag, a worked-over corner, a star, slashes.",
+    author,
+    registryDependencies: ["utils", "@ballpoint/ink-core"],
+    files: [{ path: "registry/ballpoint/ui/scrawl.tsx", type: "registry:ui" }],
   },
 ];

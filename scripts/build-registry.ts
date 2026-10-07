@@ -99,7 +99,16 @@ const registry = {
   $schema: "https://ui.shadcn.com/schema/registry.json",
   name: "ballpoint",
   homepage,
-  items: [...items.map((item) => (item.type === "registry:base" ? { ...item, cssVars: vars, css } : item)), ...themes],
+  items: [
+    ...items.map(({ styles, ...item }) => {
+      if (item.type === "registry:base") return { ...item, cssVars: vars, css };
+      // A component's own stylesheet ships as the item's css, merged into the
+      // app's global CSS on add.
+      if (styles) return { ...item, css: toObject(postcss.parse(readFileSync(new URL(`../${styles}`, import.meta.url), "utf8"))) };
+      return item;
+    }),
+    ...themes,
+  ],
 };
 
 writeFileSync(new URL("../registry.json", import.meta.url), `${JSON.stringify(registry, null, 2)}\n`);

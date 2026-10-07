@@ -684,6 +684,154 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
     ],
     pen: ["draw", "roughness", "passes", "radius", "corners", "fill", "shadow", "weight", "speed"],
   },
+  "signature-pad": {
+    group: "Drawn",
+    examples: ["signature-pad-demo"],
+    usage: `import { SignaturePad } from "@/components/ui/signature-pad"
+
+<form action={sign}>
+  <SignaturePad name="signature" required />
+  <Button type="submit">Sign</Button>
+</form>`,
+    props: [
+      { name: "name", type: "string", description: "The form field the signature is submitted under, as a data URL." },
+      { name: "required", type: "boolean", description: "The form won't submit unsigned; the pad turns red and the browser says why." },
+      { name: "valueFormat", type: '"svg" | "png"', default: '"svg"', description: "What the form receives." },
+      { name: "onChange", type: "(value: string) => void", description: "After every stroke, and on clear, with the form value (empty when cleared)." },
+      { name: "ref", type: "Ref<SignaturePadHandle>", description: "clear(), undo(), isEmpty(), strokes(), toSVG(options), toDataURL(type, options). Exports are trimmed to the ink, in blue ballpoint unless you pass a color." },
+      { name: "label", type: "string", default: '"Signature"', description: "Names the pad for screen readers." },
+      { name: "placeholder", type: "string", default: '"Sign here"', description: "Written above the line until the first stroke." },
+      { name: "disabled", type: "boolean", description: "Stops the pen." },
+      { name: "seed", type: "string | number", description: "Pins the drawing of the box and the line." },
+    ],
+    pen: ["draw", "roughness", "weight", "speed"],
+  },
+  "hatch-grid": {
+    group: "Drawn",
+    examples: ["hatch-grid-demo"],
+    usage: `import { HatchGrid } from "@/components/ui/hatch-grid"
+
+<HatchGrid
+  data={days} // { date: "2026-01-01", count: 3 }[]
+  today="2026-10-06"
+  summary="1,203 commits in 2026"
+/>`,
+    props: [
+      { name: "data", type: "{ date: string; count: number; level?: 0 | 1 | 2 | 3 | 4 }[]", description: "One entry a day. Level is worked out from count when left out: none, then quarters of the busiest day." },
+      { name: "today", type: "string", description: "Days after it are drawn dotted, still to come." },
+      { name: "unit", type: "string | [string, string]", default: '"contribution"', description: 'What\'s counted, for the hover label ("3 commits on Oct 6th, 2026"). The plural adds an s; pass [one, many] when it doesn\'t.' },
+      { name: "label", type: "(day) => string", description: "What hovering a day says, in place of the unit's sentence. A function, so pass it from a client component." },
+      { name: "summary", type: "string", description: "What the grid shows, for screen readers; to them it's one image." },
+    ],
+    pen: ["draw", "speed"],
+  },
+  timeline: {
+    group: "Drawn",
+    examples: ["timeline-demo", "timeline-vertical"],
+    exampleTitles: {
+      "timeline-vertical": { title: "Down the side", description: "For more stops, longer ones, or narrow screens: a line down the left, each stop landing as the pen reaches it." },
+    },
+    usage: `import { Timeline, TimelineDescription, TimelineItem, TimelineTime, TimelineTitle } from "@/components/ui/timeline"
+
+<Timeline>
+  <TimelineItem>
+    <TimelineTitle>Ballpoint</TimelineTitle>
+    <TimelineTime dateTime="2026">2026</TimelineTime>
+    <TimelineDescription>The pen, for everyone.</TimelineDescription>
+  </TimelineItem>
+</Timeline>`,
+    props: [
+      { name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "An arrow across the top, each stop a column (scrolling sideways when there are more than fit), or a line down the side." },
+      { name: "TimelineTime", type: "component", description: "A time element; pass dateTime for a machine-readable date." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "weight", "speed"],
+  },
+  "ink-theme-toggle": {
+    group: "Drawn",
+    examples: ["ink-theme-toggle-demo"],
+    usage: `import { InkThemeToggle } from "@/components/ui/ink-theme-toggle"
+
+// On its own: toggles .dark on <html> and remembers it.
+<InkThemeToggle />
+
+// With next-themes:
+const { resolvedTheme, setTheme } = useTheme()
+<InkThemeToggle theme={resolvedTheme} onThemeChange={setTheme} />`,
+    props: [
+      { name: "theme", type: '"light" | "dark"', description: "The current theme, when a theme library manages it." },
+      { name: "onThemeChange", type: '(theme: "light" | "dark") => void', description: "Called with the new theme, inside the view transition, so the blot reveals it." },
+      { name: "storageKey", type: "string", default: '"theme"', description: "Where the choice is kept in localStorage when the toggle manages the theme itself." },
+      { name: "…", type: "Button's", description: "Any other Button prop (variant, size, seed)." },
+    ],
+  },
+  "margin-note": {
+    group: "Drawn",
+    examples: ["margin-note-demo"],
+    usage: `import { MarginNote } from "@/components/ui/margin-note"
+
+<p className="max-w-xs">
+  Every box is drawn as four pulls, and{" "}
+  <MarginNote note="took three tries">the corners cross</MarginNote>.
+</p>`,
+    props: [
+      { name: "note", type: "ReactNode", description: "What's written in the margin." },
+      { name: "side", type: '"left" | "right"', default: '"right"', description: "Which margin. Below lg the note drops in under the line instead." },
+      { name: "color", type: '"ink" | "red"', default: '"ink"', description: "The ink, or the red pen." },
+      { name: "className", type: "string", description: "Styles the note; --margin-note-width (9rem) and --margin-note-gap (2.5rem) set its size and distance." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "weight", "speed"],
+  },
+  checklist: {
+    group: "Drawn",
+    examples: ["checklist-demo"],
+    usage: `import { Checklist, ChecklistItem } from "@/components/ui/checklist"
+
+<Checklist defaultValue={["pens"]}>
+  <ChecklistItem value="pens">Buy more blue pens</ChecklistItem>
+  <ChecklistItem value="ship">Ship it</ChecklistItem>
+</Checklist>`,
+    props: [
+      { name: "value / defaultValue", type: "string[]", description: "The done items, controlled or not." },
+      { name: "onValueChange", type: "(value: string[]) => void", description: "Called as items are ticked and unticked." },
+      { name: "ChecklistItem value", type: "string", description: "What the list reports when this item is done." },
+      { name: "ChecklistItem disabled", type: "boolean", description: "Can't be ticked or unticked." },
+    ],
+    primitive: { name: "CheckboxGroup", href: "https://base-ui.com/react/components/checkbox-group" },
+  },
+  redact: {
+    group: "Drawn",
+    examples: ["redact-demo"],
+    usage: `import { Redact } from "@/components/ui/redact"
+
+<p>The code name is <Redact>Blue Biro</Redact>.</p>`,
+    props: [
+      { name: "label", type: "string", default: '"Hidden text"', description: "What screen readers hear while it's hidden; they don't get the words until it's shown." },
+      { name: "revealed / defaultRevealed", type: "boolean", default: "false", description: "Shown or scribbled over, controlled or not." },
+      { name: "onRevealedChange", type: "(revealed: boolean) => void", description: "Called as it's clicked." },
+      { name: "seed", type: "string | number", description: "Pins the scribble." },
+    ],
+    pen: ["roughness", "weight", "speed"],
+  },
+  scrawl: {
+    group: "Drawn",
+    examples: ["scrawl-demo"],
+    usage: `import { Scrawl } from "@/components/ui/scrawl"
+
+<section className="relative">
+  <Scrawl kind="star" rotate={-8} className="absolute -right-16 top-4" />
+  …
+</section>`,
+    props: [
+      { name: "kind", type: '"zigzag" | "corner" | "star" | "slash"', default: '"zigzag"', description: "Which pen test." },
+      { name: "scale", type: "number", default: "1", description: "Size; the line stays the same weight." },
+      { name: "rotate", type: "number", default: "0", description: "Degrees." },
+      { name: "delay", type: "number", default: "0", description: "ms after it comes into view before the pen starts." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
+    pen: ["draw", "speed"],
+  },
 };
 
 /** The theme tokens, as the Installation page and llms-full.txt list them. */

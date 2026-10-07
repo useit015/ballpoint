@@ -38,6 +38,15 @@ import SectionHeadingDemo from "@/registry/ballpoint/examples/section-heading-de
 import PaperDemo from "@/registry/ballpoint/examples/paper-demo";
 import FrameDemo from "@/registry/ballpoint/examples/frame-demo";
 import CopyButtonDemo from "@/registry/ballpoint/examples/copy-button-demo";
+import SignaturePadDemo from "@/registry/ballpoint/examples/signature-pad-demo";
+import HatchGridDemo from "@/registry/ballpoint/examples/hatch-grid-demo";
+import TimelineDemo from "@/registry/ballpoint/examples/timeline-demo";
+import TimelineVertical from "@/registry/ballpoint/examples/timeline-vertical";
+import InkThemeToggleDemo from "@/registry/ballpoint/examples/ink-theme-toggle-demo";
+import MarginNoteDemo from "@/registry/ballpoint/examples/margin-note-demo";
+import ChecklistDemo from "@/registry/ballpoint/examples/checklist-demo";
+import RedactDemo from "@/registry/ballpoint/examples/redact-demo";
+import ScrawlDemo from "@/registry/ballpoint/examples/scrawl-demo";
 
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
@@ -77,6 +86,15 @@ export const examples: Record<string, ComponentType> = {
   "paper-demo": PaperDemo,
   "frame-demo": FrameDemo,
   "copy-button-demo": CopyButtonDemo,
+  "signature-pad-demo": SignaturePadDemo,
+  "hatch-grid-demo": HatchGridDemo,
+  "timeline-demo": TimelineDemo,
+  "timeline-vertical": TimelineVertical,
+  "ink-theme-toggle-demo": InkThemeToggleDemo,
+  "margin-note-demo": MarginNoteDemo,
+  "checklist-demo": ChecklistDemo,
+  "redact-demo": RedactDemo,
+  "scrawl-demo": ScrawlDemo,
 };
 
 /** An example's source, with registry imports written the way they land in an app. */

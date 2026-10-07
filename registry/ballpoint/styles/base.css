@@ -217,10 +217,12 @@
   }
 
   /* "auto" drawings wait, undrawn and with no animation running yet, until
-     they scroll into view. Only when scripts run: without them nothing would
-     ever release the pen. (Reduced motion, unlayered below, still wins.) */
+     they scroll into view; so does everything in a [data-ink-stage] whose
+     own drawing (a direct child) is waiting. Only when scripts run: without
+     them nothing would ever release the pen. (Reduced motion, unlayered
+     below, still wins.) */
   @media (scripting: enabled) {
-    .ink-sketch[data-ink-pending] .ink-draw {
+    :is(.ink-sketch[data-ink-pending], [data-ink-stage]:has(> .ink-sketch[data-ink-pending])) .ink-draw {
       animation: none;
       stroke-dashoffset: 1.05;
     }
@@ -299,6 +301,32 @@
   }
   to {
     --ink-write: 130%;
+  }
+}
+
+/* ─── Landing ──────────────────────────────────────────────────────────
+   Things that arrive as the pen passes (.ink-land): a timeline's stops, a
+   grid's columns. Each fades and settles into place over --ink-d after
+   --ink-dd. Inside a pending drawing, or a [data-ink-stage] whose own
+   drawing is pending, they wait. */
+
+@layer components {
+  .ink-land {
+    animation: ink-land calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-out) calc(var(--ink-dd) / var(--ink-speed, 1)) both;
+  }
+
+  @media (scripting: enabled) {
+    :is(.ink-sketch[data-ink-pending], [data-ink-stage]:has(> .ink-sketch[data-ink-pending])) .ink-land {
+      opacity: 0;
+      animation: none;
+    }
+  }
+}
+
+@keyframes ink-land {
+  from {
+    opacity: 0;
+    translate: 0 3px;
   }
 }
 
@@ -397,6 +425,12 @@
   .ink-write,
   :has(> .ink-sketch[data-ink-pending]) > .ink-write {
     --ink-write: 130%;
+    animation: none;
+  }
+
+  .ink-land,
+  :is(.ink-sketch[data-ink-pending], [data-ink-stage]:has(> .ink-sketch[data-ink-pending])) .ink-land {
+    opacity: 1;
     animation: none;
   }
 }

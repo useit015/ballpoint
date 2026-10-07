@@ -723,6 +723,16 @@ function ribbon(pts: InkPt[]) {
   return d;
 }
 
+/**
+ * A recorded pen line (a signature, a doodle) as one filled ribbon: `w` is
+ * the line's width at each point. A single point, a tap, is a dot.
+ */
+export function inkRibbon(points: readonly { x: number; y: number; w: number }[]) {
+  if (!points.length) return "";
+  if (points.length === 1) return blob([points[0].x, points[0].y], points[0].w * 0.6);
+  return ribbon(points as InkPt[]);
+}
+
 const blob = (p: Pt, rad: number) =>
   `M${n1(p[0] - rad)} ${n1(p[1])}a${n1(rad)} ${n1(rad)} 0 1 0 ${n1(rad * 2)} 0a${n1(rad)} ${n1(rad)} 0 1 0 ${n1(-rad * 2)} 0Z`;
 

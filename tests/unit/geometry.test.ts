@@ -55,7 +55,7 @@ const generators: Record<string, (s: number) => unknown> = {
 };
 
 // Pure helpers with no seed to vary.
-const unseeded = ["createRng", "hashSeed", "roundedRectPath"];
+const unseeded = ["createRng", "hashSeed", "roundedRectPath", "inkRibbon"];
 const exported = Object.entries(ink).filter(([name, v]) => typeof v === "function" && !unseeded.includes(name));
 
 describe("ink-sketch", () => {
