@@ -347,6 +347,7 @@ import { Switch } from "@/components/ui/switch"
       { name: "multiple", type: "boolean", default: "false", description: "On Accordion: lets more than one item stay open." },
       { name: "defaultValue", type: "string[]", description: "On Accordion: the items open to begin with." },
       { name: "AccordionTrigger seed", type: "string | number", description: "Pins the chevron's drawing." },
+      { name: "AccordionTrigger header", type: "Accordion.Header props", description: "Reaches the heading row, an h3 by default. Pass { render: <div /> } to keep it out of the page outline." },
     ],
     primitive: { name: "Accordion", href: "https://base-ui.com/react/components/accordion" },
   },
