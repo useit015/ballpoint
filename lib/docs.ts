@@ -423,7 +423,11 @@ import { Switch } from "@/components/ui/switch"
   },
   dialog: {
     group: "Components",
-    examples: ["dialog-demo"],
+    examples: ["dialog-demo", "dialog-controlled", "dialog-scroll"],
+    exampleTitles: {
+      "dialog-controlled": { title: "Controlled", description: "Own the open state to close the dialog from code, here when the form is submitted." },
+      "dialog-scroll": { title: "Long content", description: "A scrolling region inside a dialog, reachable from the keyboard." },
+    },
     usage: `import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -459,7 +463,10 @@ import {
   },
   "alert-dialog": {
     group: "Components",
-    examples: ["alert-dialog-demo"],
+    examples: ["alert-dialog-demo", "alert-dialog-confirm"],
+    exampleTitles: {
+      "alert-dialog-confirm": { title: "Confirming an action", description: "The action runs only when confirmed; cancelling leaves things as they were." },
+    },
     usage: `import {
   AlertDialog,
   AlertDialogAction,
@@ -497,7 +504,10 @@ import { Button } from "@/components/ui/button"
   },
   sheet: {
     group: "Components",
-    examples: ["sheet-demo"],
+    examples: ["sheet-demo", "sheet-nav"],
+    exampleTitles: {
+      "sheet-nav": { title: "Navigation menu", description: "A sheet from the left holding a list of links." },
+    },
     usage: `import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
@@ -520,7 +530,10 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
   },
   popover: {
     group: "Components",
-    examples: ["popover-demo"],
+    examples: ["popover-demo", "popover-actions"],
+    exampleTitles: {
+      "popover-actions": { title: "Account menu", description: "An avatar that opens a small card of actions." },
+    },
     usage: `import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
@@ -539,7 +552,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
   },
   tooltip: {
     group: "Components",
-    examples: ["tooltip-demo"],
+    examples: ["tooltip-demo", "tooltip-sides", "tooltip-shortcut"],
+    exampleTitles: {
+      "tooltip-sides": { title: "Sides", description: "Which edge of the trigger the tooltip opens on." },
+      "tooltip-shortcut": { title: "With a shortcut", description: "Name a tool and show the key that triggers it." },
+    },
     usage: `import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -560,7 +577,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
   },
   "dropdown-menu": {
     group: "Components",
-    examples: ["dropdown-menu-demo"],
+    examples: ["dropdown-menu-demo", "dropdown-menu-row-actions"],
+    exampleTitles: {
+      "dropdown-menu-row-actions": { title: "Row actions", description: "An icon trigger for each row, with a destructive item set apart." },
+    },
     usage: `import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -592,7 +612,11 @@ import {
   },
   select: {
     group: "Components",
-    examples: ["select-demo"],
+    examples: ["select-demo", "select-form", "select-controlled"],
+    exampleTitles: {
+      "select-form": { title: "In a form", description: "With a label, a hint, and an invalid state." },
+      "select-controlled": { title: "Controlled", description: "Read the chosen value from state." },
+    },
     usage: `import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const pens = [
@@ -623,7 +647,10 @@ const pens = [
   },
   toast: {
     group: "Components",
-    examples: ["toast-demo"],
+    examples: ["toast-demo", "toast-actions"],
+    exampleTitles: {
+      "toast-actions": { title: "More kinds", description: "Info, warning, a note that stays until closed, and clearing them all." },
+    },
     usage: `// app/layout.tsx: once, near the root
 import { Toaster } from "@/components/ui/toast"
 
