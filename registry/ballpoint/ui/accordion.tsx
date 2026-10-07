@@ -32,10 +32,20 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   );
 }
 
-/** The heading row; its drawn chevron turns over when the item opens. */
-function AccordionTrigger({ className, children, seed, ...props }: AccordionPrimitive.Trigger.Props & { seed?: string | number }) {
+/**
+ * The heading row; its drawn chevron turns over when the item opens. The row
+ * is an `<h3>`; `header` reaches it, e.g. `header={{ render: <div /> }}` when
+ * the row shouldn't join the page's outline.
+ */
+function AccordionTrigger({
+  className,
+  children,
+  seed,
+  header,
+  ...props
+}: AccordionPrimitive.Trigger.Props & { seed?: string | number; header?: AccordionPrimitive.Header.Props }) {
   return (
-    <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Header {...header} className={cn("flex", header?.className)}>
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
