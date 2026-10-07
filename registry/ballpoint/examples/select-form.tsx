@@ -7,6 +7,13 @@ const sizes = [
   { label: "Letter", value: "letter" },
 ];
 
+const rulings = [
+  { label: "Lined", value: "lined" },
+  { label: "Grid", value: "grid" },
+  { label: "Dotted", value: "dotted" },
+  { label: "Blank", value: "blank" },
+];
+
 export default function SelectForm() {
   return (
     <div className="grid w-full max-w-sm gap-6">
@@ -28,12 +35,12 @@ export default function SelectForm() {
       </Field>
       <Field data-invalid>
         <FieldLabel htmlFor="sf-ruling">Ruling</FieldLabel>
-        <Select items={sizes}>
+        <Select items={rulings}>
           <SelectTrigger id="sf-ruling" aria-invalid className="w-full" seed="sf-ruling">
             <SelectValue placeholder="Choose one" />
           </SelectTrigger>
           <SelectContent seed="sf-ruling-list">
-            {sizes.map((s) => (
+            {rulings.map((s) => (
               <SelectItem key={s.value} value={s.value}>
                 {s.label}
               </SelectItem>
