@@ -83,6 +83,18 @@ import TabsVertical from "@/registry/ballpoint/examples/tabs-vertical";
 import TabsIcons from "@/registry/ballpoint/examples/tabs-icons";
 import AccordionMultiple from "@/registry/ballpoint/examples/accordion-multiple";
 
+import DialogControlled from "@/registry/ballpoint/examples/dialog-controlled";
+import DialogScroll from "@/registry/ballpoint/examples/dialog-scroll";
+import AlertDialogConfirm from "@/registry/ballpoint/examples/alert-dialog-confirm";
+import SheetNav from "@/registry/ballpoint/examples/sheet-nav";
+import PopoverActions from "@/registry/ballpoint/examples/popover-actions";
+import TooltipSides from "@/registry/ballpoint/examples/tooltip-sides";
+import TooltipShortcut from "@/registry/ballpoint/examples/tooltip-shortcut";
+import DropdownMenuRowActions from "@/registry/ballpoint/examples/dropdown-menu-row-actions";
+import SelectForm from "@/registry/ballpoint/examples/select-form";
+import SelectControlled from "@/registry/ballpoint/examples/select-controlled";
+import ToastActions from "@/registry/ballpoint/examples/toast-actions";
+
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
   "button-pens": ButtonPens,
@@ -146,6 +158,17 @@ export const examples: Record<string, ComponentType> = {
   "dropdown-menu-demo": DropdownMenuDemo,
   "select-demo": SelectDemo,
   "toast-demo": ToastDemo,
+  "dialog-controlled": DialogControlled,
+  "dialog-scroll": DialogScroll,
+  "alert-dialog-confirm": AlertDialogConfirm,
+  "sheet-nav": SheetNav,
+  "popover-actions": PopoverActions,
+  "tooltip-sides": TooltipSides,
+  "tooltip-shortcut": TooltipShortcut,
+  "dropdown-menu-row-actions": DropdownMenuRowActions,
+  "select-form": SelectForm,
+  "select-controlled": SelectControlled,
+  "toast-actions": ToastActions,
   "ink-icons-demo": InkIconsDemo,
   "annotate-demo": AnnotateDemo,
   "annotate-types": AnnotateTypes,
