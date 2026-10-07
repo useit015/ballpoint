@@ -45,9 +45,10 @@ test("radio: arrows move the choice and the dot follows", async ({ page }) => {
 
 test("choice card: clicking the card chooses it and inks its box", async ({ page }) => {
   await open(page, "/docs/radio-group", "light");
-  await page.locator("[data-preview]").getByText("Navy, for the lamp.").click();
-  await expect(page.getByRole("radio", { name: /Night/ })).toHaveAttribute("aria-checked", "true");
-  const outline = page.locator('[data-slot="field-label"]', { hasText: "Night" }).locator("svg.ink-sketch").first();
+  const preview = page.locator("[data-preview]").first();
+  await preview.getByText("Navy, for the lamp.").click();
+  await expect(preview.getByRole("radio", { name: /Night/ })).toHaveAttribute("aria-checked", "true");
+  const outline = preview.locator('[data-slot="field-label"]', { hasText: "Night" }).locator("svg.ink-sketch").first();
   const ink = await page.evaluate(() => getComputedStyle(document.body).color);
   // The ink eases over --dur-hover; wait for it to settle (still hovered).
   await expect.poll(() => outline.evaluate((el) => getComputedStyle(el).color)).toBe(ink);
@@ -81,8 +82,9 @@ test("slider: arrow keys move the value", async ({ page }) => {
 test.describe("input", () => {
   test("focus draws one more pass in full ink", async ({ page }) => {
     await open(page, "/docs/input", "light");
-    const field = page.getByLabel("Email");
-    const pass = page.locator('[data-slot="input"]').first().locator("path.ink-focus-draw");
+    const preview = page.locator("[data-preview]").first();
+    const field = preview.getByLabel("Email");
+    const pass = preview.locator('[data-slot="input"]').first().locator("path.ink-focus-draw");
     expect(await shown(pass)).toBe(false);
     await field.focus();
     expect(await shown(pass)).toBe(true);

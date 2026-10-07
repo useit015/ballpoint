@@ -6,7 +6,7 @@ export function Disclosure({ summary, children, seed }: { summary: ReactNode; ch
   return (
     <Accordion>
       <AccordionItem value="more">
-        <AccordionTrigger seed={seed} className="w-fit flex-none gap-3 py-2 text-base font-normal text-ink-2 hover:text-ink">
+        <AccordionTrigger seed={seed} header={{ render: <div /> }} className="w-fit flex-none gap-3 py-2 text-base font-normal text-ink-2 hover:text-ink">
           {summary}
         </AccordionTrigger>
         <AccordionContent keepMounted>
