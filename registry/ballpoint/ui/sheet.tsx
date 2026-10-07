@@ -67,7 +67,7 @@ function SheetContent({
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "ink-paper fixed isolate z-50 flex flex-col gap-4 text-base text-popover-foreground outline-none",
+          "ink-paper fixed isolate z-50 flex flex-col gap-5 text-base text-popover-foreground outline-none",
           "transition-[translate,opacity] duration-(--dur-enter) ease-out-expo data-ending-style:duration-(--dur-state) data-ending-style:ease-in",
           "motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0",
           "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[85dvh] motion-safe:data-[side=bottom]:data-starting-style:translate-y-full motion-safe:data-[side=bottom]:data-ending-style:translate-y-full",
@@ -91,7 +91,7 @@ function SheetContent({
   );
 }
 
-const SHADOW = 9;
+const SHADOW = 11;
 
 /** The ruled inner edge and the strip of hatching it casts onto the page. */
 function SheetEdge({ side, pen, seed }: { side: Side; pen: Pen; seed?: string | number }) {
@@ -110,15 +110,15 @@ function SheetEdge({ side, pen, seed }: { side: Side; pen: Pen; seed?: string | 
       across
         ? lineStroke(s + n, [at + off * out, -4], [at + off * out, len + 4], { bow: 0.8 * q, jitter: 0.6 * q, overshoot: 2 })
         : lineStroke(s + n, [-4, at + off * out], [len + 4, at + off * out], { bow: 0.8 * q, jitter: 0.6 * q, overshoot: 2 });
-    const strip = hatchStrokes(s + 5, across ? SHADOW : len, across ? len : SHADOW, { gap: 3.4, angle: -45, jitter: 0.5 * q }).join("");
+    const strip = hatchStrokes(s + 5, across ? SHADOW : len, across ? len : SHADOW, { gap: 4.2, angle: -45, jitter: 0.5 * q }).join("");
     const sx = across ? (out < 0 ? at - SHADOW : at) : 0;
     const sy = across ? 0 : out < 0 ? at - SHADOW : at;
-    return { edges: [line(0, 0), line(1, 1.6)], strip, shift: `translate(${sx} ${sy})` };
+    return { edges: [line(0, 0), line(1, 2.4)], strip, shift: `translate(${sx} ${sy})` };
   }, [across, side, s, w, h, q]);
   return (
     <InkSvg ref={ref} {...frame} className="-z-10 text-ink-line" style={{ ...frame.style, ...penStyle(pen) }}>
-      <g transform={paths.shift} opacity={0.6}>
-        <Stroke d={paths.strip} width={0.9} />
+      <g transform={paths.shift} opacity={0.5}>
+        <Stroke d={paths.strip} width={0.8} />
       </g>
       {paths.edges.map((d, i) => (
         <Stroke key={i} d={d} draw={mode} delay={i * 180} duration={520} width={[1.3, 0.9][i]} opacity={[1, 0.6][i]} />
@@ -128,11 +128,11 @@ function SheetEdge({ side, pen, seed }: { side: Side; pen: Pen; seed?: string | 
 }
 
 function SheetHeader({ className, ...props }: ComponentProps<"div">) {
-  return <div data-slot="sheet-header" className={cn("flex flex-col gap-1.5 p-6 pr-14", className)} {...props} />;
+  return <div data-slot="sheet-header" className={cn("flex flex-col gap-1.5 px-6 pt-6 pr-14", className)} {...props} />;
 }
 
 function SheetFooter({ className, ...props }: ComponentProps<"div">) {
-  return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-3 p-6", className)} {...props} />;
+  return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-3 px-6 pt-1 pb-6", className)} {...props} />;
 }
 
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
