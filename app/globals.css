@@ -392,3 +392,175 @@ body {
     scroll-behavior: auto;
   }
 }
+
+/* ─── Front page ─────────────────────────────────────────────────────────
+   The hero's sentence (components/landing/hero-line.tsx) is set at a few
+   fixed sizes, so the controls inside it can be zoomed to match the words:
+   --fs is the type size in px, and each control's zoom is the share of the
+   line it should fill over its own natural height. */
+
+.hero-line {
+  --fs: 46;
+  font-size: calc(var(--fs) * 1px);
+  line-height: 1.12;
+  /* Gaegu's spaces are wide at this size; a hand writes words closer. */
+  word-spacing: -0.12em;
+}
+
+@media (min-width: 40rem) {
+  .hero-line {
+    --fs: 66;
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero-line {
+    --fs: 90;
+  }
+}
+
+@media (min-width: 80rem) {
+  .hero-line {
+    --fs: 110;
+  }
+}
+
+.hero-line .pen-at {
+  display: inline-flex;
+  /* Every line is the pen's own: one ballpoint, whatever the zoom. */
+  --ink-speed: 1.5;
+}
+
+/* The pen that writes the sentence (components/landing/writing-pen.tsx). */
+@property --pen-x {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --pen-y {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --pen-turn {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --pen-lift {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.writing-pen {
+  transform: translate(var(--pen-x), var(--pen-y)) rotate(var(--pen-turn)) scale(calc(1 + var(--pen-lift) * 0.04));
+}
+
+/* Words keep their own pace, even inside a control. */
+.hero-line .ink-write {
+  --ink-speed: 1;
+}
+
+.hero-press {
+  zoom: calc(var(--fs) * 0.8 / 48);
+}
+
+.hero-press [data-slot="button"] {
+  font-size: 1.85rem;
+}
+
+.hero-tick {
+  zoom: calc(var(--fs) * 0.5 / 20);
+  vertical-align: -0.02em;
+}
+
+.hero-flip {
+  zoom: calc(var(--fs) * 0.46 / 24);
+}
+
+/* Drawn when the pen gets there: --pen-at holds every stroke, fill and
+   thumb inside back until then (strokes keep their own delays after it). */
+.pen-at .ink-draw {
+  animation-delay: calc(var(--pen-at, 0ms) + var(--ink-dd) / var(--ink-speed, 1));
+}
+
+.pen-at :is(.ink-fill, .ink-checked-draw, [data-slot="switch-thumb"]) {
+  animation: pen-arrive 320ms var(--ease-out) calc(var(--pen-at, 0ms) + 260ms) both;
+}
+
+@keyframes pen-arrive {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pen-at :is(.ink-fill, .ink-checked-draw, [data-slot="switch-thumb"]) {
+    animation: none;
+  }
+}
+
+/* A notebook page: printed rules and a red margin, under the writing. */
+.notebook {
+  --notebook-margin: 2.5rem;
+  isolation: isolate;
+}
+
+.notebook::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(var(--notebook-margin) - 1px),
+      color-mix(in oklab, var(--pen-red) 42%, transparent) calc(var(--notebook-margin) - 1px) var(--notebook-margin),
+      transparent var(--notebook-margin)
+    ),
+    repeating-linear-gradient(to bottom, transparent 0 calc(2rem - 1px), color-mix(in oklab, var(--ink) 12%, transparent) calc(2rem - 1px) 2rem);
+  background-position:
+    0 0,
+    0 0.45rem;
+}
+
+@media (min-width: 40rem) {
+  .notebook {
+    --notebook-margin: 3.5rem;
+  }
+}
+
+/* A block shaded in solid with the pen (components/landing/inked-block.tsx):
+   on it the page's colours turn over, paper-coloured writing on the ink.
+   Its writing settles in once the shading is done. */
+.inked {
+  --was-ink: var(--ink);
+  --was-paper: var(--paper);
+  --was-red: var(--pen-red);
+}
+
+.inked-face {
+  --ink: var(--was-paper);
+  --paper: var(--was-ink);
+  --pen-red: var(--was-paper);
+  --paper-tile: none;
+  color: var(--ink);
+}
+
+/* Slips laid on the block keep the page's own colours. */
+.inked-unturn {
+  --ink: var(--was-ink);
+  --paper: var(--was-paper);
+  --pen-red: var(--was-red);
+  color: var(--ink);
+}
+
+.inked-face > .ink-land {
+  --ink-d: 700ms;
+  --ink-dd: calc(var(--inked-takes, 1500ms) * 0.75);
+}
