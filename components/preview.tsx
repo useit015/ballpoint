@@ -5,12 +5,13 @@ import { InkProvider } from "@/registry/ballpoint/hooks/use-ink-box";
 import { Button } from "@/registry/ballpoint/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/ballpoint/ui/tabs";
 import { cn } from "@/lib/utils";
+import { slipProps } from "@/lib/slip";
 
 /**
  * A live example and its code. "Redraw" hands the example a new salt and
  * remounts it, so every stroke is drawn in again by a slightly different hand.
  */
-export function Preview({ children, code, className }: { children: ReactNode; code: ReactNode; className?: string }) {
+export function Preview({ children, code, className, seed }: { children: ReactNode; code: ReactNode; className?: string; seed?: string }) {
   const [tab, setTab] = useState("preview");
   const [salt, setSalt] = useState(0);
   return (
@@ -29,7 +30,7 @@ export function Preview({ children, code, className }: { children: ReactNode; co
       <TabsContent value="preview" keepMounted>
         {/* Every example sits centred on the same cream slip as the code,
             and draws on it as its paper. */}
-        <div data-preview="" data-ink-scope="" className="slip flex min-h-72 items-center justify-center px-6 py-12 text-foreground sm:px-10">
+        <div data-preview="" data-ink-scope="" {...slipProps(`preview-${seed ?? "example"}`, { allow: ["plain", "stained", "folded", "taped"] })} className="slip flex min-h-72 items-center justify-center px-6 py-12 text-foreground sm:px-10">
           <InkProvider key={salt} salt={salt === 0 ? undefined : salt}>
             {children}
           </InkProvider>

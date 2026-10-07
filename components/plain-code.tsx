@@ -6,6 +6,7 @@ export function PlainCode({ code, title, className }: { code: string; title?: st
   return (
     <CodeFrame
       className={className}
+      seed={`plain-${title}`}
       header={
         <>
           <span className="truncate text-sm text-ink-3">{title}</span>
