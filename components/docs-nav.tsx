@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
+import type { NavGroup } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-export type NavGroup = { title: string; links: { href: string; title: string }[] };
+export type { NavGroup };
 
-export function DocsNav({ groups }: { groups: NavGroup[] }) {
+export function DocsNav({ groups, onNavigate }: { groups: NavGroup[]; onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
     <nav aria-label="Docs" className="flex flex-col gap-6">
@@ -21,6 +22,7 @@ export function DocsNav({ groups }: { groups: NavGroup[] }) {
                 <li key={link.href}>
                   <Link
                     href={link.href}
+                    onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
                     className={cn("relative inline-block transition-colors", active ? "font-bold text-ink" : "text-ink-2 hover:text-ink")}
                   >

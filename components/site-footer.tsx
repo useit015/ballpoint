@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { inkRules } from "@/registry/ballpoint/lib/ink";
+import { Separator } from "@/registry/ballpoint/ui/separator";
 
 /** A ruled line and a few words at the foot of every page. */
 export function SiteFooter() {
   return (
-    <footer className="mx-auto w-full max-w-6xl px-4 pb-10 sm:px-8" style={inkRules}>
-      <div className="h-[5px] bg-ink-4 [mask-image:var(--ink-rule-2)] [mask-size:100%_100%] [mask-repeat:no-repeat]" />
+    <footer className="mx-auto w-full max-w-[85rem] px-4 pb-10 sm:px-8">
+      <Separator seed="footer-rule" />
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-6 text-sm text-ink-3">
         <p>
           Drawn by{" "}

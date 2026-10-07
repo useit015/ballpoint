@@ -1,14 +1,21 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { DocPage } from "@/components/doc-page";
 import { Heading } from "@/components/heading";
+import { TextLink } from "@/components/text-link";
+import type { TocItem } from "@/components/toc";
 import { PaperSheet, PenSheet } from "@/components/theme-sheets";
 import { papers, pens, type PaperName } from "@/registry/themes";
 
 export const metadata: Metadata = { title: "Pens and papers" };
 
+const toc: TocItem[] = [
+  { id: "pens", title: "Pens" },
+  { id: "papers", title: "Papers" },
+];
+
 export default function ThemesPage() {
   return (
-    <article className="flex flex-col gap-14">
+    <DocPage toc={toc}>
       <header className="flex flex-col gap-4">
         <Heading as="h1" id="themes" className="text-3xl">
           Pens and papers
@@ -19,9 +26,7 @@ export default function ThemesPage() {
         </p>
         <p className="text-ink-3">
           Switch the lamp in the corner to see them at night, or mix your own in the{" "}
-          <Link href="/customize" className="underline decoration-ink-4 underline-offset-4 hover:decoration-ink">
-            customizer
-          </Link>
+          <TextLink href="/customize">customizer</TextLink>
           .
         </p>
       </header>
@@ -43,6 +48,6 @@ export default function ThemesPage() {
           ))}
         </div>
       </section>
-    </article>
+    </DocPage>
   );
 }
