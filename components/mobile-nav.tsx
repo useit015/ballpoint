@@ -21,7 +21,7 @@ export function MobileNav({ groups }: { groups: NavGroup[] }) {
           <SheetTitle>Contents</SheetTitle>
           <SheetDescription className="sr-only">Every page in the docs.</SheetDescription>
         </SheetHeader>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-8 pl-9">
+        <div className="no-scrollbar-docs min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-8 pl-9">
           <DocsNav groups={groups} onNavigate={() => setOpen(false)} />
         </div>
       </SheetContent>
