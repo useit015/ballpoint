@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Gaegu, Recursive } from "next/font/google";
+import { PaperMarks } from "@/components/paper-marks";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -32,7 +33,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="flex min-h-dvh flex-col">
+      <body className="relative flex min-h-dvh flex-col">
+        <PaperMarks />
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-paper focus:px-3 focus:py-1.5">
           Skip to content
         </a>

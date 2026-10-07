@@ -61,6 +61,12 @@
    clears 5:1 on its slip, on every paper, by day and by night. */
 :root {
   --paper-tile: url("/paper/cream-light.svg");
+  /* What the sheet picked up on a desk (components/paper-marks.tsx): a dried
+     coffee ring and age spots, pressed into the paper by day. */
+  --stain: oklch(0.5 0.075 62);
+  --stain-strength: 0.5;
+  --stain-blend: multiply;
+  --lamp: none;
   /* Code and examples sit on a slip of cream a shade lighter than the page
      (scripts/paper-tiles.ts makes its texture from the same mix). */
   --slip: color-mix(in oklab, var(--paper) 80%, white);
@@ -68,7 +74,7 @@
   /* A sheet lying on the page: a contact shadow and a soft one under it. */
   --sheet-shadow: 0 0.5px 1px oklch(0.35 0.03 70 / 0.16), 0 3px 10px -3px oklch(0.35 0.03 70 / 0.2);
   /* A slip lies flatter still. */
-  --slip-shadow: 0 0.5px 1px oklch(0.35 0.03 70 / 0.1), 0 2px 6px -3px oklch(0.35 0.03 70 / 0.12);
+  --slip-shadow: inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.35 0.03 70 / 0.06), 0 0.5px 1px oklch(0.35 0.03 70 / 0.1), 0 2px 6px -3px oklch(0.35 0.03 70 / 0.12);
   --code-plain: oklch(0.26 0.012 265);
   --code-string: oklch(0.38 0.1 158);
   --code-pencil: oklch(0.37 0.012 255);
@@ -76,11 +82,20 @@
 
 .dark {
   --paper-tile: url("/paper/cream-dark.svg");
+  /* At night a dried coffee ring catches the light: a faint warm tide line
+     on the navy rather than a dark mark. A desk lamp lights the sheet a touch
+     warmer near the top, falling off toward the edges, fixed to the viewport. */
+  --stain: oklch(0.78 0.05 70);
+  --stain-strength: 0.14;
+  --stain-blend: screen;
+  --lamp:
+    radial-gradient(90% 70% at 50% 18%, oklch(0.75 0.06 80 / 0.07), transparent 70%),
+    radial-gradient(130% 100% at 50% 40%, transparent 55%, oklch(0.1 0.03 266 / 0.55) 100%);
   /* At night the slip catches a little of the pen's light instead. */
   --slip: color-mix(in oklab, var(--paper) 94%, var(--ink));
   --slip-tile: url("/paper/slip-dark.svg");
   --sheet-shadow: 0 0.5px 1px oklch(0 0 0 / 0.5), 0 4px 12px -3px oklch(0 0 0 / 0.55);
-  --slip-shadow: 0 0.5px 1px oklch(0 0 0 / 0.4), 0 2px 8px -3px oklch(0 0 0 / 0.4);
+  --slip-shadow: inset 0 1px 0 oklch(1 0 0 / 0.07), inset 0 -1px 0 oklch(0 0 0 / 0.18), 0 0.5px 1px oklch(0 0 0 / 0.4), 0 2px 8px -3px oklch(0 0 0 / 0.4);
   --code-plain: oklch(0.94 0.006 265);
   --code-string: oklch(0.88 0.08 158);
   --code-pencil: oklch(0.86 0.01 255);
@@ -150,6 +165,59 @@ html,
   --paper: var(--paper-night);
   --pen-red: var(--red-night);
   --paper-tile: var(--tile-night);
+}
+
+/* Paper marks and lamp light: only where there's room to enjoy them, so a
+   phone never pays for a blended full-page layer. */
+.paper-marks {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .paper-marks {
+    display: block;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -20;
+    pointer-events: none;
+    background: var(--lamp);
+  }
+}
+
+.paper-stain,
+.paper-foxing {
+  position: absolute;
+  background: var(--stain);
+  opacity: var(--stain-strength);
+  mix-blend-mode: var(--stain-blend);
+}
+
+.paper-stain {
+  translate: -50% -50%;
+  -webkit-mask: url("/stain-ring.svg") center / contain no-repeat;
+  mask: url("/stain-ring.svg") center / contain no-repeat;
+}
+
+.paper-stain.opacity-55 {
+  opacity: calc(var(--stain-strength) * 0.55);
+}
+
+.paper-foxing {
+  inset: 0;
+  opacity: calc(var(--stain-strength) * 0.8);
+  -webkit-mask: url("/stain-foxing.svg") 0 0 / 900px 1300px repeat;
+  mask: url("/stain-foxing.svg") 0 0 / 900px 1300px repeat;
+}
+
+@media print {
+  .paper-marks,
+  body::before {
+    display: none !important;
+  }
 }
 
 html {
