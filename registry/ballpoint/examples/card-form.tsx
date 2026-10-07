@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/registry/ballpoint/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/registry/ballpoint/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/registry/ballpoint/ui/field";
@@ -11,7 +13,7 @@ export default function CardForm() {
         <CardDescription>Use the email you booked with.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form id="cf-form">
+        <form id="cf-form" onSubmit={(event) => event.preventDefault()}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="cf-email">Email</FieldLabel>
