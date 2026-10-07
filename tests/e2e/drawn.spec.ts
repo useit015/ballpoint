@@ -103,9 +103,19 @@ test("paper: textured, ruled on the baseline, rings where asked", async ({ page 
 test("ink icons: every icon is drawn, and can be named", async ({ page }) => {
   await page.goto("/docs/ink-icons", { waitUntil: "networkidle" });
   const icons = page.locator("[data-preview] svg[data-slot=ink-glyph]");
-  expect(await icons.count()).toBeGreaterThanOrEqual(50);
+  expect(await icons.count()).toBeGreaterThanOrEqual(150);
   for (const icon of await icons.all()) {
     expect(await icon.locator("path").count()).toBeGreaterThan(0);
     await expect(icon).toHaveAttribute("aria-hidden", "true");
   }
+  // Every pull stays on the 16px grid (a hand overruns a little, not off the page).
+  const strays = await icons.evaluateAll((svgs) =>
+    svgs.flatMap((svg) =>
+      [...svg.querySelectorAll("path")].flatMap((path) => {
+        const b = (path as SVGPathElement).getBBox();
+        return b.x < -0.5 || b.y < -0.5 || b.x + b.width > 16.5 || b.y + b.height > 16.5 ? [svg.getAttribute("data-glyph")] : [];
+      }),
+    ),
+  );
+  expect(strays).toEqual([]);
 });
