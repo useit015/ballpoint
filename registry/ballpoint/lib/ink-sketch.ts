@@ -753,9 +753,10 @@ export type InkStroke = {
  * second pass goes over the first run, and a stray dash follows the lift.
  * Fits roughly -18…w+18 by -2…16.
  */
-export function underlineInk(seed: number, w: number, { weight = 2.5 } = {}): InkStroke[] {
+export function underlineInk(seed: number, w: number, { weight = 2.5, lead = 0 } = {}): InkStroke[] {
   const r = createRng(seed);
-  const start: Pt = [-12 - r() * 4, 12.5 + spread(r, 0.8)];
+  // `lead` moves the landing right, for a heading that must not reach into its neighbours.
+  const start: Pt = [lead - 12 - r() * 4, 12.5 + spread(r, 0.8)];
   const turn: Pt = [w * (0.5 + r() * 0.12), 3.6 + spread(r, 0.6)];
   // The snap is short and steep — a flick, not a second line.
   const back: Pt = [turn[0] - Math.min(38, Math.max(15, w * (0.07 + r() * 0.04))), 10.2 + spread(r, 0.6)];
@@ -874,4 +875,71 @@ export function swipePath(seed: number, w: number, h: number, { inset = 1.5 } = 
   const end: Pt = [w + spread(r, 1.2), h / 2 + spread(r, 2)];
   const start: Pt = [spread(r, 1.2), h / 2 + spread(r, 2)];
   return `${smooth([start, ...upper, end])}${smooth([end, ...lower, start]).replace(/^M/, "L")}Z`;
+}
+
+// ─── Underline shapes ───────────────────────────────────────────────────
+// A heading's underline is whatever the hand felt like: one of these, picked
+// by the heading's seed, so each title keeps its own and no two in a row are
+// likely to match. All of them stay inside -4…w and 1…19, so a title never
+// strikes through, or into, the thing beside it.
+
+export const underlineShapes = ["swoosh", "double", "wave", "zigzag", "loop", "flick"] as const;
+export type UnderlineShape = (typeof underlineShapes)[number];
+
+/** The shape a seed picks. */
+export const underlineShapeFor = (seed: number): UnderlineShape => underlineShapes[seed % underlineShapes.length];
+
+/** An underline for a title `w` wide, in one of `underlineShapes`; inside -4…w by 1…19. */
+export function underlineShape(seed: number, w: number, shape: UnderlineShape = underlineShapeFor(seed)): InkStroke[] {
+  const r = createRng(seed);
+  const weight = { weight: 2.4 };
+  switch (shape) {
+    case "swoosh":
+      // The dash after the lift reaches ~30px past the end, so the run is shortened to fit.
+      return underlineInk(seed, Math.max(40, (w - 30) / 1.07), { ...weight, lead: 12 });
+    case "double": {
+      // Two pulls, the second shorter and a little under the first, gone over twice.
+      const y = 7 + r() * 2;
+      const a: Pt[] = [[0, y + 2], [w * 0.5, y - 0.4], [w - 4, y - 1.4]];
+      const b: Pt[] = [[w * (0.1 + r() * 0.1), y + 7.5], [w * 0.55, y + 5.8], [w * (0.8 + r() * 0.1), y + 5]];
+      return inkPulls(seed, [a, b], { ...weight, dur: 330, retrace: 0.5, wander: 1.1, gap: 90 });
+    }
+    case "wave": {
+      // A tilde stretched under the title: two or three swells, dipping from a level line.
+      const swells = Math.max(2, Math.round(w / 70));
+      const y = 9 + r() * 2;
+      const amp = 3.2 + r() * 1.6;
+      const steps = swells * 4;
+      const pts: Pt[] = Array.from({ length: steps + 1 }, (_, i) => [1 + ((w - 5) * i) / steps, y + Math.sin((i / 4) * Math.PI * 2) * amp + (i ? spread(r, 0.5) : 0)]);
+      return inkPulls(seed, [pts], { ...weight, weight: 2.2, dur: 380, bow: 0.3 });
+    }
+    case "zigzag": {
+      // Quick sharp zigs, the way a pen is tried out, with a plain pull to finish.
+      const step = 6 + r() * 3;
+      const pts: Pt[] = [];
+      for (let x = 0, up = true; x < w - 8; x += step, up = !up) pts.push([x + 2 + spread(r, 0.6), (up ? 5 : 13) + spread(r, 1.1)]);
+      return inkPulls(seed, [pts, [[w * 0.1, 16.5], [w - 4, 15 + spread(r, 1)]]], { ...weight, weight: 1.9, dur: 150, gap: 120, bow: 0.25 });
+    }
+    case "loop": {
+      // A long pull that ends in a loop, the pen still going as it lifts.
+      const y = 11 + spread(r, 1);
+      const end = w - 14;
+      const rad = 4.2 + r() * 1.2;
+      const loop: Pt[] = Array.from({ length: 11 }, (_, i) => {
+        const a = (i / 10) * Math.PI * 2 - Math.PI / 2;
+        return [end + Math.cos(a) * rad + i * 0.5, y - 1.6 + Math.sin(a) * rad] as Pt;
+      });
+      return inkPulls(seed, [[[0, y + 3], [w * 0.4, y + 0.2], [end - 4, y - 0.4], ...loop, [w - 3, y - 0.6]]], { ...weight, dur: 600, bow: 0.5 });
+    }
+    case "flick": {
+      // A level pull, then three short ticks flicked off its tail.
+      const y = 11 + r() * 3;
+      const tail = Math.max(24, w * 0.3);
+      const ticks: Pt[][] = [0, 1, 2].map((i) => {
+        const x = w - tail * (0.9 - i * 0.28) - 2;
+        return [[x, y + 6.5 + spread(r, 0.6)], [x + 5 + spread(r, 1), y - 0.8 + spread(r, 0.6)]];
+      });
+      return inkPulls(seed, [[[0, y + 1.5], [w * 0.5, y - 0.6], [w - 4, y + 0.4]], ...ticks], { ...weight, dur: 260, gap: 70, retrace: 0.3 });
+    }
+  }
 }
