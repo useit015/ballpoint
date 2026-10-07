@@ -346,7 +346,7 @@ export const items: Item[] = [
     name: "ink-icons",
     type: "registry:ui",
     title: "Ink Icons",
-    description: "Everyday UI icons drawn with the pen on a 16px grid: copy, search, mail, sun and moon, and fifty more. They take the text colour and can draw themselves in.",
+    description: "Everyday UI icons drawn with the pen on a 16px grid: copy, search, mail, sun and moon, and over a hundred and fifty more. They take the text colour and can draw themselves in.",
     author,
     registryDependencies: ["@ballpoint/ink-core"],
     files: [{ path: "registry/ballpoint/ui/ink-icons.tsx", type: "registry:ui" }],
