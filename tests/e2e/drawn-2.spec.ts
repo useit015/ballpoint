@@ -82,7 +82,7 @@ test("signature pad: required stops an unsigned form; clear empties it", async (
 
 test("hatch grid: a year of days, the future dotted, hovering says what a day holds", async ({ page }) => {
   await page.goto("/docs/hatch-grid", { waitUntil: "networkidle" });
-  const grid = page.locator("[data-slot=hatch-grid]");
+  const grid = page.locator("[data-preview]").first().locator("[data-slot=hatch-grid]");
   const days = grid.locator("svg use");
   await expect(days).toHaveCount(365);
   // After 2026-10-06, still to come.
@@ -116,7 +116,7 @@ test("timeline: stops wait for the arrow, then land in order as the pen passes",
 test("ink theme toggle: switches the theme, remembers it, and says what it will do", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
   await page.goto("/docs/ink-theme-toggle", { waitUntil: "networkidle" });
-  const toggle = page.locator("[data-preview] [data-slot=ink-theme-toggle]");
+  const toggle = page.locator("[data-preview]").first().locator("[data-slot=ink-theme-toggle]");
   await expect(toggle).toHaveAccessibleName("Switch to dark theme");
   await toggle.click();
   await expect(page.locator("html")).toHaveClass(/dark/);
@@ -130,12 +130,13 @@ test("ink theme toggle: switches the theme, remembers it, and says what it will 
 test("margin note: out in the margin on wide screens, under the line on narrow ones", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/docs/margin-note", { waitUntil: "networkidle" });
-  const note = page.locator("[data-slot=margin-note]");
+  const demo = page.locator("[data-preview]").first();
+  const note = demo.locator("[data-slot=margin-note]");
   await expect(note).toHaveAttribute("role", "note");
   expect(await note.evaluate((el) => getComputedStyle(el).float)).toBe("right");
   await expect(note.locator("svg path")).toHaveCount(2);
   // The arrow ends at the words, to the left of the note.
-  const target = (await page.locator("[data-slot=margin-note-target]").boundingBox())!;
+  const target = (await demo.locator("[data-slot=margin-note-target]").boundingBox())!;
   const noteBox = (await note.boundingBox())!;
   expect(noteBox.x).toBeGreaterThan(target.x + target.width);
 
@@ -181,7 +182,7 @@ test("redact: hidden from everyone until clicked, then shown", async ({ page }) 
 
 test("scrawls are decoration: drawn, and hidden from screen readers", async ({ page }) => {
   await page.goto("/docs/scrawl", { waitUntil: "networkidle" });
-  const scrawls = page.locator("[data-preview] [data-slot=scrawl]");
+  const scrawls = page.locator("[data-preview]").first().locator("[data-slot=scrawl]");
   await expect(scrawls).toHaveCount(4);
   for (const scrawl of await scrawls.all()) {
     await expect(scrawl).toHaveAttribute("aria-hidden", "true");

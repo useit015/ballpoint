@@ -10,7 +10,10 @@ export default function SignaturePadControls() {
   const [png, setPng] = useState("");
   return (
     <div className="flex w-full max-w-md flex-col gap-4">
-      <SignaturePad ref={pad} placeholder="Sign with your finger" onChange={(value) => setEmpty(value === "")} seed="spc-pad" />
+      <SignaturePad ref={pad} placeholder="Sign with your finger" onChange={(value) => {
+          setEmpty(value === "");
+          setPng("");
+        }} seed="spc-pad" />
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="outline" size="sm" disabled={empty} onClick={() => pad.current?.undo()} seed="spc-undo">
           Undo
