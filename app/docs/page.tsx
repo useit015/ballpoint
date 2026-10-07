@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CodeBlock } from "@/components/code-block";
+import { DocPage } from "@/components/doc-page";
+import { TextLink } from "@/components/text-link";
+import type { TocItem } from "@/components/toc";
+import { Alert, AlertDescription, AlertTitle } from "@/registry/ballpoint/ui/alert";
+import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
 import { PropsTable } from "@/components/props-table";
@@ -9,17 +13,28 @@ import { homepage } from "@/registry/manifest";
 
 export const metadata: Metadata = { title: "Installation" };
 
+const toc: TocItem[] = [
+  { id: "init", title: "1. Set up the paper and ink" },
+  { id: "add", title: "2. Add components" },
+  { id: "theming", title: "Theming" },
+  { id: "pen", title: "Pen settings" },
+];
+
 export default function Installation() {
   return (
-    <article className="flex flex-col gap-14">
+    <DocPage toc={toc}>
       <header className="flex flex-col gap-4">
         <Heading as="h1" id="installation" className="text-3xl">
           Installation
         </Heading>
         <p className="text-lg text-ink-2">
-          Ballpoint is a shadcn registry. You copy the components into your app and own them. It needs React 19 and Tailwind CSS 4; the
-          examples assume Next.js.
+          Ballpoint is a shadcn registry. You copy the components into your app and own them.
         </p>
+        <Alert seed="requirements">
+          <InkGlyph name="info-circle" className="size-5" />
+          <AlertTitle>Before you start</AlertTitle>
+          <AlertDescription>React 19 and Tailwind CSS 4. The examples assume Next.js, but nothing in the components needs it.</AlertDescription>
+        </Alert>
       </header>
 
       <section className="flex flex-col gap-5">
@@ -54,13 +69,9 @@ export default function Installation() {
         <p className="text-ink-2">
           Other pens and papers install the same way, for example{" "}
           <code className="inline-code">add @ballpoint/pen-black @ballpoint/paper-white</code>. See{" "}
-          <Link href="/docs/themes" className="underline decoration-ink-4 underline-offset-4 hover:decoration-ink">
-            pens and papers
-          </Link>
+          <TextLink href="/docs/themes">pens and papers</TextLink>
           , or try them together in the{" "}
-          <Link href="/customize" className="underline decoration-ink-4 underline-offset-4 hover:decoration-ink">
-            customizer
-          </Link>
+          <TextLink href="/customize">customizer</TextLink>
           .
         </p>
         <dl className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-[auto_1fr]">
@@ -111,6 +122,6 @@ export default function RootLayout({ children }) {
 }`}
         />
       </section>
-    </article>
+    </DocPage>
   );
 }

@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import { CodeBlock } from "@/components/code-block";
 import { Disclosure } from "@/components/disclosure";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
+import { DocPage } from "@/components/doc-page";
 import { Pager } from "@/components/pager";
+import { TextLink } from "@/components/text-link";
+import { Badge } from "@/registry/ballpoint/ui/badge";
 import { Preview } from "@/components/preview";
 import { PropsTable } from "@/components/props-table";
+import type { TocItem } from "@/components/toc";
 import { allDocs, getDoc, penProps } from "@/lib/docs";
+import { neighbours } from "@/lib/nav";
 import { exampleSource, examples, itemSource } from "@/lib/examples";
 
 export const dynamicParams = false;
@@ -23,34 +27,39 @@ export async function generateMetadata({ params }: PageProps<"/docs/[name]">): P
   return doc ? { title: doc.title, description: doc.description } : {};
 }
 
-// The sidebar's order, for the previous and next links.
-const ordered = [...allDocs].sort((a, b) => a.title.localeCompare(b.title));
-const link = (doc?: (typeof allDocs)[number]) => doc && { href: `/docs/${doc.name}`, title: doc.title };
-
-const textLink = "underline decoration-ink-4 underline-offset-4 transition-colors hover:decoration-ink";
-
 /** Every component page has the same parts, in the same order. */
 export default async function ComponentPage({ params }: PageProps<"/docs/[name]">) {
   const doc = getDoc((await params).name);
   if (!doc) notFound();
   const [main, ...more] = doc.examples;
   const Example = examples[main];
-  const at = ordered.findIndex((d) => d.name === doc.name);
   const pen = penProps.filter((prop) => doc.pen?.includes(prop.name));
+  const { prev, next } = neighbours(doc.name);
+  const toc: TocItem[] = [
+    { id: "installation", title: "Installation" },
+    { id: "usage", title: "Usage" },
+    ...(more.length ? [{ id: "examples", title: "Examples" }, ...more.map((name) => ({ id: name, title: doc.exampleTitles?.[name]?.title ?? name, depth: 3 as const }))] : []),
+    { id: "api", title: "API reference" },
+  ];
 
   return (
-    <article className="flex flex-col gap-14">
+    <DocPage toc={toc}>
       <header className="flex flex-col gap-4">
         <Heading as="h1" id={doc.name} className="text-3xl">
           {doc.title}
         </Heading>
         <p className="text-lg text-ink-2">{doc.description}</p>
-        {doc.primitive && (
-          <a href={doc.primitive.href} className="flex w-fit items-center gap-1.5 text-ink-3 transition-colors hover:text-ink">
-            Built on Base UI {doc.primitive.name}
-            <InkGlyph name="arrow-up-right" className="size-3.5" />
-          </a>
-        )}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <Badge variant={doc.group === "Drawn" ? "default" : "secondary"} seed={`${doc.name}-group`}>
+            {doc.group === "Drawn" ? "Only in Ballpoint" : "From shadcn/ui"}
+          </Badge>
+          {doc.primitive && (
+            <a href={doc.primitive.href} className="flex w-fit items-center gap-1.5 text-ink-3 transition-colors hover:text-ink">
+              Built on Base UI {doc.primitive.name}
+              <InkGlyph name="arrow-up-right" className="size-3.5" />
+            </a>
+          )}
+        </div>
       </header>
 
       <Preview code={<CodeBlock code={exampleSource(main)} />}>
@@ -80,7 +89,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
             const meta = doc.exampleTitles?.[name];
             return (
               <div key={name} className="flex flex-col gap-3">
-                <h3 id={name} className="text-xl font-bold">
+                <h3 id={name} className="scroll-mt-6 text-xl font-bold">
                   {meta?.title ?? name}
                 </h3>
                 {meta && <p className="text-ink-2">{meta.description}</p>}
@@ -99,9 +108,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
         {doc.primitive && (
           <p className="text-ink-2">
             Every other prop goes to Base UI&apos;s{" "}
-            <a href={doc.primitive.href} className={textLink}>
-              {doc.primitive.name}
-            </a>
+            <TextLink href={doc.primitive.href}>{doc.primitive.name}</TextLink>
             .
           </p>
         )}
@@ -119,16 +126,14 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
                 </span>
               ))}
               , as props or from the nearest <code className="inline-code">InkProvider</code>.{" "}
-              <Link href="/docs#pen" className={textLink}>
-                What each one does
-              </Link>
+              <TextLink href="/docs#pen">What each one does</TextLink>
               .
             </p>
           </div>
         )}
       </section>
 
-      <Pager prev={link(ordered[at - 1])} next={link(ordered[at + 1])} />
-    </article>
+      <Pager prev={prev} next={next} />
+    </DocPage>
   );
 }
