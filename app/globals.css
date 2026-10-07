@@ -8,6 +8,48 @@
 
 /* ─── Docs site only ─────────────────────────────────────────────────── */
 
+/* Scrollbars are a thin rounded pen line on the paper, never the system grey
+   bar with its arrows and well. The page, the sidebar, the contents rail and
+   code blocks all share it. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 2rem;
+  min-width: 2rem;
+  border: 4px solid transparent;
+  border-radius: 999px;
+  background: var(--ink-4) padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background: var(--ink-3) padding-box;
+}
+
+/* Chrome prefers the standard properties over the rules above, so components
+   that set their own thin bar (timeline, hatch grid) are put back on this one. */
+@supports selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: auto !important;
+    scrollbar-color: auto !important;
+  }
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ink-4) transparent;
+  }
+}
+
 @theme inline {
   --font-mono: var(--font-code), ui-monospace, monospace;
   --font-mono--font-variation-settings: "MONO" 1, "CASL" 1;
@@ -146,22 +188,6 @@ body {
   font-size: 0.9375rem;
   line-height: 1.7;
   tab-size: 2;
-  /* Long lines scroll sideways on a thin pencilled bar, never a grey one. */
-  scrollbar-width: thin;
-  scrollbar-color: var(--ink-4) transparent;
-}
-
-.code-block pre::-webkit-scrollbar {
-  height: 6px;
-}
-
-.code-block pre::-webkit-scrollbar-thumb {
-  border-radius: 3px;
-  background: var(--ink-4);
-}
-
-.code-block pre::-webkit-scrollbar-track {
-  background: transparent;
 }
 
 /* Commands are one line of words: they wrap rather than scroll. */
