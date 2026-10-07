@@ -9,7 +9,7 @@
     "dev": "pnpm registry:build && pnpm paper && next dev",
     "build": "pnpm registry:build && pnpm paper && next build",
     "start": "next start",
-    "paper": "node scripts/paper-tiles.ts",
+    "paper": "node scripts/paper-tiles.ts && node scripts/scrollbar-art.ts",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "registry:build": "node scripts/contrast.ts --quiet && node scripts/build-registry.ts && shadcn build",
