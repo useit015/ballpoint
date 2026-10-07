@@ -803,7 +803,10 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "signature-pad": {
     group: "Drawn",
-    examples: ["signature-pad-demo"],
+    examples: ["signature-pad-demo", "signature-pad-controls"],
+    exampleTitles: {
+      "signature-pad-controls": { title: "Undo, clear, export", description: "The ref hands back undo(), clear(), and exports; here a PNG, trimmed to the ink." },
+    },
     usage: `import { SignaturePad } from "@/components/ui/signature-pad"
 
 <form action={sign}>
@@ -825,7 +828,10 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "hatch-grid": {
     group: "Drawn",
-    examples: ["hatch-grid-demo"],
+    examples: ["hatch-grid-demo", "hatch-grid-custom"],
+    exampleTitles: {
+      "hatch-grid-custom": { title: "Your own levels and labels", description: "Pass level per day to set the shading yourself, and label to write the hover line." },
+    },
     usage: `import { HatchGrid } from "@/components/ui/hatch-grid"
 
 <HatchGrid
@@ -866,7 +872,10 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "ink-theme-toggle": {
     group: "Drawn",
-    examples: ["ink-theme-toggle-demo"],
+    examples: ["ink-theme-toggle-demo", "ink-theme-toggle-controlled"],
+    exampleTitles: {
+      "ink-theme-toggle-controlled": { title: "Controlled", description: "Own the theme (or hand it to next-themes) and the toggle only reports clicks." },
+    },
     usage: `import { InkThemeToggle } from "@/components/ui/ink-theme-toggle"
 
 // On its own: toggles .dark on <html> and remembers it.
@@ -884,7 +893,10 @@ const { resolvedTheme, setTheme } = useTheme()
   },
   "margin-note": {
     group: "Drawn",
-    examples: ["margin-note-demo"],
+    examples: ["margin-note-demo", "margin-note-sides"],
+    exampleTitles: {
+      "margin-note-sides": { title: "Left, and in red", description: "Flip the side, or use red for a correction." },
+    },
     usage: `import { MarginNote } from "@/components/ui/margin-note"
 
 <p className="max-w-xs">
@@ -902,7 +914,11 @@ const { resolvedTheme, setTheme } = useTheme()
   },
   checklist: {
     group: "Drawn",
-    examples: ["checklist-demo"],
+    examples: ["checklist-demo", "checklist-progress", "checklist-states"],
+    exampleTitles: {
+      "checklist-progress": { title: "With progress", description: "Controlled with value, feeding a Progress bar, with check-all and clear." },
+      "checklist-states": { title: "Disabled items", description: "Items that can't be ticked yet are paler; a disabled item can still arrive done." },
+    },
     usage: `import { Checklist, ChecklistItem } from "@/components/ui/checklist"
 
 <Checklist defaultValue={["pens"]}>
@@ -919,7 +935,10 @@ const { resolvedTheme, setTheme } = useTheme()
   },
   redact: {
     group: "Drawn",
-    examples: ["redact-demo"],
+    examples: ["redact-demo", "redact-controlled"],
+    exampleTitles: {
+      "redact-controlled": { title: "Reveal them all", description: "Control revealed and the scribbles come off together; clicking one still reports through onRevealedChange." },
+    },
     usage: `import { Redact } from "@/components/ui/redact"
 
 <p>The code name is <Redact>Blue Biro</Redact>.</p>`,
@@ -933,7 +952,10 @@ const { resolvedTheme, setTheme } = useTheme()
   },
   scrawl: {
     group: "Drawn",
-    examples: ["scrawl-demo"],
+    examples: ["scrawl-demo", "scrawl-stamp"],
+    exampleTitles: {
+      "scrawl-stamp": { title: "As a stamp", description: "Position a scrawl on a corner of a card, staggering the delay so each is drawn in turn." },
+    },
     usage: `import { Scrawl } from "@/components/ui/scrawl"
 
 <section className="relative">

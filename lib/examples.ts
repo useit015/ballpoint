@@ -47,6 +47,14 @@ import MarginNoteDemo from "@/registry/ballpoint/examples/margin-note-demo";
 import ChecklistDemo from "@/registry/ballpoint/examples/checklist-demo";
 import RedactDemo from "@/registry/ballpoint/examples/redact-demo";
 import ScrawlDemo from "@/registry/ballpoint/examples/scrawl-demo";
+import ChecklistProgress from "@/registry/ballpoint/examples/checklist-progress";
+import ChecklistStates from "@/registry/ballpoint/examples/checklist-states";
+import RedactControlled from "@/registry/ballpoint/examples/redact-controlled";
+import MarginNoteSides from "@/registry/ballpoint/examples/margin-note-sides";
+import ScrawlStamp from "@/registry/ballpoint/examples/scrawl-stamp";
+import HatchGridCustom from "@/registry/ballpoint/examples/hatch-grid-custom";
+import SignaturePadControls from "@/registry/ballpoint/examples/signature-pad-controls";
+import InkThemeToggleControlled from "@/registry/ballpoint/examples/ink-theme-toggle-controlled";
 
 import ButtonIcons from "@/registry/ballpoint/examples/button-icons";
 import ButtonLoading from "@/registry/ballpoint/examples/button-loading";
@@ -205,6 +213,14 @@ export const examples: Record<string, ComponentType> = {
   "checklist-demo": ChecklistDemo,
   "redact-demo": RedactDemo,
   "scrawl-demo": ScrawlDemo,
+  "checklist-progress": ChecklistProgress,
+  "checklist-states": ChecklistStates,
+  "redact-controlled": RedactControlled,
+  "margin-note-sides": MarginNoteSides,
+  "scrawl-stamp": ScrawlStamp,
+  "hatch-grid-custom": HatchGridCustom,
+  "signature-pad-controls": SignaturePadControls,
+  "ink-theme-toggle-controlled": InkThemeToggleControlled,
 };
 
 /** An example's source, with registry imports written the way they land in an app. */
