@@ -18,12 +18,16 @@ export type Doc = Item & {
 const docs: Record<string, Omit<Doc, keyof Item>> = {
   button: {
     group: "Components",
-    examples: ["button-demo", "button-pens"],
+    examples: ["button-demo", "button-pens", "button-icons", "button-loading", "button-link", "button-actions"],
     exampleTitles: {
       "button-pens": {
         title: "Pen settings",
         description: "Corners, roughness, weight, fills and shadows, per button or for a whole group with InkProvider.",
       },
+      "button-icons": { title: "With icons", description: "Icons sit beside the label, or stand alone in the icon sizes." },
+      "button-loading": { title: "Loading", description: "Disable the button while it works and show a spinning loop; the label says what is happening." },
+      "button-link": { title: "As a link", description: "Render the button’s drawing on an <a> with render and nativeButton={false}." },
+      "button-actions": { title: "Form actions", description: "Cancel, save and publish in order of weight; a destructive choice beside a quiet alternative." },
     },
     pen: ["draw", "roughness", "passes", "radius", "corners", "fill", "shadow", "weight", "speed"],
     usage: `import { Button } from "@/components/ui/button"
@@ -45,7 +49,12 @@ export function Actions() {
   },
   input: {
     group: "Components",
-    examples: ["input-demo"],
+    examples: ["input-demo", "input-types", "input-states", "input-with-button"],
+    exampleTitles: {
+      "input-types": { title: "Types", description: "Password, number, search and file inputs, each with a field label and hint." },
+      "input-states": { title: "States", description: "Read-only, disabled, and invalid in the box or on the line." },
+      "input-with-button": { title: "With a button", description: "An email field and a submit button on one row." },
+    },
     usage: `import { Input } from "@/components/ui/input"
 
 <Input type="email" placeholder="you@example.com" />`,
@@ -60,7 +69,12 @@ export function Actions() {
   },
   textarea: {
     group: "Components",
-    examples: ["textarea-demo"],
+    examples: ["textarea-demo", "textarea-counter", "textarea-states", "textarea-with-button"],
+    exampleTitles: {
+      "textarea-counter": { title: "Character count", description: "A live count that turns red when the note runs over." },
+      "textarea-states": { title: "States", description: "Invalid with a message, read-only and disabled." },
+      "textarea-with-button": { title: "With a button", description: "A message field with its send button." },
+    },
     usage: `import { Textarea } from "@/components/ui/textarea"
 
 <Textarea placeholder="Write something." />`,
@@ -73,7 +87,10 @@ export function Actions() {
   },
   label: {
     group: "Components",
-    examples: ["label-demo"],
+    examples: ["label-demo", "label-controls"],
+    exampleTitles: {
+      "label-controls": { title: "With controls", description: "Wrap a switch, radio or checkbox so the whole row is clickable; mark required fields; disabled controls dim their label." },
+    },
     usage: `import { Label } from "@/components/ui/label"
 
 <Label htmlFor="email">Email</Label>`,
@@ -98,7 +115,11 @@ export function Actions() {
   },
   field: {
     group: "Components",
-    examples: ["field-demo"],
+    examples: ["field-demo", "field-settings", "field-errors"],
+    exampleTitles: {
+      "field-settings": { title: "Settings list", description: "A fieldset of horizontal fields, each with a title, a hint and a switch." },
+      "field-errors": { title: "Several errors", description: "Give FieldError a list of errors and it shows each distinct message once." },
+    },
     usage: `import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
@@ -116,7 +137,11 @@ import { Input } from "@/components/ui/input"
   },
   checkbox: {
     group: "Components",
-    examples: ["checkbox-demo"],
+    examples: ["checkbox-demo", "checkbox-states", "checkbox-cards"],
+    exampleTitles: {
+      "checkbox-states": { title: "States", description: "Unchecked, checked, mixed, disabled, and invalid with an error." },
+      "checkbox-cards": { title: "Choice cards", description: "Wrap a Field in FieldLabel and the whole row becomes the target." },
+    },
     usage: `import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
@@ -133,7 +158,10 @@ import { Label } from "@/components/ui/label"
   },
   "radio-group": {
     group: "Components",
-    examples: ["radio-group-demo"],
+    examples: ["radio-group-demo", "radio-group-states"],
+    exampleTitles: {
+      "radio-group-states": { title: "States", description: "A disabled option, and a group with no choice made yet and an error." },
+    },
     usage: `import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
@@ -153,7 +181,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
   },
   switch: {
     group: "Components",
-    examples: ["switch-demo"],
+    examples: ["switch-demo", "switch-settings"],
+    exampleTitles: {
+      "switch-settings": { title: "In a card", description: "A controlled switch in a settings card, and a disabled one beside it." },
+    },
     usage: `import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 
@@ -170,7 +201,10 @@ import { Switch } from "@/components/ui/switch"
   },
   slider: {
     group: "Components",
-    examples: ["slider-demo"],
+    examples: ["slider-demo", "slider-controlled"],
+    exampleTitles: {
+      "slider-controlled": { title: "Controlled", description: "Read the value as it moves: a single pen-pressure value and a price range in steps of five." },
+    },
     usage: `import { Slider } from "@/components/ui/slider"
 
 <Slider defaultValue={40} aria-label="Roughness" />
