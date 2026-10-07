@@ -205,6 +205,14 @@
     stroke: #fff;
   }
 
+  /* A ribbon drawn in once (InkMarks, "auto" or "mount") needs its mask only
+     while the pen runs: when its guide has drawn, useInkBox marks it drawn
+     too and it is painted bare. It looks the same, and a page of finished
+     drawings doesn't paint a layer per ribbon. */
+  .ink-sketch .ink-reveal.ink-drawn {
+    mask: none;
+  }
+
   /* Draw in: the pen runs once, from its delay (--ink-dd) over --ink-d. */
   :is(.ink-sketch, .ink-glyph) .ink-draw {
     stroke-dasharray: 1.05 1.05;
@@ -274,16 +282,25 @@
    drawing it waits, unwritten, until that drawing is released. */
 
 @layer components {
+  /* The edge is a mask, four times the words' width and slid across them,
+     so --ink-write (0% to 130% of the way along) puts its fade, 18% wide,
+     where the pen is. The mask is only there for as long as the edge moves
+     (it's in the keyframes, which hold their start through the delay and
+     let go at the end): once the words are written they're painted plain,
+     with no mask layer to keep. */
   .ink-write {
     padding-inline: 0.12em 0.3em;
     margin-inline: -0.12em -0.3em;
-    mask-image: linear-gradient(90deg, #000 calc(var(--ink-write) - 18%), transparent var(--ink-write));
-    animation: ink-write calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-write) calc(var(--ink-dd) / var(--ink-speed, 1)) both;
+    mask-size: 400% 100%;
+    mask-repeat: no-repeat;
+    mask-position: calc((200% - var(--ink-write)) / 3) 0;
+    animation: ink-write calc(var(--ink-d) / var(--ink-speed, 1)) var(--ease-write) calc(var(--ink-dd) / var(--ink-speed, 1)) backwards;
   }
 
   @media (scripting: enabled) {
     :has(> .ink-sketch[data-ink-pending]) > .ink-write {
       --ink-write: 0%;
+      mask-image: linear-gradient(90deg, #000 45.5%, transparent 50%);
       animation: none;
     }
   }
@@ -298,9 +315,11 @@
 @keyframes ink-write {
   from {
     --ink-write: 0%;
+    mask-image: linear-gradient(90deg, #000 45.5%, transparent 50%);
   }
   to {
     --ink-write: 130%;
+    mask-image: linear-gradient(90deg, #000 45.5%, transparent 50%);
   }
 }
 
@@ -425,7 +444,12 @@
   .ink-write,
   :has(> .ink-sketch[data-ink-pending]) > .ink-write {
     --ink-write: 130%;
+    mask-image: none;
     animation: none;
+  }
+
+  .ink-sketch .ink-reveal {
+    mask: none;
   }
 
   .ink-land,

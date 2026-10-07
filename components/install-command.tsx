@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useSyncExternalStore } from "react";
-import { install } from "@/lib/docs";
+import { install } from "@/lib/install";
 import { CodeFrame } from "@/components/code-frame";
 import { CopyButton } from "@/components/copy-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/ballpoint/ui/tabs";

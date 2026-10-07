@@ -96,8 +96,13 @@ export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {
     // Once a stroke has drawn itself in, drop its dash pattern: it looks the
     // same, but guarantees a fresh paint (Chrome can leave a small SVG on an
     // early frame of a dash animation) and stops paying for dash geometry.
+    // A ribbon's guide (InkMarks) takes the ribbon's mask with it.
     const settle = (e: AnimationEvent) => {
-      if (e.animationName === "ink-draw" && e.target instanceof SVGElement) e.target.classList.add("ink-drawn");
+      if (e.animationName !== "ink-draw" || !(e.target instanceof SVGElement)) return;
+      e.target.classList.add("ink-drawn");
+      const mask = e.target.parentElement;
+      if (!(mask instanceof SVGMaskElement)) return;
+      for (const ribbon of svg.querySelectorAll(".ink-reveal")) if (ribbon.getAttribute("mask") === `url(#${mask.id})`) ribbon.classList.add("ink-drawn");
     };
     svg.addEventListener("animationend", settle);
     const unobserve = observe(el, update);
