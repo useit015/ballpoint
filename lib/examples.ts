@@ -95,6 +95,16 @@ import SelectForm from "@/registry/ballpoint/examples/select-form";
 import SelectControlled from "@/registry/ballpoint/examples/select-controlled";
 import ToastActions from "@/registry/ballpoint/examples/toast-actions";
 
+import AnnotateReview from "@/registry/ballpoint/examples/annotate-review";
+import SectionHeadingLevels from "@/registry/ballpoint/examples/section-heading-levels";
+import PaperLetter from "@/registry/ballpoint/examples/paper-letter";
+import PaperTextures from "@/registry/ballpoint/examples/paper-textures";
+import FrameGallery from "@/registry/ballpoint/examples/frame-gallery";
+import CopyButtonStates from "@/registry/ballpoint/examples/copy-button-states";
+import CopyButtonDynamic from "@/registry/ballpoint/examples/copy-button-dynamic";
+import InkIconsButtons from "@/registry/ballpoint/examples/ink-icons-buttons";
+import InkIconsSizes from "@/registry/ballpoint/examples/ink-icons-sizes";
+
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
   "button-pens": ButtonPens,
@@ -177,6 +187,15 @@ export const examples: Record<string, ComponentType> = {
   "paper-demo": PaperDemo,
   "frame-demo": FrameDemo,
   "copy-button-demo": CopyButtonDemo,
+  "annotate-review": AnnotateReview,
+  "section-heading-levels": SectionHeadingLevels,
+  "paper-letter": PaperLetter,
+  "paper-textures": PaperTextures,
+  "frame-gallery": FrameGallery,
+  "copy-button-states": CopyButtonStates,
+  "copy-button-dynamic": CopyButtonDynamic,
+  "ink-icons-buttons": InkIconsButtons,
+  "ink-icons-sizes": InkIconsSizes,
   "signature-pad-demo": SignaturePadDemo,
   "hatch-grid-demo": HatchGridDemo,
   "timeline-demo": TimelineDemo,

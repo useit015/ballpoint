@@ -87,7 +87,8 @@ test("copy button copies, says so, and swaps back", async ({ page, context }) =>
 
 test("paper: textured, ruled on the baseline, rings where asked", async ({ page }) => {
   await page.goto("/docs/paper", { waitUntil: "networkidle" });
-  const sheets = page.locator("[data-slot=paper]");
+  const demo = page.locator("[data-preview]").first();
+  const sheets = demo.locator("[data-slot=paper]");
   await expect(sheets).toHaveCount(4);
   for (const sheet of await sheets.all()) {
     expect(await sheet.evaluate((el) => getComputedStyle(el).backgroundImage)).toContain("data:image/svg+xml");
@@ -95,7 +96,7 @@ test("paper: textured, ruled on the baseline, rings where asked", async ({ page 
   // One coffee ring on the plain sheet.
   await expect(sheets.first().locator("> span[aria-hidden]")).toHaveCount(1);
   // The ruled sheet's line height is its rule spacing.
-  const ruled = page.locator("[data-slot=paper][data-variant=ruled]");
+  const ruled = demo.locator("[data-slot=paper][data-variant=ruled]");
   expect(await ruled.evaluate((el) => getComputedStyle(el).lineHeight)).toBe("32px");
 });
 

@@ -45,7 +45,7 @@ function CopyButton({
   className,
   "aria-label": ariaLabel,
   ...props
-}: Omit<ComponentProps<typeof Button>, "value" | "children"> & {
+}: Omit<ComponentProps<typeof Button>, "value" | "children" | "onCopy"> & {
   /** The text to copy, or a function that returns it when clicked. */
   value: string | (() => string);
   /** The label. Icon sizes show the copy icon instead and use this as the accessible name. */
