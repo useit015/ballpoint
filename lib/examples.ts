@@ -48,6 +48,25 @@ import ChecklistDemo from "@/registry/ballpoint/examples/checklist-demo";
 import RedactDemo from "@/registry/ballpoint/examples/redact-demo";
 import ScrawlDemo from "@/registry/ballpoint/examples/scrawl-demo";
 
+import ButtonIcons from "@/registry/ballpoint/examples/button-icons";
+import ButtonLoading from "@/registry/ballpoint/examples/button-loading";
+import ButtonLink from "@/registry/ballpoint/examples/button-link";
+import ButtonActions from "@/registry/ballpoint/examples/button-actions";
+import InputTypes from "@/registry/ballpoint/examples/input-types";
+import InputStates from "@/registry/ballpoint/examples/input-states";
+import InputWithButton from "@/registry/ballpoint/examples/input-with-button";
+import TextareaCounter from "@/registry/ballpoint/examples/textarea-counter";
+import TextareaStates from "@/registry/ballpoint/examples/textarea-states";
+import TextareaWithButton from "@/registry/ballpoint/examples/textarea-with-button";
+import LabelControls from "@/registry/ballpoint/examples/label-controls";
+import FieldSettings from "@/registry/ballpoint/examples/field-settings";
+import FieldErrors from "@/registry/ballpoint/examples/field-errors";
+import CheckboxStates from "@/registry/ballpoint/examples/checkbox-states";
+import CheckboxCards from "@/registry/ballpoint/examples/checkbox-cards";
+import RadioGroupStates from "@/registry/ballpoint/examples/radio-group-states";
+import SwitchSettings from "@/registry/ballpoint/examples/switch-settings";
+import SliderControlled from "@/registry/ballpoint/examples/slider-controlled";
+
 export const examples: Record<string, ComponentType> = {
   "button-demo": ButtonDemo,
   "button-pens": ButtonPens,
@@ -60,6 +79,24 @@ export const examples: Record<string, ComponentType> = {
   "radio-group-demo": RadioGroupDemo,
   "switch-demo": SwitchDemo,
   "slider-demo": SliderDemo,
+  "button-icons": ButtonIcons,
+  "button-loading": ButtonLoading,
+  "button-link": ButtonLink,
+  "button-actions": ButtonActions,
+  "input-types": InputTypes,
+  "input-states": InputStates,
+  "input-with-button": InputWithButton,
+  "textarea-counter": TextareaCounter,
+  "textarea-states": TextareaStates,
+  "textarea-with-button": TextareaWithButton,
+  "label-controls": LabelControls,
+  "field-settings": FieldSettings,
+  "field-errors": FieldErrors,
+  "checkbox-states": CheckboxStates,
+  "checkbox-cards": CheckboxCards,
+  "radio-group-states": RadioGroupStates,
+  "switch-settings": SwitchSettings,
+  "slider-controlled": SliderControlled,
   "card-demo": CardDemo,
   "badge-demo": BadgeDemo,
   "avatar-demo": AvatarDemo,
