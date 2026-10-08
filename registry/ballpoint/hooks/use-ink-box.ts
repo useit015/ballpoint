@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, createElement, useContext, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, createElement, useCallback, useContext, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { hashSeed } from "@/registry/ballpoint/lib/ink-sketch";
 
 export type InkSize = readonly [number, number];
@@ -79,11 +79,11 @@ function release(el: Element, svg: SVGSVGElement) {
  * A `pending` InkSvg is released to draw once it scrolls into view.
  */
 export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {}) {
-  const ref = useRef<SVGSVGElement | null>(null);
+  const drawing = useRef<SVGSVGElement | null>(null);
   const [size, setSize] = useState<InkSize>(estimate);
 
-  useLayoutEffect(() => {
-    const svg = ref.current;
+  const ref = useCallback((svg: SVGSVGElement | null) => {
+    drawing.current = svg;
     const el = svg?.parentElement;
     if (!svg || !el) return;
     const snap = (v: number) => Math.max(step, Math.round(v / step) * step);
@@ -101,13 +101,21 @@ export function useInkBox(estimate: InkSize, { step = 2 }: { step?: number } = {
     };
     svg.addEventListener("animationend", settle);
     const unobserve = observe(el, update);
-    const unrelease = svg.hasAttribute("data-ink-pending") ? release(el, svg) : undefined;
     return () => {
       unobserve();
-      unrelease?.();
       svg.removeEventListener("animationend", settle);
+      drawing.current = null;
     };
   }, [step]);
+
+  // Recheck after every commit: draw mode can add pending to an existing SVG,
+  // and conditional drawings can attach after the hook's first render.
+  useLayoutEffect(() => {
+    const svg = drawing.current;
+    const el = svg?.parentElement;
+    if (!svg || !el || !svg.hasAttribute("data-ink-pending")) return;
+    return release(el, svg);
+  });
 
   return [ref, size] as const;
 }
