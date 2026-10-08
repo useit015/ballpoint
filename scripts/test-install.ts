@@ -2,7 +2,7 @@
 // then proves the result compiles and builds:
 //   1. build the registry against a local URL and serve public/ on :4400
 //   2. create-next-app (same Next version as this repo), `shadcn init` the
-//      base item, `shadcn add` every other item
+//      base item, add and typecheck Badge alone, then add every other item
 //   3. render every example on one page, then tsc and next build
 //   4. check init left globals.css free of self-referencing variables
 // `--serve` keeps the built app running on :4401 for a look in a browser.
@@ -70,6 +70,11 @@ try {
   const base = registry.items.find((item) => item.type === "registry:base");
   if (!base) throw new Error("registry.json has no registry:base item");
   await run("node", [shadcn, "init", `${registryUrl}/r/${base.name}.json`, "-y"], app);
+  // Check a standalone component before the full set can supply its missing dependencies.
+  await run("node", [shadcn, "add", "@ballpoint/badge", "-y"], app);
+  writeFileSync(join(app, "app/page.tsx"), 'import { Badge } from "@/components/ui/badge";\n\nexport default function Page() { return <Badge>Installed alone</Badge>; }\n');
+  await run("pnpm", ["exec", "next", "typegen"], app);
+  await run("pnpm", ["exec", "tsc", "--noEmit"], app);
   const rest = registry.items.filter((item) => !["registry:base", "registry:font", "registry:lib"].includes(item.type));
   await run("node", [shadcn, "add", ...rest.map((item) => `@ballpoint/${item.name}`), "-y"], app);
 
