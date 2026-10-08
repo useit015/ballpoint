@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, useId, useMemo, type CSSProperties, type ReactNode } from "react";
+import { Children, isValidElement, useId, useMemo, type CSSProperties, type ReactNode } from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -137,6 +137,9 @@ function Button({
   const classes = cn(buttonVariants({ variant: v, size: sz }), lifts && lift);
   const ring = pen.radius === "full" ? "9999px" : pen.radius ? `${pen.radius}px` : undefined;
   const own = ring ? ({ "--ink-r": ring } as CSSProperties) : undefined;
+  // A link drawn as a button is still a link: Base UI gives any element
+  // other than a <button> role="button" unless told otherwise.
+  const link = isValidElement<{ href?: unknown }>(props.render) && (props.render.type === "a" || props.render.props.href !== undefined);
 
   return (
     <ButtonPrimitive
@@ -144,6 +147,7 @@ function Button({
       data-variant={v}
       className={inkClassName(classes, className)}
       style={typeof style === "function" ? (state) => ({ ...own, ...style(state) }) : own || style ? { ...own, ...style } : undefined}
+      {...(link ? { role: undefined } : null)}
       {...props}
     >
       <ButtonInk variant={v} seed={seed} pen={pen} estimate={estimateSize(children, sz)} />

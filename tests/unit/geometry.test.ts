@@ -20,6 +20,7 @@ const generators: Record<string, (s: number) => unknown> = {
   verticalStroke: (s) => ink.verticalStroke(s, 22),
   scribbleFill: (s) => ink.scribbleFill(s, 80, 30),
   hatchStrokes: (s) => ink.hatchStrokes(s, 60, 30),
+  wanderStroke: (s) => ink.wanderStroke(s, 700, 8, { sway: 0.5 }),
   arrowStroke: (s) => ink.arrowStroke(s, 300),
   dotStroke: (s) => ink.dotStroke(s),
   blotPath: (s) => ink.blotPath(s),
