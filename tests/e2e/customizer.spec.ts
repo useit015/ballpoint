@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { pens } from "../../registry/themes";
+import { contrast, over, parseColor } from "../../lib/color";
 import { open } from "./routes";
 
 test.describe("customizer", () => {
@@ -47,6 +48,25 @@ test.describe("customizer", () => {
     await page.getByRole("switch", { name: "Night" }).click();
     await expect(page.locator("[data-customizer-preview]")).toHaveClass(/\bdark\b/);
     expect(await page.locator("[data-customizer-preview]").evaluate((el) => el.style.getPropertyValue("--ink"))).toBe(pens.blue.ink.dark);
+  });
+
+  test("a light preview on a dark page uses the fill shown in its contrast readout", async ({ page }) => {
+    await page.getByRole("button", { name: "Switch to dark theme", exact: true }).click();
+    await expect(page.getByRole("switch", { name: "Night", exact: true })).toBeChecked();
+    await page.getByRole("switch", { name: "Night", exact: true }).click();
+    const preview = page.locator("[data-customizer-preview]");
+    await expect(preview).not.toHaveClass(/\bdark\b/);
+    const paint = await preview.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return {
+        ink: style.getPropertyValue("--ink"), paper: style.getPropertyValue("--paper"),
+        fill: Number(style.getPropertyValue("--ink-fill")),
+      };
+    });
+    const paper = parseColor(paint.paper);
+    const ratio = contrast(paper, over(parseColor(paint.ink), paint.fill, paper));
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    await expect(page.locator("li").filter({ hasText: "Labels on solid buttons" })).toHaveText(`Labels on solid buttons${ratio.toFixed(2)} ✓`);
   });
 
   test("your own pen gives the CSS for it", async ({ page }) => {
