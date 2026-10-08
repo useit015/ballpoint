@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 
-type InputProps = InputPrimitive.Props &
+type InputProps = Omit<InputPrimitive.Props, "className"> &
   Pen & {
+    className?: string;
     /** "box" is drawn around the field; "line" is the line you write on. */
     variant?: "box" | "line";
     seed?: string | number;

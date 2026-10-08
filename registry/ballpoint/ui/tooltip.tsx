@@ -4,7 +4,7 @@ import { useId, useMemo } from "react";
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
 import { cn } from "@/lib/utils";
 import { penStyle, useInkFrame, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { penBoxStrokes, roundedRectPath, shadeFill } from "@/registry/ballpoint/lib/ink-sketch";
 
 function TooltipProvider({ delay = 0, ...props }: TooltipPrimitive.Provider.Props) {
@@ -44,10 +44,12 @@ function TooltipContent({
       <TooltipPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50">
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
-          className={cn(
-            "relative isolate inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 px-3 py-1 text-sm text-primary-foreground",
-            "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-instant:transition-none",
-            "motion-safe:data-starting-style:scale-95 motion-safe:data-ending-style:scale-95",
+          className={inkClassName(
+            cn(
+              "relative isolate inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 px-3 py-1 text-sm text-primary-foreground",
+              "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-instant:transition-none",
+              "motion-safe:data-starting-style:scale-95 motion-safe:data-ending-style:scale-95",
+            ),
             className,
           )}
           {...props}

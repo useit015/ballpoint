@@ -4,7 +4,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from "re
 import { CheckboxGroup } from "@base-ui/react/checkbox-group";
 import { cn } from "@/lib/utils";
 import { useInkBox, useInkSeed } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { lineStroke } from "@/registry/ballpoint/lib/ink-sketch";
 import { Checkbox } from "@/registry/ballpoint/ui/checkbox";
 
@@ -30,10 +30,10 @@ function Checklist({
       data-slot="checklist"
       value={done}
       onValueChange={(next, details) => {
-        if (value === undefined) setOwn(next);
         onValueChange?.(next, details);
+        if (value === undefined && !details.isCanceled) setOwn(next);
       }}
-      className={cn("flex flex-col gap-3", className)}
+      className={inkClassName("flex flex-col gap-3", className)}
       {...props}
     >
       <DoneContext value={done}>{children}</DoneContext>

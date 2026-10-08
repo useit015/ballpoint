@@ -4,14 +4,14 @@ import { useMemo } from "react";
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { cn } from "@/lib/utils";
 import { useInkSeed } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke, inkRules } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke, inkRules } from "@/registry/ballpoint/lib/ink";
 import { chevronStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
 function Accordion({ className, style, ...props }: AccordionPrimitive.Root.Props) {
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
-      className={cn("flex w-full flex-col", className)}
+      className={inkClassName("flex w-full flex-col", className)}
       style={typeof style === "function" ? (state) => ({ ...inkRules, ...style(state) }) : { ...inkRules, ...style }}
       {...props}
     />
@@ -23,10 +23,7 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn(
-        "relative not-last:after:pointer-events-none not-last:after:absolute not-last:after:inset-x-0 not-last:after:-bottom-[2.5px] not-last:after:h-[5px] not-last:after:bg-ink-4 not-last:after:[mask-image:var(--ink-rule-1)] not-last:after:[mask-size:100%_100%] nth-[3n+2]:after:[mask-image:var(--ink-rule-2)] nth-[3n]:after:[mask-image:var(--ink-rule-3)]",
-        className,
-      )}
+      className={inkClassName("relative not-last:after:pointer-events-none not-last:after:absolute not-last:after:inset-x-0 not-last:after:-bottom-[2.5px] not-last:after:h-[5px] not-last:after:bg-ink-4 not-last:after:[mask-image:var(--ink-rule-1)] not-last:after:[mask-size:100%_100%] nth-[3n+2]:after:[mask-image:var(--ink-rule-2)] nth-[3n]:after:[mask-image:var(--ink-rule-3)]", className)}
       {...props}
     />
   );
@@ -48,10 +45,12 @@ function AccordionTrigger({
     <AccordionPrimitive.Header {...header} className={cn("flex", header?.className)}>
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
-        className={cn(
-          "group/accordion-trigger relative flex flex-1 cursor-pointer items-center justify-between gap-4 py-3.5 text-left text-base font-bold transition-colors outline-none",
-          "hover:text-ink-2 focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
-          "aria-disabled:pointer-events-none aria-disabled:opacity-50",
+        className={inkClassName(
+          cn(
+            "group/accordion-trigger relative flex flex-1 cursor-pointer items-center justify-between gap-4 py-3.5 text-left text-base font-bold transition-colors outline-none",
+            "hover:text-ink-2 focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
+            "aria-disabled:pointer-events-none aria-disabled:opacity-50",
+          ),
           className,
         )}
         {...props}

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { cn } from "@/lib/utils";
 import { penStyle, useInkBox, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { ringStroke, ruleStroke, verticalStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
 // Track lines are drawn long and stretched along their length only.
@@ -37,7 +37,7 @@ function Slider({
   const thumbLabel = (index: number) => (label && values.length > 1 ? `${label}, ${index === 0 ? "from" : "to"}` : label);
   return (
     <SliderPrimitive.Root
-      className={cn("data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full", className)}
+      className={inkClassName("data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full", className)}
       data-slot="slider"
       defaultValue={defaultValue}
       value={value}

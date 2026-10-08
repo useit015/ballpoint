@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode, Ref } from "react";
+import { cn } from "@/lib/utils";
 import { hashSeed, ruleStroke, swipePath, type InkStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
 // Server-safe drawing primitives. Every drawn part of a component is an
@@ -16,6 +17,11 @@ import { hashSeed, ruleStroke, swipePath, type InkStroke } from "@/registry/ball
 // Widths and timings scale with --ink-weight and --ink-speed.
 
 export type DrawMode = "auto" | "mount" | "hover" | "focus" | "checked" | "indeterminate" | "none";
+
+/** Preserve Base UI's state callback while merging the component's classes. */
+export function inkClassName<State>(classes: string, className?: string | ((state: State) => string | undefined)) {
+  return typeof className === "function" ? (state: State) => cn(classes, className(state)) : cn(classes, className);
+}
 
 const drawClass: Record<DrawMode, string> = {
   auto: "ink-draw",

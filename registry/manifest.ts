@@ -59,6 +59,7 @@ export const items: Item[] = [
     title: "Ink core",
     description: "Seeded ballpoint stroke geometry, the SVG primitives that draw it, and a hook that sizes it to its element.",
     author,
+    registryDependencies: ["utils"],
     files: [
       { path: "registry/ballpoint/lib/ink-sketch.ts", type: "registry:lib" },
       { path: "registry/ballpoint/lib/ink.tsx", type: "registry:lib" },
@@ -122,7 +123,7 @@ export const items: Item[] = [
     title: "Field",
     description: "Labels, descriptions, red-pen errors, fieldsets and choice cards: shadcn's field layout, drawn.",
     author,
-    dependencies: ["class-variance-authority"],
+    dependencies: ["@base-ui/react", "class-variance-authority"],
     registryDependencies: ["utils", "@ballpoint/ink-core", "@ballpoint/label", "@ballpoint/separator"],
     files: [{ path: "registry/ballpoint/ui/field.tsx", type: "registry:ui" }],
   },

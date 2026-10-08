@@ -5,7 +5,7 @@ import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { penStyle, useInkFrame, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { linkStroke, penBoxStrokes } from "@/registry/ballpoint/lib/ink-sketch";
 
 function Tabs({ className, orientation = "horizontal", ...props }: TabsPrimitive.Root.Props) {
@@ -14,7 +14,7 @@ function Tabs({ className, orientation = "horizontal", ...props }: TabsPrimitive
       data-slot="tabs"
       data-orientation={orientation}
       orientation={orientation}
-      className={cn("group/tabs flex gap-4 data-[orientation=horizontal]:flex-col", className)}
+      className={inkClassName("group/tabs flex gap-4 data-[orientation=horizontal]:flex-col", className)}
       {...props}
     />
   );
@@ -53,7 +53,7 @@ function TabsList({
 }: TabsPrimitive.List.Props & VariantProps<typeof tabsListVariants> & Omit<Pen, "fill" | "shadow" | "draw"> & { seed?: string | number }) {
   const pen = usePen({ roughness, passes, radius, corners, weight, speed });
   return (
-    <TabsPrimitive.List data-slot="tabs-list" data-variant={variant} className={cn(tabsListVariants({ variant }), className)} {...props}>
+    <TabsPrimitive.List data-slot="tabs-list" data-variant={variant} className={inkClassName(tabsListVariants({ variant }), className)} {...props}>
       {children}
       <TabsPrimitive.Indicator
         data-slot="tabs-indicator"
@@ -93,13 +93,15 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
-      className={cn(
-        "relative inline-flex h-9 items-center justify-center gap-1.5 px-3 text-base whitespace-nowrap transition-colors duration-(--dur-hover) outline-none",
-        "hover:text-ink-2 data-active:text-ink",
-        "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
-        "disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
-        "group-data-[orientation=vertical]/tabs:justify-start group-data-[variant=line]/tabs-list:px-1",
-        "[&_svg:not(.ink-sketch)]:pointer-events-none [&_svg:not(.ink-sketch)]:shrink-0 [&_svg:not(.ink-sketch):not([class*='size-'])]:size-4",
+      className={inkClassName(
+        cn(
+          "relative inline-flex h-9 items-center justify-center gap-1.5 px-3 text-base whitespace-nowrap transition-colors duration-(--dur-hover) outline-none",
+          "hover:text-ink-2 data-active:text-ink",
+          "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
+          "disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
+          "group-data-[orientation=vertical]/tabs:justify-start group-data-[variant=line]/tabs-list:px-1",
+          "[&_svg:not(.ink-sketch)]:pointer-events-none [&_svg:not(.ink-sketch)]:shrink-0 [&_svg:not(.ink-sketch):not([class*='size-'])]:size-4",
+        ),
         className,
       )}
       {...props}
@@ -111,7 +113,7 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
-      className={cn("flex-1 text-base outline-none focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring", className)}
+      className={inkClassName("flex-1 text-base outline-none focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring", className)}
       {...props}
     />
   );

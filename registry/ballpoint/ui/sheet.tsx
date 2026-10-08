@@ -4,7 +4,7 @@ import { useMemo, type ComponentProps } from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { cn } from "@/lib/utils";
 import { penStyle, useInkFrame, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import { hatchStrokes, lineStroke } from "@/registry/ballpoint/lib/ink-sketch";
 import { Button } from "@/registry/ballpoint/ui/button";
@@ -32,10 +32,12 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   return (
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
-      className={cn(
-        "fixed inset-0 z-50 bg-paper/65 backdrop-blur-[1.5px] transition-opacity duration-(--dur-state) ease-out",
-        "data-ending-style:opacity-0 data-ending-style:ease-in data-starting-style:opacity-0",
-        "supports-[-webkit-touch-callout:none]:absolute",
+      className={inkClassName(
+        cn(
+          "fixed inset-0 z-50 bg-paper/65 backdrop-blur-[1.5px] transition-opacity duration-(--dur-state) ease-out",
+          "data-ending-style:opacity-0 data-ending-style:ease-in data-starting-style:opacity-0",
+          "supports-[-webkit-touch-callout:none]:absolute",
+        ),
         className,
       )}
       {...props}
@@ -66,14 +68,16 @@ function SheetContent({
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         data-side={side}
-        className={cn(
-          "ink-paper fixed isolate z-50 flex flex-col gap-5 text-base text-popover-foreground outline-none",
-          "transition-[translate,opacity] duration-(--dur-enter) ease-out-expo data-ending-style:duration-(--dur-state) data-ending-style:ease-in",
-          "motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0",
-          "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[85dvh] motion-safe:data-[side=bottom]:data-starting-style:translate-y-full motion-safe:data-[side=bottom]:data-ending-style:translate-y-full",
-          "data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:max-h-[85dvh] motion-safe:data-[side=top]:data-starting-style:-translate-y-full motion-safe:data-[side=top]:data-ending-style:-translate-y-full",
-          "data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:sm:max-w-sm motion-safe:data-[side=left]:data-starting-style:-translate-x-full motion-safe:data-[side=left]:data-ending-style:-translate-x-full",
-          "data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:w-3/4 data-[side=right]:sm:max-w-sm motion-safe:data-[side=right]:data-starting-style:translate-x-full motion-safe:data-[side=right]:data-ending-style:translate-x-full",
+        className={inkClassName(
+          cn(
+            "ink-paper fixed isolate z-50 flex flex-col gap-5 text-base text-popover-foreground outline-none",
+            "transition-[translate,opacity] duration-(--dur-enter) ease-out-expo data-ending-style:duration-(--dur-state) data-ending-style:ease-in",
+            "motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0",
+            "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[85dvh] motion-safe:data-[side=bottom]:data-starting-style:translate-y-full motion-safe:data-[side=bottom]:data-ending-style:translate-y-full",
+            "data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:max-h-[85dvh] motion-safe:data-[side=top]:data-starting-style:-translate-y-full motion-safe:data-[side=top]:data-ending-style:-translate-y-full",
+            "data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:sm:max-w-sm motion-safe:data-[side=left]:data-starting-style:-translate-x-full motion-safe:data-[side=left]:data-ending-style:-translate-x-full",
+            "data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:w-3/4 data-[side=right]:sm:max-w-sm motion-safe:data-[side=right]:data-starting-style:translate-x-full motion-safe:data-[side=right]:data-ending-style:translate-x-full",
+          ),
           className,
         )}
         {...props}
@@ -136,11 +140,11 @@ function SheetFooter({ className, ...props }: ComponentProps<"div">) {
 }
 
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
-  return <SheetPrimitive.Title data-slot="sheet-title" className={cn("text-xl leading-snug font-bold", className)} {...props} />;
+  return <SheetPrimitive.Title data-slot="sheet-title" className={inkClassName("text-xl leading-snug font-bold", className)} {...props} />;
 }
 
 function SheetDescription({ className, ...props }: SheetPrimitive.Description.Props) {
-  return <SheetPrimitive.Description data-slot="sheet-description" className={cn("text-base text-ink-3", className)} {...props} />;
+  return <SheetPrimitive.Description data-slot="sheet-description" className={inkClassName("text-base text-ink-3", className)} {...props} />;
 }
 
 export { Sheet, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription };

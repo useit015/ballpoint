@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentProps } from "react";
+import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
@@ -29,11 +30,13 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
-      className={cn(
-        "fixed inset-0 z-50 bg-paper/65 backdrop-blur-[1.5px] transition-opacity duration-(--dur-state) ease-out",
-        "data-ending-style:opacity-0 data-ending-style:ease-in data-starting-style:opacity-0",
-        // iOS: cover the whole visible viewport.
-        "supports-[-webkit-touch-callout:none]:absolute",
+      className={inkClassName(
+        cn(
+          "fixed inset-0 z-50 bg-paper/65 backdrop-blur-[1.5px] transition-opacity duration-(--dur-state) ease-out",
+          "data-ending-style:opacity-0 data-ending-style:ease-in data-starting-style:opacity-0",
+          // iOS: cover the whole visible viewport.
+          "supports-[-webkit-touch-callout:none]:absolute",
+        ),
         className,
       )}
       {...props}
@@ -69,12 +72,14 @@ function DialogContent({
       <DialogPrimitive.Viewport data-slot="dialog-viewport" className="fixed inset-0 z-50 flex items-center justify-center p-5">
         <DialogPrimitive.Popup
           data-slot="dialog-content"
-          className={cn(
-            "ink-paper relative isolate grid w-full max-w-md gap-5 p-6 text-base text-popover-foreground outline-none",
-            // It lands: a little low and askew, then settles flat.
-            "transition-[opacity,translate,rotate] duration-(--dur-enter) ease-out-expo data-starting-style:opacity-0 data-ending-style:opacity-0",
-            "motion-safe:data-starting-style:translate-y-3 motion-safe:data-starting-style:-rotate-1",
-            "data-ending-style:duration-(--dur-state) data-ending-style:ease-in motion-safe:data-ending-style:translate-y-1.5",
+          className={inkClassName(
+            cn(
+              "ink-paper relative isolate grid w-full max-w-md gap-5 p-6 text-base text-popover-foreground outline-none",
+              // It lands: a little low and askew, then settles flat.
+              "transition-[opacity,translate,rotate] duration-(--dur-enter) ease-out-expo data-starting-style:opacity-0 data-ending-style:opacity-0",
+              "motion-safe:data-starting-style:translate-y-3 motion-safe:data-starting-style:-rotate-1",
+              "data-ending-style:duration-(--dur-state) data-ending-style:ease-in motion-safe:data-ending-style:translate-y-1.5",
+            ),
             className,
           )}
           {...props}
@@ -107,14 +112,14 @@ function DialogFooter({ className, showCloseButton = false, children, ...props }
 }
 
 function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
-  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-xl leading-snug font-bold", className)} {...props} />;
+  return <DialogPrimitive.Title data-slot="dialog-title" className={inkClassName("text-xl leading-snug font-bold", className)} {...props} />;
 }
 
 function DialogDescription({ className, ...props }: DialogPrimitive.Description.Props) {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-base text-ink-3 *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-ink", className)}
+      className={inkClassName("text-base text-ink-3 *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-ink", className)}
       {...props}
     />
   );

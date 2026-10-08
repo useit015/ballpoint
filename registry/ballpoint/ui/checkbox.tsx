@@ -3,7 +3,7 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { dashStroke, tickStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
@@ -27,14 +27,16 @@ function Checkbox({
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
-      className={cn(
-        "peer group/checkbox relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center outline-none",
-        // A finger-sized hit area around the small box.
-        "after:absolute after:-inset-x-3 after:-inset-y-2",
-        "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:not-data-indeterminate:hover:text-ink data-checked:text-ink data-indeterminate:text-ink",
-        "aria-invalid:text-destructive data-invalid:text-destructive",
-        "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
-        "data-disabled:cursor-not-allowed data-disabled:opacity-50",
+      className={inkClassName(
+        cn(
+          "peer group/checkbox relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center outline-none",
+          // A finger-sized hit area around the small box.
+          "after:absolute after:-inset-x-3 after:-inset-y-2",
+          "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:not-data-indeterminate:hover:text-ink data-checked:text-ink data-indeterminate:text-ink",
+          "aria-invalid:text-destructive data-invalid:text-destructive",
+          "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
+          "data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        ),
         className,
       )}
       {...props}
