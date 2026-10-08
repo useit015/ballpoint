@@ -3,7 +3,7 @@
 import { memo, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
-import { penStyle, useInkBox, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
+import { penStyle, useInkBox, useInkStage, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { Stroke } from "@/registry/ballpoint/lib/ink";
 import { boxStroke, hashSeed, hatchStrokes, loopStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
@@ -20,6 +20,8 @@ type Cell = HatchGridDay & { level: Level };
 
 const CELL = 11.5;
 const PITCH = 14.5;
+// How far in from an edge weeks scrolled past it fade out.
+const FADE = 24;
 // Each level is drawn three ways, so the grid never looks stamped.
 const VARIANTS = 3;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -124,21 +126,10 @@ function HatchGrid({
   const id = `hg${useId().replace(/[^\w-]/g, "")}`;
   const mode = pen.draw ?? "auto";
   const [ref] = useInkBox([800, 120]);
+  const monthRow = useInkStage({ draw: mode });
   const [hover, setHover] = useState<{ wi: number; di: number; text: string; x: number; y: number } | null>(null);
-  // Starts scrolled to the latest weeks when the grid is wider than its box;
-  // then it's a stop for the keyboard too, so arrow keys can scroll it.
   const scroller = useRef<HTMLDivElement>(null);
   const [overflows, setOverflows] = useState(false);
-  useLayoutEffect(() => {
-    const el = scroller.current;
-    if (!el) return;
-    el.scrollLeft = el.scrollWidth;
-    const check = () => setOverflows(el.scrollWidth > el.clientWidth + 1);
-    check();
-    const observer = new ResizeObserver(check);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   const { weeks, months } = useMemo(() => {
     const days = [...data].sort((a, b) => (a.date < b.date ? -1 : 1));
@@ -169,6 +160,35 @@ function HatchGrid({
     return { weeks, months };
   }, [data]);
 
+  // Starts scrolled to the latest weeks when the grid is wider than its box:
+  // with `today`, today's week sits at the right edge with a couple of the
+  // weeks still to come after it, rather than a run of blank ones. Then
+  // it's a stop for the keyboard too, so arrow keys can scroll it. There's
+  // no scrollbar: weeks scrolled out of sight fade at the edge they left by.
+  const latest = today ? weeks.findIndex((w) => w.some((d) => d && d.date >= today)) : -1;
+  useLayoutEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    el.scrollLeft = latest < 0 ? el.scrollWidth : parseFloat(getComputedStyle(el).paddingLeft) + (latest + 3) * PITCH - el.clientWidth;
+    const fade = () => {
+      const rest = el.scrollWidth - el.clientWidth - el.scrollLeft;
+      el.style.setProperty("--fade-start", `${Math.min(FADE, el.scrollLeft)}px`);
+      el.style.setProperty("--fade-end", `${Math.min(FADE, Math.max(0, rest))}px`);
+    };
+    const check = () => {
+      setOverflows(el.scrollWidth > el.clientWidth + 1);
+      fade();
+    };
+    check();
+    el.addEventListener("scroll", fade, { passive: true });
+    const observer = new ResizeObserver(check);
+    observer.observe(el);
+    return () => {
+      el.removeEventListener("scroll", fade);
+      observer.disconnect();
+    };
+  }, [latest]);
+
   const width = Math.max(1, weeks.length * PITCH - (PITCH - CELL));
   const height = 7 * PITCH - (PITCH - CELL);
   const loop = useMemo(() => loopStroke(hashSeed("hatch-loop"), CELL, CELL, { pad: 3.5, turns: 1.15 }), []);
@@ -197,16 +217,23 @@ function HatchGrid({
       aria-label={overflows ? (summary ?? "Days") : undefined}
       onScroll={() => setHover(null)}
       className={cn(
-        "max-w-full overflow-x-auto overflow-y-hidden px-1 pt-1 pb-2 outline-none [scrollbar-color:var(--ink-4)_transparent] [scrollbar-width:thin]",
+        "max-w-full overflow-x-auto overflow-y-hidden px-1 pt-1 pb-2 outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        // The fade is a mask, which would hide the focus ring with it.
+        overflows && "[mask-image:linear-gradient(to_right,transparent,#000_var(--fade-start),#000_calc(100%_-_var(--fade-end)),transparent)] focus-visible:[mask-image:none]",
         "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-2 focus-visible:outline-ring",
         className,
       )}
       style={penStyle(pen)}
     >
       <div className="w-max">
-        <div aria-hidden="true" className="relative mb-2 h-4 text-xs leading-none text-ink-3">
+        {/* The months are written in, then the weeks land under them. */}
+        <div aria-hidden="true" {...monthRow} className="relative mb-2 h-4 text-xs leading-none text-ink-3">
           {months.map(({ index, label }) => (
-            <span key={index} className="absolute top-0" style={{ left: index * PITCH }}>
+            <span
+              key={index}
+              className={cn("absolute top-0", mode !== "none" && "ink-land")}
+              style={{ left: index * PITCH, "--ink-d": "320ms", "--ink-dd": `${index * 14}ms` } as CSSProperties}
+            >
               {label}
             </span>
           ))}

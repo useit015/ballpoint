@@ -111,6 +111,7 @@ export function Actions() {
 <Separator orientation="vertical" />`,
     props: [
       { name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Which way the rule runs." },
+      { name: "delay", type: "number", default: "0", description: "ms after the pen gets to it before the rule is drawn. Rising delays rule a list off one line after another." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     primitive: { name: "Separator", href: "https://base-ui.com/react/components/separator" },
@@ -842,7 +843,7 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
 />`,
     props: [
       { name: "data", type: "{ date: string; count: number; level?: 0 | 1 | 2 | 3 | 4 }[]", description: "One entry a day. Level is worked out from count when left out: none, then quarters of the busiest day." },
-      { name: "today", type: "string", description: "Days after it are drawn dotted, still to come." },
+      { name: "today", type: "string", description: "Days after it are drawn dotted, still to come. Where the grid is wider than its box, it opens on this week." },
       { name: "unit", type: "string | [string, string]", default: '"contribution"', description: 'What\'s counted, for the hover label ("3 commits on Oct 6th, 2026"). The plural adds an s; pass [one, many] when it doesn\'t.' },
       { name: "label", type: "(day) => string", description: "What hovering a day says, in place of the unit's sentence. A function, so pass it from a client component." },
       { name: "summary", type: "string", description: "What the grid shows, for screen readers; to them it's one image." },
