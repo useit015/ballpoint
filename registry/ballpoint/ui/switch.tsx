@@ -2,9 +2,8 @@
 
 import { useId, useMemo } from "react";
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
-import { cn } from "@/lib/utils";
 import { penStyle, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { ringStroke, roundedRectPath, scribbleFill, shadeFill, hatchStrokes } from "@/registry/ballpoint/lib/ink-sketch";
 
@@ -39,7 +38,7 @@ function Switch({
     <SwitchPrimitive.Root
       data-slot="switch"
       data-size={size}
-      className={cn(
+      className={inkClassName(
         "peer group/switch relative inline-flex shrink-0 cursor-pointer items-center rounded-full outline-none",
         "after:absolute after:-inset-x-3 after:-inset-y-2",
         "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:hover:text-ink data-checked:text-ink",

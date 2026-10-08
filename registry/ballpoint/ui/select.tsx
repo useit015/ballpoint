@@ -3,7 +3,7 @@
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { inkRules, inkWash } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, inkRules, inkWash } from "@/registry/ballpoint/lib/ink";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
@@ -11,11 +11,11 @@ import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
 const Select = SelectPrimitive.Root;
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
-  return <SelectPrimitive.Group data-slot="select-group" className={cn("scroll-my-1", className)} {...props} />;
+  return <SelectPrimitive.Group data-slot="select-group" className={inkClassName("scroll-my-1", className)} {...props} />;
 }
 
 function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
-  return <SelectPrimitive.Value data-slot="select-value" className={cn("flex flex-1 truncate text-left", className)} {...props} />;
+  return <SelectPrimitive.Value data-slot="select-value" className={inkClassName("flex flex-1 truncate text-left", className)} {...props} />;
 }
 
 /**
@@ -41,7 +41,7 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       data-size={size}
-      className={cn(
+      className={inkClassName(
         "group/select-trigger ink-within relative inline-flex w-fit min-w-40 cursor-pointer items-center justify-between gap-2 px-3 text-base whitespace-nowrap text-foreground outline-none select-none",
         "data-[size=default]:h-10 data-[size=sm]:h-8 data-[size=sm]:px-2.5 data-[size=sm]:text-sm data-placeholder:text-ink-3",
         "disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50",
@@ -111,7 +111,7 @@ function SelectContent({
       >
         <SelectPrimitive.Popup
           data-slot="select-content"
-          className={cn(
+          className={inkClassName(
             "ink-paper relative isolate min-w-(--anchor-width) origin-(--transform-origin) text-popover-foreground outline-none data-[side=none]:min-w-[calc(var(--anchor-width)+1rem)]",
             "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:ease-in",
             "motion-safe:data-starting-style:scale-[0.97] motion-safe:data-ending-style:scale-[0.98] data-[side=none]:data-starting-style:scale-100",
@@ -133,7 +133,7 @@ function SelectContent({
 }
 
 function SelectLabel({ className, ...props }: SelectPrimitive.GroupLabel.Props) {
-  return <SelectPrimitive.GroupLabel data-slot="select-label" className={cn("px-2.5 pt-1.5 pb-1 text-sm text-ink-3", className)} {...props} />;
+  return <SelectPrimitive.GroupLabel data-slot="select-label" className={inkClassName("px-2.5 pt-1.5 pb-1 text-sm text-ink-3", className)} {...props} />;
 }
 
 /** The highlighted item is shaded in with a quick pass of the pen; the chosen one is ticked. */
@@ -141,7 +141,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
-      className={cn(
+      className={inkClassName(
         "relative isolate flex w-full cursor-default items-center gap-2 py-1 pr-9 pl-2.5 text-base outline-none select-none",
         "before:pointer-events-none before:absolute before:inset-x-0.5 before:inset-y-0 before:-z-10 before:bg-current before:opacity-0 before:transition-opacity before:duration-(--dur-press)",
         "before:[mask-image:var(--ink-wash-1)] before:[mask-size:100%_100%] before:[mask-repeat:no-repeat] nth-[3n+2]:before:[mask-image:var(--ink-wash-2)] nth-[3n]:before:[mask-image:var(--ink-wash-3)]",
@@ -165,7 +165,7 @@ function SelectSeparator({ className, ...props }: SelectPrimitive.Separator.Prop
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
-      className={cn("pointer-events-none mx-1 my-1.5 h-[5px] bg-ink-4 [mask-image:var(--ink-rule-2)] [mask-size:100%_100%] [mask-repeat:no-repeat]", className)}
+      className={inkClassName("pointer-events-none mx-1 my-1.5 h-[5px] bg-ink-4 [mask-image:var(--ink-rule-2)] [mask-size:100%_100%] [mask-repeat:no-repeat]", className)}
       {...props}
     />
   );
@@ -175,7 +175,7 @@ function SelectScrollUpButton({ className, ...props }: SelectPrimitive.ScrollUpA
   return (
     <SelectPrimitive.ScrollUpArrow
       data-slot="select-scroll-up-button"
-      className={cn("ink-paper absolute inset-x-1 top-1 z-10 flex h-6 cursor-default items-center justify-center text-ink-3", className)}
+      className={inkClassName("ink-paper absolute inset-x-1 top-1 z-10 flex h-6 cursor-default items-center justify-center text-ink-3", className)}
       {...props}
     >
       <InkGlyph name="chevron-up" className="size-3.5" />
@@ -187,7 +187,7 @@ function SelectScrollDownButton({ className, ...props }: SelectPrimitive.ScrollD
   return (
     <SelectPrimitive.ScrollDownArrow
       data-slot="select-scroll-down-button"
-      className={cn("ink-paper absolute inset-x-1 bottom-1 z-10 flex h-6 cursor-default items-center justify-center text-ink-3", className)}
+      className={inkClassName("ink-paper absolute inset-x-1 bottom-1 z-10 flex h-6 cursor-default items-center justify-center text-ink-3", className)}
       {...props}
     >
       <InkGlyph name="chevron-down" className="size-3.5" />

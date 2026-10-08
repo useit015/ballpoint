@@ -4,6 +4,7 @@ import type { ComponentProps } from "react";
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
+import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
 import { Button } from "@/registry/ballpoint/ui/button";
@@ -25,7 +26,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
   return (
     <AlertDialogPrimitive.Backdrop
       data-slot="alert-dialog-overlay"
-      className={cn(
+      className={inkClassName(
         "fixed inset-0 z-50 bg-paper/65 backdrop-blur-[1.5px] transition-opacity duration-(--dur-state) ease-out",
         "data-ending-style:opacity-0 data-ending-style:ease-in data-starting-style:opacity-0",
         "supports-[-webkit-touch-callout:none]:absolute",
@@ -63,7 +64,7 @@ function AlertDialogContent({
         <AlertDialogPrimitive.Popup
           data-slot="alert-dialog-content"
           data-size={size}
-          className={cn(
+          className={inkClassName(
             "group/alert-dialog-content ink-paper relative isolate grid w-full gap-5 p-6 text-base text-popover-foreground outline-none data-[size=default]:max-w-md data-[size=sm]:max-w-xs",
             "transition-[opacity,translate,rotate] duration-(--dur-enter) ease-out-expo data-starting-style:opacity-0 data-ending-style:opacity-0",
             "motion-safe:data-starting-style:translate-y-3 motion-safe:data-starting-style:rotate-1",
@@ -129,7 +130,7 @@ function AlertDialogTitle({ className, ...props }: AlertDialogPrimitive.Title.Pr
   return (
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
-      className={cn(
+      className={inkClassName(
         "text-xl leading-snug font-bold sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
         className,
       )}
@@ -142,7 +143,7 @@ function AlertDialogDescription({ className, ...props }: AlertDialogPrimitive.De
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      className={cn("text-base text-balance text-ink-3 md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-ink", className)}
+      className={inkClassName("text-base text-balance text-ink-3 md:text-pretty *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-ink", className)}
       {...props}
     />
   );

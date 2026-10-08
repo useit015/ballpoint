@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { useRender } from "@base-ui/react/use-render";
 import { cn } from "@/lib/utils";
 import { Label } from "@/registry/ballpoint/ui/label";
 import { Separator } from "@/registry/ballpoint/ui/separator";
@@ -70,6 +71,7 @@ function FieldContent({ className, ...props }: ComponentProps<"div">) {
  * pencilled box drawn around it that inks over when its control is checked.
  */
 function FieldLabel({
+  ref: consumerRef,
   className,
   children,
   seed,
@@ -89,29 +91,32 @@ function FieldLabel({
   const ref = useRef<HTMLLabelElement>(null);
   const [card, setCard] = useState(false);
   useLayoutEffect(() => setCard(!!ref.current?.querySelector(":scope > [data-slot=field]")), []);
-  return (
-    <Label
-      ref={ref}
-      data-slot="field-label"
-      className={cn(
-        "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50",
-        "has-[>[data-slot=field]]:relative has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:cursor-pointer has-[>[data-slot=field]]:flex-col *:data-[slot=field]:p-3",
-        className,
-      )}
-      {...props}
-    >
-      {card && (
-        <InkOutline
-          pen={pen}
-          seed={seed}
-          estimate={[260, 76]}
-          maxRadius={18}
-          className="text-ink-line transition-colors duration-(--dur-hover) group-[:hover:not(:has([data-checked]))]/field-label:text-ink-3 group-has-data-checked/field-label:text-ink"
-        />
-      )}
-      {children}
-    </Label>
-  );
+  return useRender({
+    defaultTagName: "label",
+    ref: [ref, consumerRef ?? null],
+    render: (
+      <Label
+        data-slot="field-label"
+        className={cn(
+          "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50",
+          "has-[>[data-slot=field]]:relative has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:cursor-pointer has-[>[data-slot=field]]:flex-col *:data-[slot=field]:p-3",
+          className,
+        )}
+        {...props}
+      >
+        {card && (
+          <InkOutline
+            pen={pen}
+            seed={seed}
+            estimate={[260, 76]}
+            maxRadius={18}
+            className="text-ink-line transition-colors duration-(--dur-hover) group-[:hover:not(:has([data-checked]))]/field-label:text-ink-3 group-has-data-checked/field-label:text-ink"
+          />
+        )}
+        {children}
+      </Label>
+    ),
+  });
 }
 
 function FieldTitle({ className, ...props }: ComponentProps<"div">) {

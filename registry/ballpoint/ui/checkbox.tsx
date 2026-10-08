@@ -1,9 +1,8 @@
 "use client";
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
-import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { dashStroke, tickStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
@@ -27,7 +26,7 @@ function Checkbox({
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
-      className={cn(
+      className={inkClassName(
         "peer group/checkbox relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center outline-none",
         // A finger-sized hit area around the small box.
         "after:absolute after:-inset-x-3 after:-inset-y-2",

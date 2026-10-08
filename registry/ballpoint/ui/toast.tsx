@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Toast as ToastPrimitive, type ToastManagerAddOptions, type ToastManagerPromiseOptions } from "@base-ui/react/toast";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
+import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { InkGlyph, type GlyphName } from "@/registry/ballpoint/lib/ink-glyphs";
 import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
 import { Button } from "@/registry/ballpoint/ui/button";
@@ -74,7 +75,7 @@ function Toaster({
       <ToastPrimitive.Portal>
         <ToastPrimitive.Viewport
           data-slot="toaster"
-          className={cn("fixed right-4 bottom-4 z-60 mx-auto w-[calc(100vw-2rem)] sm:right-8 sm:bottom-8 sm:w-90", className)}
+          className={inkClassName("fixed right-4 bottom-4 z-60 mx-auto w-[calc(100vw-2rem)] sm:right-8 sm:bottom-8 sm:w-90", className)}
         >
           <Toasts pen={pen} seed={seed} />
         </ToastPrimitive.Viewport>

@@ -4,6 +4,7 @@ import type { ComponentProps } from "react";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
+import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
@@ -41,7 +42,7 @@ function PopoverContent({
       <PopoverPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50">
         <PopoverPrimitive.Popup
           data-slot="popover-content"
-          className={cn(
+          className={inkClassName(
             "ink-paper relative isolate flex w-72 origin-(--transform-origin) flex-col gap-3 p-4 text-base text-popover-foreground outline-none",
             "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:ease-in",
             "motion-safe:data-starting-style:scale-[0.97] motion-safe:data-ending-style:scale-[0.98]",
@@ -62,11 +63,11 @@ function PopoverHeader({ className, ...props }: ComponentProps<"div">) {
 }
 
 function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
-  return <PopoverPrimitive.Title data-slot="popover-title" className={cn("text-lg leading-snug font-bold", className)} {...props} />;
+  return <PopoverPrimitive.Title data-slot="popover-title" className={inkClassName("text-lg leading-snug font-bold", className)} {...props} />;
 }
 
 function PopoverDescription({ className, ...props }: PopoverPrimitive.Description.Props) {
-  return <PopoverPrimitive.Description data-slot="popover-description" className={cn("text-base text-ink-3", className)} {...props} />;
+  return <PopoverPrimitive.Description data-slot="popover-description" className={inkClassName("text-base text-ink-3", className)} {...props} />;
 }
 
 export { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger };

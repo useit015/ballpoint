@@ -2,9 +2,8 @@
 
 import { useMemo } from "react";
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
-import { cn } from "@/lib/utils";
 import { penStyle, useInkBox, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { ruleStroke, verticalStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
 // Drawn long and stretched along its length only, so the line keeps its
@@ -30,7 +29,7 @@ function Separator({
     <SeparatorPrimitive
       data-slot="separator"
       orientation={orientation}
-      className={cn(
+      className={inkClassName(
         "relative shrink-0 text-ink-4 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",
         className,
       )}
