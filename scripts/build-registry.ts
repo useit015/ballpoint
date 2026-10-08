@@ -11,11 +11,11 @@
 // `shadcn build` then turns registry.json into public/r/*.json.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import postcss, { type ChildNode, type Container } from "postcss";
+import postcss, { type Container } from "postcss";
+import { add, toObject, type CssObject } from "./registry-css.ts";
 import { homepage, items } from "../registry/manifest.ts";
 import { papers, pens, type PenTheme } from "../registry/themes.ts";
 
-type CssObject = { [key: string]: string | CssObject };
 
 const source = readFileSync(new URL("../registry/ballpoint/styles/base.css", import.meta.url), "utf8");
 const root = postcss.parse(source);
@@ -35,28 +35,6 @@ function declsOf(node: Container, into: Record<string, string>, rest?: CssObject
   });
 }
 
-function toObject(node: Container): CssObject {
-  const out: CssObject = {};
-  node.each((child) => add(out, child));
-  return out;
-}
-
-function add(out: CssObject, child: ChildNode) {
-  if (child.type === "comment") return;
-  if (child.type === "decl") {
-    out[child.prop] = child.important ? `${child.value} !important` : child.value;
-  } else if (child.type === "rule") {
-    const selector = child.selector.replace(/\s+/g, " ");
-    out[selector] = merge(out[selector], toObject(child));
-  } else if (child.type === "atrule") {
-    const key = `@${child.name}${child.params ? ` ${child.params}` : ""}`;
-    out[key] = merge(out[key], child.nodes ? toObject(child) : {});
-  }
-}
-
-function merge(existing: string | CssObject | undefined, next: CssObject): CssObject {
-  return typeof existing === "object" ? { ...existing, ...next } : next;
-}
 
 const derived = { ":root": {}, ".dark": {} } as Record<":root" | ".dark", CssObject>;
 css[":root"] = derived[":root"];
