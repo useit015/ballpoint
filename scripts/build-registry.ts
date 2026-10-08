@@ -16,7 +16,6 @@ import { add, toObject, type CssObject } from "./registry-css.ts";
 import { homepage, items } from "../registry/manifest.ts";
 import { papers, pens, type PenTheme } from "../registry/themes.ts";
 
-
 const source = readFileSync(new URL("../registry/ballpoint/styles/base.css", import.meta.url), "utf8");
 const root = postcss.parse(source);
 
@@ -34,7 +33,6 @@ function declsOf(node: Container, into: Record<string, string>, rest?: CssObject
     } else if (child.type !== "comment") throw new Error(`Unexpected ${child.type} inside a variables block`);
   });
 }
-
 
 const derived = { ":root": {}, ".dark": {} } as Record<":root" | ".dark", CssObject>;
 css[":root"] = derived[":root"];
