@@ -1002,9 +1002,4 @@ export const allDocs: Doc[] = items.filter((item) => docs[item.name]).map((item)
 
 export const getDoc = (name: string) => allDocs.find((doc) => doc.name === name);
 
-export const install = {
-  pnpm: (what: string) => `pnpm dlx shadcn@latest ${what}`,
-  npm: (what: string) => `npx shadcn@latest ${what}`,
-  yarn: (what: string) => `yarn shadcn@latest ${what}`,
-  bun: (what: string) => `bunx --bun shadcn@latest ${what}`,
-};
+export { install } from "@/lib/install";

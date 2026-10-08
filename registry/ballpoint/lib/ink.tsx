@@ -119,7 +119,10 @@ function pathBounds(paths: string[], pad: number) {
 /**
  * Pressured ink ribbons drawn on in order: each pass is revealed by a mask
  * stroke running along its centreline, one mask per pass so crossing
- * strokes never reveal each other early.
+ * strokes never reveal each other early. A mask is a layer of its own to
+ * paint, so it is only kept while it has something to reveal: drawn "none",
+ * there are none, and a ribbon drawn in once ("auto", "mount") drops its
+ * mask when its pen has finished (.ink-reveal in base.css).
  */
 export function InkMarks({
   id,
@@ -134,6 +137,8 @@ export function InkMarks({
   delay?: number;
   guide?: number;
 }) {
+  if (draw === "none") return strokes.map((k, i) => <path key={i} d={k.ink} className="ink-ribbon" opacity={k.opacity} />);
+  const once = draw === "auto" || draw === "mount";
   return (
     <>
       <defs>
@@ -144,7 +149,7 @@ export function InkMarks({
         ))}
       </defs>
       {strokes.map((k, i) => (
-        <path key={i} d={k.ink} className="ink-ribbon" opacity={k.opacity} mask={`url(#${id}-${i})`} />
+        <path key={i} d={k.ink} className={once ? "ink-ribbon ink-reveal" : "ink-ribbon"} opacity={k.opacity} mask={`url(#${id}-${i})`} />
       ))}
     </>
   );

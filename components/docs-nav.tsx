@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IntentLink } from "@/components/intent-link";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import type { NavGroup } from "@/lib/nav";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,7 @@ export function DocsNav({ groups, onNavigate }: { groups: NavGroup[]; onNavigate
               const active = pathname === link.href;
               return (
                 <li key={link.href}>
-                  <Link
+                  <IntentLink
                     href={link.href}
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
@@ -29,7 +29,7 @@ export function DocsNav({ groups, onNavigate }: { groups: NavGroup[]; onNavigate
                     {link.title}
                     {/* The current page gets a dot in the margin, not another underline. */}
                     {active && <InkGlyph name="dot" className="absolute top-1/2 -left-3.5 size-2 -translate-y-1/2" />}
-                  </Link>
+                  </IntentLink>
                 </li>
               );
             })}

@@ -6,6 +6,7 @@ import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import { ComponentArt } from "@/components/component-art";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
+import { IntentLink } from "@/components/intent-link";
 import { TextLink } from "@/components/text-link";
 import { Correction } from "@/components/landing/correction";
 import { DrawnPage } from "@/components/landing/drawn-page";
@@ -154,12 +155,12 @@ export default function Home() {
             <ul className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 lg:grid-cols-6">
               {picks.map((name) => (
                 <li key={name}>
-                  <Link href={`/docs/${name}`} className="group flex flex-col items-center gap-2 text-center">
+                  <IntentLink href={`/docs/${name}`} className="group flex flex-col items-center gap-2 text-center">
                     <ComponentArt name={name} className="h-16 w-24 text-ink-3 transition-colors group-hover:text-ink" />
                     <span className="underline decoration-transparent underline-offset-4 transition-colors group-hover:decoration-ink-4">
                       {docs.get(name)?.title}
                     </span>
-                  </Link>
+                  </IntentLink>
                 </li>
               ))}
             </ul>
