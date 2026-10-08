@@ -181,7 +181,7 @@ export const items: Item[] = [
     title: "Badge",
     description: "A word circled or coloured in: a pill pulled once around it, shaded, hatched or in red pen.",
     author,
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "class-variance-authority"],
     registryDependencies: ["utils", "@ballpoint/ink-core"],
     files: [{ path: "registry/ballpoint/ui/badge.tsx", type: "registry:ui" }],
   },
