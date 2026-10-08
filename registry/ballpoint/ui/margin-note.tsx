@@ -61,6 +61,7 @@ function MarginNote({
   const pen = usePen({ draw, weight, speed });
   const s = useInkSeed(seed);
   const target = useRef<HTMLSpanElement>(null);
+  const noteRef = useRef<HTMLSpanElement>(null);
   const [ref] = useInkBox([140, 40]);
   const [where, setWhere] = useState<{ margin: boolean; a: P; b: P } | null>(null);
   const mode = pen.draw === "none" ? "none" : pen.draw === "mount" ? "mount" : "auto";
@@ -69,7 +70,7 @@ function MarginNote({
   // Where the arrow runs depends on where the note landed: measured, and
   // measured again whenever the text reflows.
   useLayoutEffect(() => {
-    const noteEl = ref.current?.parentElement;
+    const noteEl = noteRef.current;
     const word = target.current;
     if (!noteEl || !word) return;
     const measure = () => {
@@ -92,7 +93,7 @@ function MarginNote({
     observer.observe(noteEl.parentElement ?? noteEl);
     observer.observe(word);
     return () => observer.disconnect();
-  }, [ref, right]);
+  }, [right]);
 
   const geo = useMemo(() => (where ? arrow(s, where.a, where.b, right ? -1 : 1) : null), [s, where, right]);
 
@@ -102,6 +103,7 @@ function MarginNote({
         {children}
       </span>
       <span
+        ref={noteRef}
         role="note"
         data-slot="margin-note"
         data-side={side}

@@ -80,10 +80,10 @@ const Defs = memo(function Defs({ id }: { id: string }) {
 });
 
 /** The columns, memoised: hovering only redraws the loop and the label, never the cells. */
-const Columns = memo(function Columns({ id, weeks, today }: { id: string; weeks: (Cell | null)[][]; today?: string }) {
+const Columns = memo(function Columns({ id, weeks, today, animate }: { id: string; weeks: (Cell | null)[][]; today?: string; animate: boolean }) {
   return weeks.map((week, wi) => (
     // Each column lands as the pen sweeps across, left to right.
-    <g key={wi} className="ink-land" transform={`translate(${wi * PITCH} 0)`} style={{ "--ink-d": "320ms", "--ink-dd": `${wi * 14}ms` } as CSSProperties}>
+    <g key={wi} className={animate ? "ink-land" : undefined} transform={`translate(${wi * PITCH} 0)`} style={{ "--ink-d": "320ms", "--ink-dd": `${wi * 14}ms` } as CSSProperties}>
       {week.map((day, di) => {
         if (!day) return null;
         const v = hashSeed(day.date) % VARIANTS;
@@ -224,7 +224,7 @@ function HatchGrid({
             className="ink-sketch block text-ink"
           >
             <Defs id={id} />
-            <Columns id={id} weeks={weeks} today={today} />
+            <Columns id={id} weeks={weeks} today={today} animate={mode !== "none"} />
           </svg>
           {hover && (
             <>
