@@ -23,7 +23,10 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={inkClassName("relative not-last:after:pointer-events-none not-last:after:absolute not-last:after:inset-x-0 not-last:after:-bottom-[2.5px] not-last:after:h-[5px] not-last:after:bg-ink-4 not-last:after:[mask-image:var(--ink-rule-1)] not-last:after:[mask-size:100%_100%] nth-[3n+2]:after:[mask-image:var(--ink-rule-2)] nth-[3n]:after:[mask-image:var(--ink-rule-3)]", className)}
+      className={inkClassName(
+        "relative not-last:after:pointer-events-none not-last:after:absolute not-last:after:inset-x-0 not-last:after:-bottom-[2.5px] not-last:after:h-[5px] not-last:after:bg-ink-4 not-last:after:[mask-image:var(--ink-rule-1)] not-last:after:[mask-size:100%_100%] nth-[3n+2]:after:[mask-image:var(--ink-rule-2)] nth-[3n]:after:[mask-image:var(--ink-rule-3)]",
+        className,
+      )}
       {...props}
     />
   );
@@ -42,15 +45,13 @@ function AccordionTrigger({
   ...props
 }: AccordionPrimitive.Trigger.Props & { seed?: string | number; header?: AccordionPrimitive.Header.Props }) {
   return (
-    <AccordionPrimitive.Header {...header} className={cn("flex", header?.className)}>
+    <AccordionPrimitive.Header {...header} className={inkClassName("flex", header?.className)}>
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={inkClassName(
-          cn(
-            "group/accordion-trigger relative flex flex-1 cursor-pointer items-center justify-between gap-4 py-3.5 text-left text-base font-bold transition-colors outline-none",
-            "hover:text-ink-2 focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
-            "aria-disabled:pointer-events-none aria-disabled:opacity-50",
-          ),
+          "group/accordion-trigger relative flex flex-1 cursor-pointer items-center justify-between gap-4 py-3.5 text-left text-base font-bold transition-colors outline-none",
+          "hover:text-ink-2 focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:[border-radius:var(--hand-radius)]",
+          "aria-disabled:pointer-events-none aria-disabled:opacity-50",
           className,
         )}
         {...props}

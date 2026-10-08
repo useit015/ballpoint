@@ -1,10 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { Toast as ToastPrimitive, type ToastManagerAddOptions, type ToastManagerPromiseOptions } from "@base-ui/react/toast";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
+import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { InkGlyph, type GlyphName } from "@/registry/ballpoint/lib/ink-glyphs";
 import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
 import { Button } from "@/registry/ballpoint/ui/button";

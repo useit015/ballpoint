@@ -18,9 +18,16 @@ import { hashSeed, ruleStroke, swipePath, type InkStroke } from "@/registry/ball
 
 export type DrawMode = "auto" | "mount" | "hover" | "focus" | "checked" | "indeterminate" | "none";
 
-/** Preserve Base UI's state callback while merging the component's classes. */
-export function inkClassName<State>(classes: string, className?: string | ((state: State) => string | undefined)) {
-  return typeof className === "function" ? (state: State) => cn(classes, className(state)) : cn(classes, className);
+type StateClassName<State> = string | ((state: State) => string | undefined) | undefined;
+
+/**
+ * `cn` for Base UI parts, whose `className` (the last argument) can also be a
+ * function of the part's state: it stays a function, merged on every call.
+ */
+export function inkClassName<State>(...args: [...classes: Parameters<typeof cn>, className: StateClassName<State>]) {
+  const classes = args.slice(0, -1) as Parameters<typeof cn>;
+  const className = args[args.length - 1] as StateClassName<State>;
+  return typeof className === "function" ? (state: State) => cn(...classes, className(state)) : cn(...classes, className);
 }
 
 const drawClass: Record<DrawMode, string> = {

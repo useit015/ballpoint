@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useId, useMemo, type CSSProperties } from "react";
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress";
-import { cn } from "@/lib/utils";
 import { penStyle, useInkFrame, useInkSeed, usePen, type InkFill, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { hatchStrokes, penBoxStrokes, roundedRectPath, scribbleFill, shadeFill } from "@/registry/ballpoint/lib/ink-sketch";
@@ -66,10 +65,8 @@ function ProgressIndicator({ className, style, ...props }: ProgressPrimitive.Ind
       data-slot="progress-indicator"
       style={typeof style === "function" ? (state) => ({ ...round, ...style(state) }) : { ...round, ...style }}
       className={inkClassName(
-        cn(
-          // .ink-progress (base.css) slides it along when indeterminate.
-          "ink-progress absolute inset-y-0 left-0 overflow-hidden transition-[width] duration-(--dur-state) ease-out motion-reduce:transition-none",
-        ),
+        // .ink-progress (base.css) slides it along when indeterminate.
+        "ink-progress absolute inset-y-0 left-0 overflow-hidden transition-[width] duration-(--dur-state) ease-out motion-reduce:transition-none",
         className,
       )}
       {...props}

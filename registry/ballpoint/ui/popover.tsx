@@ -1,10 +1,10 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
+import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
@@ -43,11 +43,9 @@ function PopoverContent({
         <PopoverPrimitive.Popup
           data-slot="popover-content"
           className={inkClassName(
-            cn(
-              "ink-paper relative isolate flex w-72 origin-(--transform-origin) flex-col gap-3 p-4 text-base text-popover-foreground outline-none",
-              "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:ease-in",
-              "motion-safe:data-starting-style:scale-[0.97] motion-safe:data-ending-style:scale-[0.98]",
-            ),
+            "ink-paper relative isolate flex w-72 origin-(--transform-origin) flex-col gap-3 p-4 text-base text-popover-foreground outline-none",
+            "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:ease-in",
+            "motion-safe:data-starting-style:scale-[0.97] motion-safe:data-ending-style:scale-[0.98]",
             className,
           )}
           {...props}

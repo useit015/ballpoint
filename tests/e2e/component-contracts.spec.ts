@@ -15,6 +15,11 @@ test("state class callbacks receive checked, active, and open states", async ({ 
   await page.getByRole("tab", { name: "Second" }).click();
   await expect(page.getByRole("tab", { name: "First" })).toHaveClass(/consumer-inactive/);
   await expect(page.getByRole("tab", { name: "Second" })).toHaveClass(/consumer-active/);
+  const header = page.getByRole("heading", { name: "Callback accordion" });
+  await expect(header).toHaveClass(/consumer-header-closed/);
+  await page.getByRole("button", { name: "Callback accordion" }).click();
+  await expect(header).toHaveClass(/consumer-header-open/);
+  await expect(header).toHaveClass(/\bflex\b/);
   await page.getByRole("button", { name: "Open callback popover" }).click();
   await expect(page.locator("[data-slot=popover-content]")).toHaveClass(/consumer-open/);
 });

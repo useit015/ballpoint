@@ -2,7 +2,6 @@
 
 import { useId, useMemo } from "react";
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
-import { cn } from "@/lib/utils";
 import { penStyle, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
@@ -40,14 +39,12 @@ function Switch({
       data-slot="switch"
       data-size={size}
       className={inkClassName(
-        cn(
-          "peer group/switch relative inline-flex shrink-0 cursor-pointer items-center rounded-full outline-none",
-          "after:absolute after:-inset-x-3 after:-inset-y-2",
-          "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:hover:text-ink data-checked:text-ink",
-          "aria-invalid:text-destructive data-invalid:text-destructive",
-          "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring",
-          "data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        ),
+        "peer group/switch relative inline-flex shrink-0 cursor-pointer items-center rounded-full outline-none",
+        "after:absolute after:-inset-x-3 after:-inset-y-2",
+        "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:hover:text-ink data-checked:text-ink",
+        "aria-invalid:text-destructive data-invalid:text-destructive",
+        "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring",
+        "data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
       style={{ width: w, height: h }}

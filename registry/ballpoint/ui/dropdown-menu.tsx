@@ -65,11 +65,9 @@ function DropdownMenuContent({
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={inkClassName(
-            cn(
-              "ink-paper relative isolate w-max min-w-[max(11rem,var(--anchor-width))] max-w-(--available-width) origin-(--transform-origin) text-popover-foreground outline-none",
-              "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:ease-in",
-              "motion-safe:data-starting-style:scale-[0.97] motion-safe:data-ending-style:scale-[0.98]",
-            ),
+            "ink-paper relative isolate w-max min-w-[max(11rem,var(--anchor-width))] max-w-(--available-width) origin-(--transform-origin) text-popover-foreground outline-none",
+            "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-ending-style:ease-in",
+            "motion-safe:data-starting-style:scale-[0.97] motion-safe:data-ending-style:scale-[0.98]",
             className,
           )}
           style={typeof style === "function" ? (state) => ({ ...marks, ...style(state) }) : { ...marks, ...style }}
@@ -106,13 +104,7 @@ function DropdownMenuItem({ className, inset, variant = "default", ...props }: M
       data-slot="dropdown-menu-item"
       data-inset={inset}
       data-variant={variant}
-      className={inkClassName(
-        cn(
-          itemClass,
-          "data-[variant=destructive]:text-destructive",
-        ),
-        className,
-      )}
+      className={inkClassName(itemClass, "data-[variant=destructive]:text-destructive", className)}
       {...props}
     />
   );
@@ -127,13 +119,7 @@ function DropdownMenuSubTrigger({ className, inset, children, ...props }: MenuPr
     <MenuPrimitive.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
-      className={inkClassName(
-        cn(
-          itemClass,
-          "data-popup-open:before:opacity-(--ink-wash-opacity)",
-        ),
-        className,
-      )}
+      className={inkClassName(itemClass, "data-popup-open:before:opacity-(--ink-wash-opacity)", className)}
       {...props}
     >
       {children}
@@ -159,13 +145,7 @@ function DropdownMenuSubContent({ align = "start", alignOffset = -6, side = "rig
 /** Checking it ticks it, the pen running up and out; unchecking pulls the tick back out. */
 function DropdownMenuCheckboxItem({ className, children, inset, ...props }: MenuPrimitive.CheckboxItem.Props & { inset?: boolean }) {
   return (
-    <MenuPrimitive.CheckboxItem data-slot="dropdown-menu-checkbox-item" data-inset={inset} className={inkClassName(
-      cn(
-        itemClass,
-        "pr-9",
-      ),
-      className,
-    )} {...props}>
+    <MenuPrimitive.CheckboxItem data-slot="dropdown-menu-checkbox-item" data-inset={inset} className={inkClassName(itemClass, "pr-9", className)} {...props}>
       {children}
       <MenuPrimitive.CheckboxItemIndicator
         keepMounted
@@ -185,13 +165,7 @@ function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
 /** The chosen one gets a dot scribbled in beside it. */
 function DropdownMenuRadioItem({ className, children, inset, ...props }: MenuPrimitive.RadioItem.Props & { inset?: boolean }) {
   return (
-    <MenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" data-inset={inset} className={inkClassName(
-      cn(
-        itemClass,
-        "pr-9",
-      ),
-      className,
-    )} {...props}>
+    <MenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" data-inset={inset} className={inkClassName(itemClass, "pr-9", className)} {...props}>
       {children}
       <MenuPrimitive.RadioItemIndicator
         keepMounted

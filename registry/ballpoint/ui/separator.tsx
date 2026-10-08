@@ -29,7 +29,10 @@ function Separator({
     <SeparatorPrimitive
       data-slot="separator"
       orientation={orientation}
-      className={inkClassName("relative shrink-0 text-ink-4 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch", className)}
+      className={inkClassName(
+        "relative shrink-0 text-ink-4 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",
+        className,
+      )}
       {...props}
     >
       <InkSvg

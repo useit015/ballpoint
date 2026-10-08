@@ -15,7 +15,7 @@ import {
   type InkSize,
   type Pen,
 } from "@/registry/ballpoint/hooks/use-ink-box";
-import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
+import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import {
   boxStroke,
   cornerTicks,
@@ -142,7 +142,7 @@ function Button({
     <ButtonPrimitive
       data-slot="button"
       data-variant={v}
-      className={typeof className === "function" ? (state) => cn(classes, className(state)) : cn(classes, className)}
+      className={inkClassName(classes, className)}
       style={typeof style === "function" ? (state) => ({ ...own, ...style(state) }) : own || style ? { ...own, ...style } : undefined}
       {...props}
     >

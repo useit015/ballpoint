@@ -28,7 +28,10 @@ function Avatar({
     <AvatarPrimitive.Root
       data-slot="avatar"
       data-size={size}
-      className={inkClassName("group/avatar relative flex size-8 shrink-0 rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6", className)}
+      className={inkClassName(
+        "group/avatar relative flex size-8 shrink-0 rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6",
+        className,
+      )}
       {...props}
     >
       {children}
@@ -60,7 +63,10 @@ function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props)
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
-      className={inkClassName("flex size-full items-center justify-center rounded-full bg-ink-5 text-sm text-ink group-data-[size=lg]/avatar:text-base group-data-[size=sm]/avatar:text-xs", className)}
+      className={inkClassName(
+        "flex size-full items-center justify-center rounded-full bg-ink-5 text-sm text-ink group-data-[size=lg]/avatar:text-base group-data-[size=sm]/avatar:text-xs",
+        className,
+      )}
       {...props}
     />
   );

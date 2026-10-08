@@ -45,11 +45,9 @@ function TooltipContent({
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={inkClassName(
-            cn(
-              "relative isolate inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 px-3 py-1 text-sm text-primary-foreground",
-              "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-instant:transition-none",
-              "motion-safe:data-starting-style:scale-95 motion-safe:data-ending-style:scale-95",
-            ),
+            "relative isolate inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 px-3 py-1 text-sm text-primary-foreground",
+            "transition-[opacity,scale] duration-(--dur-hover) ease-out data-starting-style:opacity-0 data-ending-style:opacity-0 data-instant:transition-none",
+            "motion-safe:data-starting-style:scale-95 motion-safe:data-ending-style:scale-95",
             className,
           )}
           {...props}

@@ -1,10 +1,10 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
+import { inkClassName } from "@/registry/ballpoint/lib/ink";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import { InkPanel } from "@/registry/ballpoint/lib/ink-panel";
 import { Button } from "@/registry/ballpoint/ui/button";
@@ -31,12 +31,10 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={inkClassName(
-        cn(
-          "fixed inset-0 z-50 bg-paper/65 backdrop-blur-[1.5px] transition-opacity duration-(--dur-state) ease-out",
-          "data-ending-style:opacity-0 data-ending-style:ease-in data-starting-style:opacity-0",
-          // iOS: cover the whole visible viewport.
-          "supports-[-webkit-touch-callout:none]:absolute",
-        ),
+        "fixed inset-0 z-50 bg-paper/65 backdrop-blur-[1.5px] transition-opacity duration-(--dur-state) ease-out",
+        "data-ending-style:opacity-0 data-ending-style:ease-in data-starting-style:opacity-0",
+        // iOS: cover the whole visible viewport.
+        "supports-[-webkit-touch-callout:none]:absolute",
         className,
       )}
       {...props}
@@ -73,13 +71,11 @@ function DialogContent({
         <DialogPrimitive.Popup
           data-slot="dialog-content"
           className={inkClassName(
-            cn(
-              "ink-paper relative isolate grid w-full max-w-md gap-5 p-6 text-base text-popover-foreground outline-none",
-              // It lands: a little low and askew, then settles flat.
-              "transition-[opacity,translate,rotate] duration-(--dur-enter) ease-out-expo data-starting-style:opacity-0 data-ending-style:opacity-0",
-              "motion-safe:data-starting-style:translate-y-3 motion-safe:data-starting-style:-rotate-1",
-              "data-ending-style:duration-(--dur-state) data-ending-style:ease-in motion-safe:data-ending-style:translate-y-1.5",
-            ),
+            "ink-paper relative isolate grid w-full max-w-md gap-5 p-6 text-base text-popover-foreground outline-none",
+            // It lands: a little low and askew, then settles flat.
+            "transition-[opacity,translate,rotate] duration-(--dur-enter) ease-out-expo data-starting-style:opacity-0 data-ending-style:opacity-0",
+            "motion-safe:data-starting-style:translate-y-3 motion-safe:data-starting-style:-rotate-1",
+            "data-ending-style:duration-(--dur-state) data-ending-style:ease-in motion-safe:data-ending-style:translate-y-1.5",
             className,
           )}
           {...props}

@@ -2,7 +2,6 @@
 
 import { Radio as RadioPrimitive } from "@base-ui/react/radio";
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
-import { cn } from "@/lib/utils";
 import { usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { inkClassName, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
@@ -27,14 +26,12 @@ function RadioGroupItem({
     <RadioPrimitive.Root
       data-slot="radio-group-item"
       className={inkClassName(
-        cn(
-          "peer group/radio relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
-          "after:absolute after:-inset-x-3 after:-inset-y-2",
-          "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:hover:text-ink data-checked:text-ink",
-          "aria-invalid:text-destructive data-invalid:text-destructive",
-          "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring",
-          "data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        ),
+        "peer group/radio relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none",
+        "after:absolute after:-inset-x-3 after:-inset-y-2",
+        "text-ink-3 transition-colors duration-(--dur-hover) not-data-checked:hover:text-ink data-checked:text-ink",
+        "aria-invalid:text-destructive data-invalid:text-destructive",
+        "focus-visible:outline-solid focus-visible:outline-[1.5px] focus-visible:outline-offset-4 focus-visible:outline-ring",
+        "data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
       {...props}
