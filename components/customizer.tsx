@@ -209,6 +209,7 @@ export function Customizer() {
               "--ink": colours.ink,
               "--paper": colours.paper,
               "--pen-red": colours.red,
+              "--ink-fill": colours.fill,
               "--paper-tile": paperTile(s.paper, mode),
             } as CSSProperties
           }
