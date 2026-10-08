@@ -122,6 +122,7 @@ function SignaturePad({
   // The stroke being drawn: built up in a ref by the pointer handlers,
   // and copied into state to render as it grows.
   const building = useRef<SignatureStroke | null>(null);
+  const pointer = useRef<number | null>(null);
   const [active, setActive] = useState<SignatureStroke | null>(null);
   const hand = useRef({ x: 0, y: 0, t: 0, v: 0 });
   const [invalid, setInvalid] = useState(false);
@@ -181,8 +182,9 @@ function SignaturePad({
   }
 
   function down(e: ReactPointerEvent<HTMLDivElement>) {
-    if (disabled || (e.pointerType === "mouse" && e.button !== 0)) return;
+    if (disabled || pointer.current !== null || (e.pointerType === "mouse" && e.button !== 0)) return;
     e.preventDefault();
+    pointer.current = e.pointerId;
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {}
@@ -197,7 +199,7 @@ function SignaturePad({
 
   function move(e: ReactPointerEvent<HTMLDivElement>) {
     const stroke = building.current;
-    if (!stroke) return;
+    if (!stroke || e.pointerId !== pointer.current) return;
     const el = e.currentTarget;
     const samples = e.nativeEvent.getCoalescedEvents?.() ?? [];
     for (const sample of samples.length ? samples : [e.nativeEvent]) {
@@ -207,10 +209,11 @@ function SignaturePad({
     setActive(stroke.slice());
   }
 
-  function up() {
+  function up(e: ReactPointerEvent<HTMLDivElement>) {
     const stroke = building.current;
-    if (!stroke) return;
+    if (!stroke || e.pointerId !== pointer.current) return;
     building.current = null;
+    pointer.current = null;
     setActive(null);
     // Lifting off: the line flicks off thin if the hand was still moving.
     const last = stroke[stroke.length - 1];
