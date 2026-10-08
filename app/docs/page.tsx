@@ -89,7 +89,11 @@ export default function Installation() {
         <p className="text-ink-2">
           Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser; pass{" "}
           <code className="inline-code">seed</code> to pin one. By default everything draws itself in the first time it scrolls into
-          view (<code className="inline-code">draw=&quot;auto&quot;</code>); with reduced motion it appears already drawn.
+          view (<code className="inline-code">draw=&quot;auto&quot;</code>), and what comes into view together is drawn in reading
+          order, each drawing starting as the one before gets under way, the way one pen goes down a page. Content with no drawing of
+          its own can take its turn too: spread <code className="inline-code">useInkStage()</code> onto it, and what inside it has{" "}
+          <code className="inline-code">ink-land</code> settles in when the pen gets there. With reduced motion everything appears
+          already drawn.
         </p>
         <p className="text-ink-2">
           How the pen behaves is yours to set, per component or for a whole region: roughness, how many passes, corner radius (pills

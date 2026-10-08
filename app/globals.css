@@ -13,17 +13,18 @@
 /* Scrollbars are drawn by hand (scripts/scrollbar-art.ts): a wobbly ink line
    for the thumb, a pencil line for the track, no arrows. Chrome prefers the
    standard properties over the ::-webkit-scrollbar rules, so anything that
-   sets its own thin bar (Timeline, Hatch Grid) is put back on the drawn one.
-   Firefox has no way to draw one: it gets its thin bar in the ink's colour. */
+   sets its own thin bar (Timeline) is put back on the drawn one. Hatch Grid
+   has none: it fades the weeks it has scrolled past instead. Firefox has no
+   way to draw one: it gets its thin bar in the ink's colour. */
 @supports selector(::-webkit-scrollbar) {
-  * {
+  :where(:not([data-slot="hatch-grid"])) {
     scrollbar-width: auto !important;
     scrollbar-color: auto !important;
   }
 }
 
 @supports not selector(::-webkit-scrollbar) {
-  * {
+  :where(:not([data-slot="hatch-grid"])) {
     scrollbar-width: thin;
     scrollbar-color: var(--ink-4) transparent;
   }

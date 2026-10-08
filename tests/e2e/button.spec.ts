@@ -33,6 +33,12 @@ test.describe("button", () => {
     }
   });
 
+  test("a button drawn on a link is still a link", async ({ page }) => {
+    const link = page.locator("[data-preview] a[data-slot=button]").first();
+    await expect(link).not.toHaveAttribute("role");
+    await expect(page.locator("[data-preview]").getByRole("link", { name: /Read the docs/ })).toBeVisible();
+  });
+
   test("disabled buttons can't take focus", async ({ page }) => {
     const disabled = page.locator("[data-preview] [data-slot=button]", { hasText: "Disabled" });
     await expect(disabled).toBeDisabled();
