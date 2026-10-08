@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useState, type KeyboardEvent } from "react";
+import { IntentLink } from "@/components/intent-link";
 import { Badge } from "@/registry/ballpoint/ui/badge";
 import { Button } from "@/registry/ballpoint/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/registry/ballpoint/ui/dialog";
@@ -61,6 +61,13 @@ export function Search({ entries }: { entries: SearchEntry[] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // The arrow keys and Enter never touch a link, so fetch the highlighted
+  // page ahead of them.
+  const highlighted = open ? results[at]?.href : undefined;
+  useEffect(() => {
+    if (highlighted) router.prefetch(highlighted);
+  }, [highlighted, router]);
+
   const go = (href: string) => {
     setOpen(false);
     router.push(href);
@@ -110,7 +117,7 @@ export function Search({ entries }: { entries: SearchEntry[] }) {
           <ul id={listId} role="listbox" aria-label="Results" className="-mx-2 flex max-h-72 flex-col gap-0.5 overflow-y-auto overscroll-contain px-2 py-1">
             {results.map((entry, i) => (
               <li key={entry.href} role="presentation">
-                <Link
+                <IntentLink
                   id={`${listId}-${i}`}
                   role="option"
                   aria-selected={i === at}
@@ -126,7 +133,7 @@ export function Search({ entries }: { entries: SearchEntry[] }) {
                   <Badge variant="outline" className="shrink-0" draw="none">
                     {entry.group}
                   </Badge>
-                </Link>
+                </IntentLink>
               </li>
             ))}
           </ul>

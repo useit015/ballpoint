@@ -1,22 +1,37 @@
-// Writes a paper texture for every paper in registry/themes.ts, by day and
-// by night, to public/paper/<name>-<mode>.svg: a seamless 600px tile that
-// looks like a sheet of real paper up close, and averages out to exactly
-// that paper's colour, so text contrast on it is the contrast checked
-// against --paper. The docs site paints the page with one (--paper-tile),
-// and the customizer and the Pens and papers page swap in the one for the
-// paper shown.
+// Writes the paper textures for every paper in registry/themes.ts, by day and
+// by night: seamless tiles that look like a sheet of real paper up close, and
+// average out to exactly that paper's colour, so text contrast on it is the
+// contrast checked against --paper. The docs site paints the page with one
+// (--paper-tile, in app/globals.css), and the customizer and the Pens and
+// papers page swap in the one for the paper shown.
 //
 // The page is the portfolio's sheet: noise lit like paper under a window
 // (feDiffuseLighting), so it carries a soft, crinkled relief and a fine
 // speckled tooth, and stays its own hue. The docs' slips (code and examples)
 // are card stock laid on it: a finer, stronger crinkle, and the odd fibre
 // lying on the surface, mostly lighter than the sheet, a few darker.
+//
+// Each texture is three layers, painted over each other (--paper-tile-size):
+// - public/paper/<name>-<mode>.png, the relief: a 600px tile of the lit noise.
+//   It's drawn by an SVG filter, but kept as the picture Chrome paints from it:
+//   on a phone the filter costs a few hundred ms of raster for every tile and
+//   every scale, where the PNG (a few dozen colours, indexed) is a quick
+//   decode. It records the SVG it was painted from; when that changes, this
+//   script paints it again in Chrome (CHROME_PATH, or the installed Chrome),
+//   and fails without one, so a stale relief never ships.
+// - public/paper/tooth-<mode>.svg, the tooth: a small seamless tile of fine
+//   speckle, cheap to paint and sharp at any pixel density.
+// - public/paper/slip-fibres-<mode>.svg, the slips' fibres.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { mix, parseColor, type Rgb } from "../lib/color.ts";
 import { papers } from "../registry/themes.ts";
+import { encodePng, readPngText } from "./png.ts";
 
 const SIZE = 600;
+// The tooth's tile. Keep in step with --paper-tile-size in app/globals.css.
+const TOOTH = 128;
 // The mean of the lighting below, measured by rendering the filter in Chrome
 // (one value per grain); the colour map is centred on it so the tile
 // averages to the paper.
@@ -57,7 +72,10 @@ function fibres(rgb: number[], mode: "light" | "dark") {
   const repeats = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, 1], [-1, 1], [1, -1]]
     .map(([dx, dy]) => `<use href='#f' x='${dx * SIZE}' y='${dy * SIZE}'/>`)
     .join("");
-  return `<g id='f' fill='none' stroke-linecap='round'>${paths.join("")}</g>${repeats}`;
+  return `<svg xmlns='http://www.w3.org/2000/svg' width='${SIZE}' height='${SIZE}'>
+<g id='f' fill='none' stroke-linecap='round'>${paths.join("")}</g>${repeats}
+</svg>
+`;
 }
 
 type Grain = "page" | "slip";
@@ -68,8 +86,8 @@ const grains = {
   slip: { freq: ".012", relief: 2.8, day: 0.5, night: 0.34 },
 } as const;
 
-function tile(paper: string | Rgb, mode: "light" | "dark", kind: Grain = "page") {
-  const rgb = (typeof paper === "string" ? parseColor(paper) : paper).map(toGamma);
+/** The relief: noise lit like paper, mapped onto the paper's colour. */
+function relief(rgb: number[], mode: "light" | "dark", kind: Grain) {
   const g = grains[kind];
   // How far L moves the colour: the same amount on every channel, so the
   // sheet stays its own hue. The offset puts the tile's mean back on the paper.
@@ -77,16 +95,23 @@ function tile(paper: string | Rgb, mode: "light" | "dark", kind: Grain = "page")
   const funcs = ["R", "G", "B"]
     .map((ch, i) => `<feFunc${ch} type='linear' slope='${slope}' intercept='${n(rgb[i] - slope * MEAN_L[kind])}'/>`)
     .join("");
-  // The tooth: fine speckle, a touch of warm grey.
-  const tooth = mode === "dark" ? "0.030 -0.009" : "0.060 -0.018";
   return `<svg xmlns='http://www.w3.org/2000/svg' width='${SIZE}' height='${SIZE}'>
 <filter id='p' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'>
 <feTurbulence type='fractalNoise' baseFrequency='${g.freq}' numOctaves='4' seed='3' stitchTiles='stitch' result='n'/>
 <feDiffuseLighting in='n' lighting-color='#fff' surfaceScale='${g.relief}' diffuseConstant='1' result='l'><feDistantLight azimuth='225' elevation='55'/></feDiffuseLighting>
 <feComponentTransfer>${funcs}<feFuncA type='linear' slope='0' intercept='1'/></feComponentTransfer>
 </filter>
-<filter id='t' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='9' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 ${tooth}'/></filter>
-<rect width='100%' height='100%' filter='url(#p)'/><rect width='100%' height='100%' filter='url(#t)'/>${kind === "slip" ? fibres(rgb, mode) : ""}
+<rect width='100%' height='100%' filter='url(#p)'/>
+</svg>
+`;
+}
+
+/** The tooth: fine speckle, a touch of warm grey. */
+function tooth(mode: "light" | "dark") {
+  const alpha = mode === "dark" ? "0.030 -0.009" : "0.060 -0.018";
+  return `<svg xmlns='http://www.w3.org/2000/svg' width='${TOOTH}' height='${TOOTH}'>
+<filter id='t' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='9' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 ${alpha}'/></filter>
+<rect width='100%' height='100%' filter='url(#t)'/>
 </svg>
 `;
 }
@@ -99,11 +124,62 @@ const slip = {
   light: mix(parseColor(papers.cream.paper.light), 0.8, white),
   dark: mix(parseColor(papers.cream.paper.dark), 0.94, ink.dark),
 };
+const gamma = (paper: string | Rgb) => (typeof paper === "string" ? parseColor(paper) : paper).map(toGamma);
 
 const dir = new URL("../public/paper/", import.meta.url);
 mkdirSync(dir, { recursive: true });
+
+const reliefs: { file: URL; svg: string }[] = [];
 for (const [name, paper] of Object.entries(papers)) {
-  for (const mode of ["light", "dark"] as const) writeFileSync(new URL(`${name}-${mode}.svg`, dir), tile(paper.paper[mode], mode));
+  for (const mode of ["light", "dark"] as const) reliefs.push({ file: new URL(`${name}-${mode}.png`, dir), svg: relief(gamma(paper.paper[mode]), mode, "page") });
 }
-for (const mode of ["light", "dark"] as const) writeFileSync(new URL(`slip-${mode}.svg`, dir), tile(slip[mode], mode, "slip"));
-console.log(`public/paper: ${Object.keys(papers).length * 2 + 2} tiles`);
+for (const mode of ["light", "dark"] as const) {
+  reliefs.push({ file: new URL(`slip-${mode}.png`, dir), svg: relief(gamma(slip[mode]), mode, "slip") });
+  writeFileSync(new URL(`tooth-${mode}.svg`, dir), tooth(mode));
+  writeFileSync(new URL(`slip-fibres-${mode}.svg`, dir), fibres(gamma(slip[mode]), mode));
+}
+
+// What a relief was painted from: its SVG, and the size it was painted at.
+const source = (svg: string) => createHash("sha256").update(`${SIZE}px\n${svg}`).digest("hex").slice(0, 32);
+const stale = reliefs.filter(({ file, svg }) => !existsSync(file) || readPngText(readFileSync(file)).Source !== source(svg));
+if (stale.length) await paint(stale);
+console.log(`public/paper: ${reliefs.length} reliefs${stale.length ? ` (${stale.length} painted)` : ""}, 2 tooth tiles, 2 fibre tiles`);
+
+/** Paints reliefs in Chrome, the way the page would, and saves them as PNGs. */
+async function paint(list: typeof reliefs) {
+  const names = list.map(({ file }) => file.pathname.split("/").pop()).join(", ");
+  let browser;
+  try {
+    const { chromium } = await import("@playwright/test");
+    browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : { channel: "chrome" });
+  } catch (error) {
+    throw new Error(
+      `public/paper: ${names} no longer match scripts/paper-tiles.ts, and there's no Chrome here to paint them again. ` +
+        `Run \`pnpm paper\` where Chrome is installed (or with CHROME_PATH set) and commit the PNGs.`,
+      { cause: error },
+    );
+  }
+  try {
+    const page = await browser.newPage();
+    for (const { file, svg } of list) {
+      const b64 = await page.evaluate(
+        async ({ svg, size }) => {
+          const img = new Image();
+          img.src = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+          await img.decode();
+          const canvas = new OffscreenCanvas(size, size);
+          const ctx = canvas.getContext("2d")!;
+          ctx.drawImage(img, 0, 0, size, size);
+          const px = ctx.getImageData(0, 0, size, size).data;
+          let s = "";
+          for (let i = 0; i < px.length; i += 0x8000) s += String.fromCharCode(...px.subarray(i, i + 0x8000));
+          return btoa(s);
+        },
+        { svg, size: SIZE },
+      );
+      writeFileSync(file, encodePng(SIZE, SIZE, Buffer.from(b64, "base64"), { Source: source(svg), Software: "scripts/paper-tiles.ts" }));
+    }
+  } finally {
+    await browser.close();
+  }
+}
