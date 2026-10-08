@@ -9,7 +9,7 @@ type P = readonly [number, number];
 // ─── The pen ────────────────────────────────────────────────────────────
 // A stick ballpoint drawn in its own ink: laid along +x with the ball at the
 // origin, then turned up to the angle a right hand holds it at. Units are
-// hundredths of an em of the sentence it writes, so it's three ems long.
+// hundredths of an em of its `size`, so it's three ems long.
 
 const TILT = -54;
 const R = { tip: 3.8, nose: 9.8, cap: 11.8 };
@@ -66,8 +66,8 @@ const VIEW = (() => {
 })();
 
 // ─── The writing ───────────────────────────────────────────────────────
-// Every word and control in the sentence carries its beat (data-pen-at,
-// data-pen-d: see hero-line.tsx). The pen visits them in order: along each
+// Every word and control in the drawing carries its beat (data-pen-at,
+// data-pen-d: see launch-card.tsx). The pen visits them in order: along each
 // word level with the soft edge that writes it in (.ink-write's mask),
 // round each control while its box is drawn, and lifted in between.
 
@@ -88,9 +88,8 @@ function bezier(x1: number, y1: number, x2: number, y2: number) {
 
 type Frame = { t: number; x: number; y: number; lift: number; turn: number; o?: number };
 
-function plan(line: HTMLElement): { frames: Frame[]; end: number } | null {
+function plan(line: HTMLElement, em: number): { frames: Frame[]; end: number } | null {
   const box = line.getBoundingClientRect();
-  const em = parseFloat(getComputedStyle(line).fontSize);
   const marks = [...line.querySelectorAll<HTMLElement>("[data-pen-at]")]
     .map((el) => ({
       el,
@@ -99,7 +98,8 @@ function plan(line: HTMLElement): { frames: Frame[]; end: number } | null {
       word: el.classList.contains("ink-write"),
       // A line is given in the px of the drawing it belongs to.
       line: el.dataset.penLine?.split(" ").map(Number),
-      rect: (el instanceof SVGElement && el.ownerSVGElement ? el.ownerSVGElement : el).getBoundingClientRect(),
+      // A control can name the part the pen goes round (a checkbox in its row).
+      rect: (el instanceof SVGElement && el.ownerSVGElement ? el.ownerSVGElement : el.dataset.penBox ? (el.querySelector(el.dataset.penBox) ?? el) : el).getBoundingClientRect(),
     }))
     .filter((m) => m.rect.width > 0)
     .sort((a, b) => a.at - b.at);
@@ -164,50 +164,84 @@ function plan(line: HTMLElement): { frames: Frame[]; end: number } | null {
   return { frames, end: frames[frames.length - 1].t };
 }
 
+/** Where the pen lies once it's put down: px from the top left of the drawing it's in, and how far it's turned. */
+export type PenRest = { x: number; y: number; turn: number };
+
 /**
- * The pen that writes the front page's sentence. It turns up as the first
- * word starts, follows the writing word by word and round each control,
- * then lifts off the page. Synced to the CSS that writes the words, so it
- * joins in step however late the page's scripts arrive.
+ * The pen that draws the front page's card. It comes in as the first mark
+ * starts, follows the drawing mark by mark (along each word, level with
+ * the soft edge that writes it in, and round each control while its box is
+ * drawn), then puts itself down on the sheet at `rest`. Synced to the CSS
+ * that draws the marks, so it joins in step however late the page's
+ * scripts arrive. A new `take` (the card drawn again) picks it back up
+ * from where it lies. `size` is its scale: it's three times that long.
  */
-export function WritingPen({ seed = "hero-pen" }: { seed?: string }) {
+export function WritingPen({
+  seed = "stage-pen",
+  size,
+  take = 0,
+  rest,
+}: {
+  seed?: string;
+  size: number;
+  take?: number;
+  rest: (w: number, h: number) => PenRest;
+}) {
   const s = useInkSeed(seed);
   const art = useMemo(() => penArt(s), [s]);
   const ref = useRef<HTMLSpanElement>(null);
+  // Read when the pen moves, not a reason to plan it again.
+  const restAt = useRef(rest);
+  useEffect(() => {
+    restAt.current = rest;
+  });
 
   useEffect(() => {
     const pen = ref.current;
     const line = pen?.parentElement;
-    if (!pen || !line || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!pen || !line) return;
     let anim: Animation | undefined;
     let stopped = false;
 
+    // Lying still where it was put down: with reduced motion, and once the
+    // drawing's done and the sheet changes size under it.
+    const lie = () => {
+      anim?.cancel();
+      anim = undefined;
+      const r = restAt.current(line.clientWidth, line.clientHeight);
+      pen.style.setProperty("--pen-x", `${r.x}px`);
+      pen.style.setProperty("--pen-y", `${r.y}px`);
+      pen.style.setProperty("--pen-turn", `${r.turn}deg`);
+      pen.style.opacity = "1";
+    };
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return lie();
+
     const run = () => {
       if (stopped) return;
-      // The first word's own animation is the clock the whole sentence runs on.
-      const clock = line
-        .querySelector("[data-pen-at]")
-        ?.getAnimations()
+      // The first word's own animation is the clock the whole drawing runs on.
+      const clock = [...line.querySelectorAll<HTMLElement>(".ink-write[data-pen-at]")]
+        .flatMap((el) => el.getAnimations())
         .find((a) => a instanceof CSSAnimation && a.animationName === "ink-write");
-      if (clock && clock.startTime == null) return void clock.ready.then(run);
-      const p = plan(line);
-      if (!clock || !p) return;
+      if (!clock) return void (anim ? undefined : lie());
+      if (clock.startTime == null) return void clock.ready.then(run);
+      const p = plan(line, size);
+      if (!p) return;
       const { frames, end } = p;
-      const em = parseFloat(getComputedStyle(line).fontSize);
-      const total = end + 900;
+      const r = restAt.current(line.clientWidth, line.clientHeight);
+      const total = end + 1100;
       const first = frames[0];
       const lastF = frames[frames.length - 1];
-      const out = { x: line.clientWidth + 1.2 * em, y: -2.4 * em };
       const keys: Frame[] = [
-        { t: 0, x: first.x + 0.5 * em, y: first.y - 0.9 * em, lift: 1, turn: 6, o: 0 },
-        { t: Math.max(1, first.t - 40), x: first.x, y: first.y - 0.2 * em, lift: 1, turn: 2, o: 1 },
+        // Picked up from the sheet, or brought in from above it the first time.
+        take ? { t: 0, x: r.x, y: r.y, lift: 0, turn: r.turn, o: 1 } : { t: 0, x: first.x + 0.5 * size, y: first.y - 0.9 * size, lift: 1, turn: 6, o: 0 },
+        { t: Math.max(1, first.t - 40), x: first.x, y: first.y - 0.2 * size, lift: 1, turn: 2, o: 1 },
         ...frames,
-        { t: end + 160, x: lastF.x + 0.2 * em, y: lastF.y - 0.5 * em, lift: 1, turn: 4, o: 1 },
-        { t: total, x: out.x, y: out.y, lift: 1, turn: 14, o: 0 },
+        { t: end + 220, x: lastF.x + 0.3 * size, y: lastF.y - 0.5 * size, lift: 1, turn: 4, o: 1 },
+        { t: total, x: r.x, y: r.y, lift: 0, turn: r.turn, o: 1 },
       ];
       // Moved by custom properties rather than transform, so the pen runs on
-      // the same thread as the words: when a busy phone holds the words
-      // back, it holds the pen back with them instead of letting it run on.
+      // the same thread as the marks: when a busy phone holds the drawing
+      // back, it holds the pen back with it instead of letting it run on.
       const keyframes: Keyframe[] = keys.map((k, i) => ({
         offset: Math.min(1, k.t / total),
         "--pen-x": `${k.x.toFixed(1)}px`,
@@ -215,28 +249,33 @@ export function WritingPen({ seed = "hero-pen" }: { seed?: string }) {
         "--pen-turn": `${k.turn}deg`,
         "--pen-lift": k.lift,
         opacity: k.o ?? 1,
-        // Lifting off the page, it speeds away.
-        easing: i === keys.length - 2 ? "cubic-bezier(0.7, 0, 0.84, 0)" : "linear",
+        // Out to its first mark quickly, and put down gently at the end.
+        easing: i === 0 ? "cubic-bezier(0.3, 0, 0.2, 1)" : i === keys.length - 2 ? "cubic-bezier(0.45, 0, 0.2, 1)" : "linear",
       }));
       anim?.cancel();
       anim = pen.animate(keyframes, { duration: total, fill: "both" });
       anim.startTime = clock.startTime;
     };
 
-    // Measure once the hand's font is in, and again if the line reflows.
+    // Measure once the hand's font is in, and again if the sheet reflows.
     document.fonts.ready.then(run);
-    const observer = new ResizeObserver(() => anim && run());
+    const observer = new ResizeObserver(() => (anim?.playState === "running" ? run() : anim || pen.style.opacity ? lie() : undefined));
     observer.observe(line);
     return () => {
       stopped = true;
       observer.disconnect();
       anim?.cancel();
     };
-  }, [s]);
+  }, [s, size, take]);
 
   const [vx, vy, vw, vh] = VIEW;
   return (
-    <span ref={ref} aria-hidden="true" className="writing-pen pointer-events-none absolute top-0 left-0 z-10 block size-0 opacity-0">
+    <span
+      ref={ref}
+      aria-hidden="true"
+      className="writing-pen pointer-events-none absolute top-0 left-0 z-10 block size-0 opacity-0"
+      style={{ fontSize: size } as CSSProperties}
+    >
       <svg
         viewBox={VIEW.join(" ")}
         className="ink-sketch absolute overflow-visible text-ink"
