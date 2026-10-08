@@ -52,13 +52,17 @@ function timetable(start: number, labels: string[]) {
   };
 }
 
-/** Words written in by the pen at their beat. */
-function W({ beat, children }: { beat: Beat; children: ReactNode }) {
+/**
+ * Words written in by the pen at their beat. `inside` words belong to a
+ * control the pen is already drawing at that beat (a badge's, a button's),
+ * so the pen doesn't make a separate trip to them.
+ */
+function W({ beat, inside = false, children }: { beat: Beat; inside?: boolean; children: ReactNode }) {
   return (
     <span
       className="ink-write inline-block"
-      data-pen-at={beat.at}
-      data-pen-d={beat.d}
+      data-pen-at={inside ? undefined : beat.at}
+      data-pen-d={inside ? undefined : beat.d}
       style={{ "--ink-d": `${beat.d}ms`, "--ink-dd": `${beat.at}ms` } as CSSProperties}
     >
       {children}
@@ -120,7 +124,9 @@ export function LaunchCard({
           <CardAction>
             <At beat={beats.badge}>
               <Badge variant="outline" seed="stage-badge">
-                Friday
+                <W beat={beats.badge} inside>
+                  Friday
+                </W>
               </Badge>
             </At>
           </CardAction>
@@ -157,7 +163,9 @@ export function LaunchCard({
           </At>
           <At beat={beats.later}>
             <Button variant="ghost" seed="stage-later" onClick={() => onShip(false)}>
-              {shipped ? "Undo" : "Not yet"}
+              <W beat={beats.later} inside>
+                {shipped ? "Undo" : "Not yet"}
+              </W>
             </Button>
           </At>
         </CardFooter>
