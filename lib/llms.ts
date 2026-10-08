@@ -12,7 +12,7 @@ const summary =
   "shadcn-style React components drawn in blue ballpoint, on Base UI. Same names and props as shadcn/ui; every border, fill, rule and icon is a seeded pen stroke. Installed with the shadcn CLI as source you own. React 19, Tailwind CSS 4, MIT.";
 
 const about = [
-  "Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser. By default everything draws itself in the first time it scrolls into view; with reduced motion it appears already drawn.",
+  "Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser. By default everything draws itself in the first time it scrolls into view, and what comes into view together is drawn in reading order, each drawing starting as the one before gets under way. Content with no drawing of its own takes its turn with `useInkStage()` (spread it onto the element; children with the `ink-land` class settle in when the pen gets there). With reduced motion everything appears already drawn.",
   "Everything is one ink at different pressures on one paper. Change `--ink` and `--paper` and the rest follows; shadcn's own token names (`--background`, `--primary`, `--border`, …) are mapped onto these, so shadcn blocks sit on the same page.",
 ];
 

@@ -111,6 +111,7 @@ export function Actions() {
 <Separator orientation="vertical" />`,
     props: [
       { name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Which way the rule runs." },
+      { name: "delay", type: "number", default: "0", description: "ms after the pen gets to it before the rule is drawn. Rising delays rule a list off one line after another." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     primitive: { name: "Separator", href: "https://base-ui.com/react/components/separator" },
