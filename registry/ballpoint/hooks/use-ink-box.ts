@@ -103,16 +103,20 @@ function approach(el: Element, onNear: () => void) {
 // (LEAD of the time it takes, MAX_LEAD at most). The first waits the same
 // way for whatever the page is still drawing as it loads. A drawing
 // scrolled out of view before its turn waits to be seen again, and once
-// what the pen is busy with has scrolled out of view, it moves on.
+// the page scrolls, the pen hurries (see HURRY).
 const LEAD = 0.35;
 const MAX_LEAD = 450;
+// Someone scrolling isn't waiting for a pen to go down the page: while they
+// scroll, drawings still go in reading order but only HURRY ms apart, and
+// the wait for what the page drew as it loaded is dropped.
+const HURRY = 70;
+let hurry = false;
 const waiting = new WeakMap<Element, Element[]>();
 const queued = new WeakSet<Element>();
 let views: IntersectionObserver | undefined;
 // In view and waiting their turn, in reading order; what the pen last
 // drew, and when it's free of it.
 let line: Element[] = [];
-let busy: Element | undefined;
 let penFree: number | undefined;
 let turn: ReturnType<typeof setTimeout> | undefined;
 let looking = false;
@@ -191,24 +195,25 @@ function next() {
       continue;
     }
     draw(el);
-    busy = el;
-    penFree = now + Math.min(MAX_LEAD, penTime(el) * LEAD);
+    penFree = now + (hurry ? HURRY : Math.min(MAX_LEAD, penTime(el) * LEAD));
     if (line.length) turn = setTimeout(next, penFree - now);
+    else hurry = false;
     return;
   }
+  hurry = false;
 }
 
-// The page scrolled while drawings wait their turn: if what the pen is
-// busy with (or, before it has drawn anything, what loaded) is out of view
-// now, there's no point waiting on it.
+// The page scrolled while drawings wait their turn: the pen hurries (see
+// HURRY), and doesn't wait on what it was busy with, or on what loaded.
 function scrolled() {
   if (looking || !turn) return;
   looking = true;
   requestAnimationFrame(() => {
     looking = false;
-    if (!turn || (busy && inView(busy))) return;
+    if (!turn) return;
+    hurry = true;
     clearTimeout(turn);
-    penFree = performance.now();
+    penFree = Math.min(penFree ?? 0, performance.now() + HURRY);
     next();
   });
 }

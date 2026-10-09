@@ -4,8 +4,8 @@ import creamDark from "@/public/paper/cream-dark.png";
 import creamLight from "@/public/paper/cream-light.png";
 import legalDark from "@/public/paper/legal-dark.png";
 import legalLight from "@/public/paper/legal-light.png";
-import toothDark from "@/public/paper/tooth-dark.svg";
-import toothLight from "@/public/paper/tooth-light.svg";
+import toothDark from "@/public/paper/tooth-dark.png";
+import toothLight from "@/public/paper/tooth-light.png";
 import whiteDark from "@/public/paper/white-dark.png";
 import whiteLight from "@/public/paper/white-light.png";
 
