@@ -394,372 +394,316 @@ body {
   }
 }
 
+
 /* ─── Front page ─────────────────────────────────────────────────────────
-   The hero and the steps under it tell one story, beside a stage that stays
-   in view (components/landing/story.tsx, stage.tsx): a sheet with a card on
-   it, drawn by a pen, that each step does something to. Below a screen
-   wide enough for the two side by side, the stage holds the top of the
-   screen and the steps pass under it. */
+   A field guide on one long ruled sheet (app/page.tsx): its parts numbered
+   in the margin, and every mark on it made by the pen, in reading order,
+   as it comes into view. The rules, the margin and the numbers are printed
+   and hold still.
 
-.story {
-  /* The step that squeezes the card, for the card to follow (below). */
-  timeline-scope: --fit;
-}
+   Each part prints its own rules from its own top, so whatever stands in
+   a part (a slip, a row of controls) can never push the writing under it
+   off its lines. The writing keeps to them: body text a rule a line,
+   titles a whole number of rules, and gaps and rows of controls a rule or
+   two. */
 
-.story-step {
-  min-height: 78svh;
-  padding-block: 2rem 18svh;
-}
-
-.story-stage {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  margin-inline: -1rem;
-  padding: 0.5rem 1rem 0.75rem;
-  background-color: var(--paper);
-  background-image: var(--paper-tile);
-  background-size: var(--paper-tile-size);
-  background-attachment: local;
-}
-
-/* The steps fade in under the stage's lower edge. */
-.story-stage::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: 100%;
-  height: 2.5rem;
-  pointer-events: none;
-  background: linear-gradient(var(--paper), transparent);
+.guide {
+  --paper-rule: 2rem;
+  --paper-margin: 1.75rem;
+  --guide-ps: calc(var(--paper-margin) + 0.875rem);
+  --guide-pe: 1rem;
+  /* A rule's place in a line of body text: just under the baseline, where
+     the writing sits on it. */
+  --rule-at: 1.5rem;
+  padding: 0 var(--guide-pe) 0 var(--guide-ps);
+  font-size: 1.25rem;
+  line-height: var(--paper-rule);
 }
 
 @media (min-width: 40rem) {
-  .story-stage {
-    margin-inline: -2rem;
-    padding-inline: 2rem;
+  .guide {
+    --paper-margin: 4.5rem;
+    --guide-ps: calc(var(--paper-margin) + 1.75rem);
+    --guide-pe: 2rem;
   }
 }
 
 @media (min-width: 64rem) {
-  .story-step {
-    min-height: 92dvh;
-    padding-block: 12dvh;
-  }
-
-  .story-stage {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    background: none;
-  }
-
-  .story-stage::after {
-    content: none;
-  }
-
-  /* Held in the middle of the screen while the steps go by. */
-  .story-stage > .stage {
-    position: sticky;
-    top: max(1.5rem, calc(50dvh - 16rem));
+  .guide {
+    --paper-rule: 2.25rem;
+    --paper-margin: 7rem;
+    --guide-ps: calc(var(--paper-margin) + 2.5rem);
+    --guide-pe: 4rem;
+    --rule-at: 1.6875rem;
+    font-size: 1.375rem;
   }
 }
 
-/* The sheet's pen and paper move from one to the next rather than jump:
-   registered, so they can be transitioned, and everything on the sheet
-   takes its colours from them. */
-@property --stage-ink {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
+.guide-part {
+  /* Where the part's rules start: below the line drawn across above it. */
+  --rule-top: calc(var(--paper-rule) * 0.75);
+  position: relative;
+  padding-block: calc(var(--paper-rule) * 2) calc(var(--paper-rule) * 1.5);
 }
 
-@property --stage-paper {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
+.guide-part::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: var(--rule-top) calc(var(--guide-pe) * -1) 0 calc(var(--guide-ps) * -1);
+  pointer-events: none;
+  background: linear-gradient(transparent calc(var(--paper-rule) - 1px), color-mix(in oklab, var(--ink) 22%, transparent) 0) 0
+    calc(var(--rule-at) - var(--rule-top)) / 100% var(--paper-rule);
 }
 
-@property --stage-red {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
+.guide-part:last-child {
+  padding-bottom: calc(var(--paper-rule) * 3);
 }
 
-.stage-sheet {
-  rotate: 0.6deg;
-  transition:
-    --stage-ink 800ms var(--ease-out),
-    --stage-paper 800ms var(--ease-out),
-    --stage-red 800ms var(--ease-out);
+/* The line drawn across the sheet between one part and the next. */
+.guide-break {
+  position: absolute;
+  top: calc(var(--paper-rule) * 0.35);
+  left: calc(var(--guide-ps) * -1 + 0.75rem);
+  right: calc(var(--guide-pe) * -1 + 0.75rem);
+  width: auto;
+  color: var(--ink-3);
 }
 
-/* Turned over to show its code: a card on a sheet, flipped like one. */
-.stage-flip {
-  perspective: 1800px;
-}
-
-.stage-turn {
-  transform-style: preserve-3d;
-  transition: transform 1s var(--ease-out);
-}
-
-.stage-turn[data-flipped] {
-  transform: rotateY(-180deg);
-}
-
-.stage-face {
-  backface-visibility: hidden;
-}
-
-.stage-back {
-  transform: rotateY(180deg);
-}
-
-/* More code than fits on the card: it runs on past the edges, fading out. */
-.stage-back .code-block {
+/* The part's number, printed in the margin, under its name where there's room. */
+.guide-index {
+  position: absolute;
+  top: calc(var(--paper-rule) * 2);
+  left: calc(var(--guide-ps) * -1);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: var(--paper-margin);
+  padding-inline: 0.25rem;
+  color: var(--ink-3);
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.stage-back .code {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  mask-image: linear-gradient(#000 calc(100% - 4rem), transparent), linear-gradient(to right, #000 calc(100% - 2rem), transparent);
-  mask-composite: intersect;
+.guide-index-label {
+  display: none;
 }
 
-.stage-back .code-block pre {
+@media (min-width: 40rem) {
+  .guide-index {
+    padding-inline: 1rem;
+  }
+
+  .guide-index-label {
+    display: block;
+  }
+}
+
+.guide-headline {
+  position: relative;
+  /* Down onto its rule: a title's baseline sits higher in its lines than
+     the body text's does. */
+  top: 10px;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: calc(var(--paper-rule) * 2);
+  /* Gaegu's spaces are wide at this size; a hand writes words closer. */
+  word-spacing: -0.1em;
+}
+
+@media (min-width: 40rem) {
+  .guide-headline {
+    font-size: 4.5rem;
+    line-height: calc(var(--paper-rule) * 3);
+  }
+}
+
+@media (min-width: 64rem) {
+  .guide-headline {
+    top: 16px;
+    font-size: 6.25rem;
+  }
+}
+
+.guide-lede {
+  margin-top: var(--paper-rule);
+}
+
+.guide-lede br {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .guide-lede br {
+    display: inline;
+  }
+}
+
+@media (min-width: 64rem) {
+  .guide-lede {
+    font-size: 1.625rem;
+  }
+}
+
+/* A line only as wide as its words, so a note in the margin sits just
+   past their end and its arrow stays short. */
+.guide-lede,
+.guide-line {
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* Each row of buttons two rules high. */
+.guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.25rem;
+  margin-top: var(--paper-rule);
+}
+
+.guide-actions > * {
+  margin-block: calc(var(--paper-rule) - 1.5rem);
+}
+
+.guide-note {
+  --margin-note-gap: 4rem;
+  top: -2px;
+  margin-block: 0;
+  font-size: 1rem;
+  line-height: var(--paper-rule);
+}
+
+@media (min-width: 64rem) {
+  .guide-note {
+    top: 0;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+}
+
+.guide-hero-note {
+  --margin-note-width: 10.5rem;
+  --margin-note-gap: 5rem;
+}
+
+.guide-title-block {
+  /* The title's underline sits in 22px under it; this makes up the rule. */
+  margin-bottom: calc(var(--paper-rule) - 22px);
+}
+
+.guide-title {
+  position: relative;
+  top: 10px;
+  text-wrap: balance;
+  line-height: calc(var(--paper-rule) * 2);
+}
+
+@media (min-width: 64rem) {
+  .guide-title {
+    top: 9px;
+  }
+}
+
+.guide-column {
+  max-width: 36rem;
+}
+
+.guide-gap {
+  margin-top: var(--paper-rule);
+}
+
+.guide-checklist {
+  gap: 0;
+}
+
+.guide-checklist [data-slot="checklist-item"] {
+  align-items: center;
+  font-size: inherit;
+  line-height: var(--paper-rule);
+}
+
+.guide-checklist [data-slot="checkbox"] {
+  margin-top: 0;
+}
+
+/* A star doodled in the margin, by the list. */
+.guide-doodle {
+  position: absolute;
+  top: 0;
+  left: calc(var(--guide-ps) * -1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--paper-margin);
+}
+
+.guide-doodle-star {
+  scale: 0.55;
+  transform-origin: top center;
+}
+
+.guide-doodle-label {
+  display: none;
+  color: var(--ink-3);
   font-size: 0.75rem;
-  line-height: 1.6;
-  white-space: pre;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-/* Squeezed and let go again as the "fit" step scrolls past, every line
-   drawn again for each new width; or, where scroll can't drive it (or
-   shouldn't), held narrower while that step is on. */
-.stage-fit {
-  width: 100%;
-  margin-inline: auto;
-}
-
-[data-stage-step="fit"] .stage-fit {
-  width: var(--fit-to, 60%);
-}
-
-@keyframes stage-fit {
-  0%,
-  100% {
-    width: 100%;
-  }
-  38%,
-  62% {
-    width: var(--fit-to, 60%);
-  }
-}
-
-@media (max-width: 63.99rem) {
-  .stage-fit {
-    --fit-to: 78%;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .story-fit {
-      view-timeline: --fit block;
-    }
-
-    .stage-fit {
-      animation: stage-fit linear both;
-      animation-timeline: --fit;
-      animation-range: cover 15% cover 85%;
-    }
-  }
-
-  @supports not (animation-timeline: view()) {
-    .stage-fit {
-      transition: width 800ms var(--ease-out);
-    }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .stage-turn {
-    transition: none;
-  }
-}
-
-/* The pen that draws the card (components/landing/writing-pen.tsx). */
-@property --pen-x {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
-@property --pen-y {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
-@property --pen-turn {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@property --pen-lift {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-.writing-pen {
-  transform: translate(var(--pen-x), var(--pen-y)) rotate(var(--pen-turn)) scale(calc(1 + var(--pen-lift) * 0.04));
-}
-
-/* The card's controls are drawn a little quicker than its words are written. */
-.stage-card.pen-at,
-.stage-card .pen-at {
-  --ink-speed: 1.5;
-}
-
-.stage-card .ink-write {
-  --ink-speed: 1;
-}
-
-/* Drawn when the pen gets there: --pen-at holds every stroke, fill and
-   thumb inside back until then (strokes keep their own delays after it). */
-.pen-at .ink-draw {
-  animation-delay: calc(var(--pen-at, 0ms) + var(--ink-dd) / var(--ink-speed, 1));
-}
-
-.pen-at :is(.ink-fill, .ink-checked-draw, [data-slot="switch-thumb"], [data-slot="progress-indicator"], [data-slot="progress-label"]) {
-  animation: pen-arrive 320ms var(--ease-out) calc(var(--pen-at, 0ms) + 260ms) both;
-}
-
-@keyframes pen-arrive {
-  from {
+/* Its name lands once the star is drawn. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .guide-doodle:has([data-ink-pending]) .ink-land {
     opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pen-at :is(.ink-fill, .ink-checked-draw, [data-slot="switch-thumb"], [data-slot="progress-indicator"], [data-slot="progress-label"]) {
     animation: none;
   }
 }
 
-/* Rising into place as they scroll in, tied to the scroll so they settle
-   as fast as the reader goes. */
-@keyframes rise {
-  from {
-    opacity: 0;
-    translate: 0 2.5rem;
+@media (min-width: 40rem) {
+  .guide-doodle-star {
+    scale: 0.9;
+  }
+
+  .guide-doodle-label {
+    display: block;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .rise {
-      animation: rise linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 75%;
-    }
+.guide-signature {
+  height: calc(var(--paper-rule) * 4);
+}
 
-    .bento-cell:nth-child(2n) {
-      animation-range: entry 12% entry 90%;
-    }
+.guide-figure {
+  max-width: 62rem;
+  margin-top: var(--paper-rule);
+  line-height: 1.5;
+}
+
+/* The code wraps rather than scrolls, and its marks reach past it. */
+.guide-figure .code-block pre {
+  overflow: visible;
+}
+
+@media (max-width: 39.99rem) {
+  .guide-figure .code-block pre {
+    font-size: 0.875rem;
   }
 }
 
-/* Every component, in two rows sliding past each other
-   (components/landing/component-marquee.tsx). They run the width of the
-   window and fade out at its edges. */
-.marquee {
+@media (min-width: 64rem) {
+  .guide-figure {
+    rotate: -0.3deg;
+  }
+}
+
+/* Rows of swatches, a rule high each. */
+.guide-swatches {
   display: flex;
-  overflow: hidden;
-  margin-inline: calc(50% - 50vw);
-  padding-block: 0.5rem;
-  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
 }
 
-.marquee-pass {
-  display: flex;
-  flex-shrink: 0;
-  gap: 1rem;
-  padding-right: 1rem;
-  animation: marquee var(--marquee-takes) linear infinite;
-}
-
-.marquee[data-reverse] .marquee-pass {
-  animation-direction: reverse;
-}
-
-.marquee:hover .marquee-pass,
-.marquee:focus-within .marquee-pass {
-  animation-play-state: paused;
-}
-
-@keyframes marquee {
-  to {
-    translate: -100% 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee {
-    margin-inline: 0;
-    mask-image: none;
-  }
-
-  .marquee-pass {
-    flex-wrap: wrap;
-    flex-shrink: 1;
-    justify-content: center;
-    animation: none;
-  }
-
-  .marquee-pass[aria-hidden] {
-    display: none;
-  }
-}
-
-/* The last block runs the width of the window, its shading cut off at the
-   window's edges. */
-.finale {
-  margin-inline: calc(50% - 50vw);
-  overflow-x: clip;
-}
-
-/* A block shaded in solid with the pen (components/landing/inked-block.tsx):
-   on it the page's colours turn over, paper-coloured writing on the ink.
-   Its writing settles in once the shading is done. */
-.inked {
-  --was-ink: var(--ink);
-  --was-paper: var(--paper);
-  --was-red: var(--pen-red);
-}
-
-.inked-face {
-  --ink: var(--was-paper);
-  --paper: var(--was-ink);
-  --pen-red: var(--was-paper);
-  --paper-tile: none;
-  color: var(--ink);
-}
-
-/* Slips laid on the block keep the page's own colours. */
-.inked-unturn {
-  --ink: var(--was-ink);
-  --paper: var(--was-paper);
-  --pen-red: var(--was-red);
-  color: var(--ink);
-}
-
-.inked-face > .ink-land {
-  --ink-d: 700ms;
-  --ink-dd: calc(var(--inked-takes, 1500ms) * 0.75);
+.guide-swatches > label {
+  height: var(--paper-rule);
 }
