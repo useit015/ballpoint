@@ -2,7 +2,7 @@ import "../art.css";
 import "../docs.css";
 import "../sheets.css";
 import "../torn.css";
-import { DocsNav, JumpTo } from "@/components/docs-nav";
+import { DocsNav } from "@/components/docs-nav";
 import { SideScroll } from "@/components/side-scroll";
 import { navGroups } from "@/lib/nav";
 
@@ -12,7 +12,6 @@ export default function DocsLayout({ children }: LayoutProps<"/docs">) {
       {/* Phones and tablets open the contents from the menu in the header. */}
       <div className="docs-side-cell">
         <aside className="docs-side">
-          <JumpTo />
           <SideScroll>
             <DocsNav groups={navGroups} />
           </SideScroll>

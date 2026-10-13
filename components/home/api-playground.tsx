@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type PointerEvent, type ReactNode } from "react";
+import { TornSheet } from "@/components/torn-sheet";
 import { CodeFrame } from "@/components/code-frame";
 import { CopyButton } from "@/components/copy-button";
 import { SubscribeDemo, type Part } from "@/components/home/subscribe-demo";
@@ -50,11 +51,13 @@ export function ApiPlayground({ panels, children }: { panels: ApiPanel[]; childr
         </Tabs>
       </div>
       <div className="api-side">
-        <div className="api-out slip" data-ink-scope="">
-          <h3 className="api-out-title">Rendered output</h3>
-          <p className="api-hint">Point at a line of code, or at the form.</p>
-          <SubscribeDemo part={part} onPart={setPart} />
-        </div>
+        <TornSheet as="div" slip flush edge="b" tilt="0.3deg">
+          <div className="api-out">
+            <h3 className="api-out-title">Rendered output</h3>
+            <p className="api-hint">Point at a line of code, or at the form.</p>
+            <SubscribeDemo part={part} onPart={setPart} />
+          </div>
+        </TornSheet>
         {children}
       </div>
     </div>

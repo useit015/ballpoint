@@ -374,7 +374,7 @@ export const items: Item[] = [
     name: "paper",
     type: "registry:ui",
     title: "Paper",
-    description: "A sheet with a real paper texture on any paper colour: plain, ruled, squared or dotted, with coffee rings, age spots and a desk lamp at night.",
+    description: "A sheet with a real paper texture on any paper colour: plain, ruled, squared or dotted, torn, dog-eared or taped, with coffee rings, age spots and a desk lamp at night.",
     author,
     registryDependencies: ["utils", "@ballpoint/ink-core"],
     files: [{ path: "registry/ballpoint/ui/paper.tsx", type: "registry:ui" }],

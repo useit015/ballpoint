@@ -3,7 +3,7 @@
 import { useId, useMemo, useState } from "react";
 import { ComponentArt } from "@/components/component-art";
 import { IntentLink } from "@/components/intent-link";
-import { TornSheet } from "@/components/home/torn-sheet";
+import { TornSheet } from "@/components/torn-sheet";
 import { Heading } from "@/components/heading";
 import { Card } from "@/registry/ballpoint/ui/card";
 import { Input } from "@/registry/ballpoint/ui/input";

@@ -51,12 +51,12 @@ export default function Installation() {
           <code className="inline-code">lib/</code> and <code className="inline-code">hooks/</code>, and registers the{" "}
           <code className="inline-code">@ballpoint</code> namespace in <code className="inline-code">components.json</code>.
         </p>
-        <InstallCommand what={`init ${homepage}/r/ballpoint.json`} />
+        <InstallCommand tilted what={`init ${homepage}/r/ballpoint.json`} />
       </section>
 
       <section className="doc-section doc-step">
         <Heading id="add">Add components</Heading>
-        <InstallCommand what="add @ballpoint/button" />
+        <InstallCommand tilted what="add @ballpoint/button" />
         <CodeBlock
           code={`import { Button } from "@/components/ui/button"
 

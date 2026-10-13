@@ -70,7 +70,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
 
       <section className="doc-section">
         <Heading id="installation">Installation</Heading>
-        <InstallCommand what={`add @ballpoint/${doc.name}`} />
+        <InstallCommand tilted what={`add @ballpoint/${doc.name}`} />
         <Disclosure summary="Or copy the source">
           {doc.files?.map((file) => (
             <CodeBlock key={file.path} title={file.path.split("/").slice(-2).join("/")} code={itemSource(file.path)} />

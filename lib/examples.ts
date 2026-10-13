@@ -105,6 +105,8 @@ import ToastActions from "@/registry/ballpoint/examples/toast-actions";
 
 import AnnotateReview from "@/registry/ballpoint/examples/annotate-review";
 import SectionHeadingLevels from "@/registry/ballpoint/examples/section-heading-levels";
+import PaperEdges from "@/registry/ballpoint/examples/paper-edges";
+import PaperForm from "@/registry/ballpoint/examples/paper-form";
 import PaperLetter from "@/registry/ballpoint/examples/paper-letter";
 import PaperTextures from "@/registry/ballpoint/examples/paper-textures";
 import FrameGallery from "@/registry/ballpoint/examples/frame-gallery";
@@ -197,6 +199,8 @@ export const examples: Record<string, ComponentType> = {
   "copy-button-demo": CopyButtonDemo,
   "annotate-review": AnnotateReview,
   "section-heading-levels": SectionHeadingLevels,
+  "paper-edges": PaperEdges,
+  "paper-form": PaperForm,
   "paper-letter": PaperLetter,
   "paper-textures": PaperTextures,
   "frame-gallery": FrameGallery,

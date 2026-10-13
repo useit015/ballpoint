@@ -6,7 +6,7 @@ import { SectionHeading } from "@/registry/ballpoint/ui/section-heading";
 import { AnnotateDemo, ChecklistDemo, MarginNoteDemo, RedactDemo, ScrawlDemo, SignatureDemo } from "@/components/home/demos";
 import { Callout } from "@/components/home/callout";
 import { Doodle } from "@/components/home/doodle";
-import { TornSheet } from "@/components/home/torn-sheet";
+import { TornSheet } from "@/components/torn-sheet";
 import { IntentLink } from "@/components/intent-link";
 import { paperclip } from "@/lib/art/doodles";
 

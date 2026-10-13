@@ -91,13 +91,26 @@ test("paper: textured, ruled on the baseline, rings where asked", async ({ page 
   const sheets = demo.locator("[data-slot=paper]");
   await expect(sheets).toHaveCount(4);
   for (const sheet of await sheets.all()) {
-    expect(await sheet.evaluate((el) => getComputedStyle(el).backgroundImage)).toContain("data:image/svg+xml");
+    expect(await sheet.locator("[data-part=sheet]").evaluate((el) => getComputedStyle(el).backgroundImage)).toContain("data:image/svg+xml");
   }
   // One coffee ring on the plain sheet.
-  await expect(sheets.first().locator("> span[aria-hidden]")).toHaveCount(1);
+  await expect(sheets.first().locator("[data-part=sheet] > span")).toHaveCount(1);
   // The ruled sheet's line height is its rule spacing.
   const ruled = demo.locator("[data-slot=paper][data-variant=ruled]");
   expect(await ruled.evaluate((el) => getComputedStyle(el).lineHeight)).toBe("32px");
+});
+
+test("paper: torn, dog-eared and taped sheets are cut to their outline, tilted, and cast it", async ({ page }) => {
+  await page.goto("/docs/paper", { waitUntil: "networkidle" });
+  const demo = page.locator("[data-preview]").nth(1);
+  const torn = demo.locator("[data-slot=paper][data-edge=torn]");
+  expect(await torn.locator("[data-part=sheet]").evaluate((el) => getComputedStyle(el).clipPath)).toContain("polygon(");
+  expect(await torn.evaluate((el) => getComputedStyle(el).rotate)).toBe("-1.5deg");
+  const dogEar = demo.locator("[data-slot=paper][data-edge=dog-ear]");
+  expect(await dogEar.locator("[data-part=sheet]").evaluate((el) => getComputedStyle(el).clipPath)).toContain("polygon(");
+  await expect(demo.locator("[data-part=tape]")).toHaveCount(1);
+  // The shadow is the sheet's own outline, so a torn edge casts a torn shadow.
+  expect(await torn.locator("> span").first().locator("> span").evaluate((el) => getComputedStyle(el).clipPath)).toContain("polygon(");
 });
 
 test("ink icons: every icon is drawn, and can be named", async ({ page }) => {

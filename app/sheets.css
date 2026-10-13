@@ -1,5 +1,13 @@
 /* ─── Sheets of paper ────────────────────────────────────────────────── */
 
+:root {
+  --tape: oklch(0.86 0.07 88 / 0.62);
+}
+
+.dark {
+  --tape: oklch(0.72 0.06 88 / 0.4);
+}
+
 .torn-wrap {
   --paper: var(--slip);
   --paper-tile: var(--slip-tile);
@@ -35,4 +43,49 @@
 .torn {
   position: relative;
   padding: clamp(1.5rem, 3.4vw, 2.75rem) clamp(1.1rem, 3.4vw, 3rem) clamp(1.75rem, 3.4vw, 3rem);
+}
+
+/* Code and examples: the same paper, lifted less, with no padding of its own. */
+.torn[data-flush] {
+  padding: 0;
+}
+
+.torn-wrap[data-weight="slip"] .torn-shadow {
+  filter: drop-shadow(0 0.5px 1px oklch(0.3 0.04 70 / 0.22)) drop-shadow(0 5px 7px oklch(0.3 0.04 70 / 0.12));
+}
+
+.dark .torn-wrap[data-weight="slip"] .torn-shadow {
+  filter: drop-shadow(0 0.5px 1px oklch(0 0 0 / 0.5)) drop-shadow(0 6px 8px oklch(0 0 0 / 0.32));
+}
+
+/* Washi tape across the top edge, a little see-through, with torn ends. */
+.torn-tape {
+  position: absolute;
+  z-index: 3;
+  top: -0.75rem;
+  left: 12%;
+  width: 6.5rem;
+  height: 1.6rem;
+  rotate: -3deg;
+  background:
+    repeating-linear-gradient(115deg, oklch(1 0 0 / 0.16) 0 7px, transparent 7px 14px),
+    var(--tape);
+  clip-path: polygon(0 0, 3% 20%, 0 42%, 3% 64%, 0 86%, 2% 100%, 100% 100%, 97% 80%, 100% 58%, 97% 36%, 100% 14%, 98% 0);
+  box-shadow: 0 1px 2px oklch(0.3 0.04 80 / 0.2);
+  pointer-events: none;
+}
+
+.torn-wrap[data-edge="b"] .torn-tape {
+  left: auto;
+  right: 10%;
+  rotate: 2.5deg;
+}
+
+/* The content is cut to the paper's edge too, so ruling and grid never run past a tear. */
+.torn-wrap[data-weight="slip"] .torn {
+  clip-path: var(--torn-a);
+}
+
+.torn-wrap[data-weight="slip"][data-edge="b"] .torn {
+  clip-path: var(--torn-b);
 }

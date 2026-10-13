@@ -4,7 +4,8 @@ import { createRng, hashSeed } from "@/registry/ballpoint/lib/ink-sketch";
 
 // A sheet of paper: the paper colour with a texture laid over it that
 // works on any paper (cream, white, legal pad, navy at night), printed
-// rules, and the marks a sheet picks up on a desk. Server-safe; no JS.
+// rules, the marks a sheet picks up on a desk, and the way it lies there:
+// torn from a pad or dog-eared, taped down, a little askew. Server-safe; no JS.
 
 const SIZE = 600;
 // The mean of the noise below, measured in Chrome: the grain lightens above
@@ -78,11 +79,45 @@ const lines = {
 } as const;
 
 type Variant = keyof typeof lines;
+type Edge = "straight" | "torn" | "dog-ear";
+
+/** The depth of a tear at each step along an edge, in px: slow swells and fine jags, the way paper tears. */
+function tear(r: () => number, steps: number, depth: number) {
+  const p1 = r() * 6;
+  const p2 = r() * 6;
+  return Array.from({ length: steps + 1 }, (_, i) => Math.max(0.4, depth * (0.55 + Math.sin(i * 0.31 + p1) * 0.45 + Math.sin(i * 0.83 + p2) * 0.3 + (r() - 0.5) * 0.72)));
+}
+
+/**
+ * A clip-path for a torn sheet: along each edge a point is a percentage of its
+ * length, across it a few px, so the tear is as deep on a phone as on a wide
+ * screen. Seeded, so a sheet tears the same way on the server and in the browser.
+ */
+function tornOutline(seed: string | number) {
+  const r = createRng(hashSeed(`torn-${seed}`));
+  const [top, right, bottom, left] = [tear(r, 70, 6), tear(r, 42, 4.5), tear(r, 70, 7), tear(r, 42, 4.5)];
+  const f = (v: number) => Math.round(v * 10) / 10;
+  const pts = [
+    ...top.map((d, i) => `${f((i / 70) * 100)}% ${f(d)}px`),
+    ...right.map((d, i) => `calc(100% - ${f(d)}px) ${f((i / 42) * 100)}%`),
+    ...bottom.map((d, i) => `${f(100 - (i / 70) * 100)}% calc(100% - ${f(d)}px)`),
+    ...left.map((d, i) => `${f(d)}px ${f(100 - (i / 42) * 100)}%`),
+  ];
+  return `polygon(${pts.join(",")})`;
+}
+
+const DOG_EAR = "1.6rem";
+const dogEar = `polygon(0 0, 100% 0, 100% calc(100% - ${DOG_EAR}), calc(100% - ${DOG_EAR}) 100%, 0 100%)`;
+
+// Washi tape: a little see-through, with torn ends and faint stripes.
+const tapeEnds = "polygon(0 0, 3% 20%, 0 42%, 3% 64%, 0 86%, 2% 100%, 100% 100%, 97% 80%, 100% 58%, 97% 36%, 100% 14%, 98% 0)";
+const tapeStripes = "repeating-linear-gradient(115deg, oklch(1 0 0 / 0.16) 0 7px, transparent 7px 14px)";
 
 /**
  * A sheet of paper to lay content on: textured, optionally ruled, squared
- * or dotted, and marked with coffee rings and age spots. At night a desk
- * lamp lights it a touch warmer near the top (`lamp`).
+ * or dotted, and marked with coffee rings and age spots. It can be torn from
+ * a pad or dog-eared (`edge`), taped down (`tape`) and set a little askew
+ * (`tilt`). At night a desk lamp lights it a touch warmer near the top (`lamp`).
  *
  * Ruled lines are `--paper-rule` apart (2rem) and the sheet's line height
  * matches, so text writes on them; `--paper-rule-offset` moves them down
@@ -97,6 +132,9 @@ function Paper({
   foxing: spotted = false,
   lamp = false,
   lifted = false,
+  edge = "straight",
+  tape = "none",
+  tilt = 0,
   seed,
   className,
   style,
@@ -118,7 +156,13 @@ function Paper({
   lamp?: boolean;
   /** A soft shadow under the sheet, as if laid on the page. */
   lifted?: boolean;
-  /** Moves the coffee rings. */
+  /** Cut square, torn from a pad, or with the bottom corner turned down. */
+  edge?: Edge;
+  /** A strip of washi tape across the top, or over a corner. */
+  tape?: "none" | "top" | "corner";
+  /** Degrees to turn the sheet, as if it were dropped there. */
+  tilt?: number;
+  /** Moves the coffee rings and the tear. */
   seed?: string | number;
 }) {
   const r = createRng(hashSeed(seed ?? "paper"));
@@ -135,46 +179,80 @@ function Paper({
   const ruled = variant === "ruled" || variant === "grid";
   const backgrounds = [...(texture ? [`${grain} 0 0 / ${SIZE}px ${SIZE}px`] : []), ...lines[variant]];
   if (margin) backgrounds.push(`linear-gradient(to right, transparent 0 var(--paper-margin), color-mix(in oklab, var(--pen-red) 45%, transparent) var(--paper-margin) calc(var(--paper-margin) + 1px), transparent calc(var(--paper-margin) + 1px)) 0 0 / 100% 100% no-repeat`);
+  const shape = edge === "torn" ? tornOutline(seed ?? "paper") : edge === "dog-ear" ? dogEar : undefined;
+  const cut = shape ? { clipPath: shape } : undefined;
 
   return (
     <Tag
       data-slot="paper"
       data-variant={variant}
+      data-edge={edge}
       className={cn(
-        "relative isolate overflow-hidden bg-paper p-6 text-foreground [--paper-margin:3rem] [--paper-rule-offset:1rem] [--paper-rule:2rem]",
+        "relative isolate p-6 text-foreground [--paper-margin:3rem] [--paper-rule-offset:1rem] [--paper-rule:2rem]",
         ruled && "leading-(--paper-rule)",
+        edge === "torn" && "px-8 py-7",
         margin && "ps-[calc(var(--paper-margin)+1rem)]",
-        lifted && "rounded-[2px] shadow-[0_1px_2px_rgb(0_0_0/0.07),0_12px_28px_-14px_rgb(0_0_0/0.28)]",
         className,
       )}
-      style={{ background: backgrounds.length ? `${backgrounds.join(", ")}, var(--paper)` : undefined, ...style } as CSSProperties}
+      style={{ ...(tilt ? { rotate: `${tilt}deg` } : null), ...style } as CSSProperties}
       {...props}
     >
-      {rings.map((ring, i) => (
+      {/* The shadow follows the sheet's outline, so a torn edge casts a torn shadow. */}
+      {lifted && (
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 [filter:drop-shadow(0_1px_1px_rgb(0_0_0/0.14))_drop-shadow(0_12px_14px_rgb(0_0_0/0.14))]">
+          <span className={cn("block size-full bg-paper", !shape && "rounded-[2px]")} style={cut} />
+        </span>
+      )}
+      {/* The paper itself: its colour and grain, its rules, and what it has picked up. */}
+      <span
+        aria-hidden="true"
+        data-part="sheet"
+        className={cn("pointer-events-none absolute inset-0 -z-10 overflow-hidden", !shape && "rounded-[2px]")}
+        style={{ background: backgrounds.length ? `${backgrounds.join(", ")}, var(--paper)` : "var(--paper)", ...cut } as CSSProperties}
+      >
+        {rings.map((ring, i) => (
+          <span
+            key={i}
+            className="absolute -translate-1/2 bg-(--stain)"
+            style={{
+              mixBlendMode: "var(--stain-blend)" as CSSProperties["mixBlendMode"],
+              top: ring.top,
+              left: ring.left,
+              width: ring.size,
+              height: ring.size,
+              rotate: ring.rotate,
+              opacity: `calc(var(--stain-strength) * ${ring.faint ? 0.55 : 1})`,
+              mask: `${ringMask} center / contain no-repeat`,
+            }}
+          />
+        ))}
+        {spotted && (
+          <span
+            className="absolute inset-0 bg-(--stain)"
+            style={{ mixBlendMode: "var(--stain-blend)" as CSSProperties["mixBlendMode"], opacity: "calc(var(--stain-strength) * 0.8)", mask: `${foxingMask} 0 0 / 900px 1300px repeat` }}
+          />
+        )}
+        {lamp && <span className="absolute inset-0 bg-(image:--lamp)" />}
+      </span>
+      {/* The corner, turned down: the flap lies over the sheet, a shade darker, the back of the paper. */}
+      {edge === "dog-ear" && (
         <span
-          key={i}
           aria-hidden="true"
-          className="pointer-events-none absolute -z-10 -translate-1/2 bg-(--stain)"
-          style={{
-            mixBlendMode: "var(--stain-blend)" as CSSProperties["mixBlendMode"],
-            top: ring.top,
-            left: ring.left,
-            width: ring.size,
-            height: ring.size,
-            rotate: ring.rotate,
-            opacity: `calc(var(--stain-strength) * ${ring.faint ? 0.55 : 1})`,
-            mask: `${ringMask} center / contain no-repeat`,
-          }}
-        />
-      ))}
-      {spotted && (
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-(--stain)"
-          style={{ mixBlendMode: "var(--stain-blend)" as CSSProperties["mixBlendMode"], opacity: "calc(var(--stain-strength) * 0.8)", mask: `${foxingMask} 0 0 / 900px 1300px repeat` }}
+          className="pointer-events-none absolute right-0 bottom-0 z-10"
+          style={{ width: DOG_EAR, height: DOG_EAR, background: "linear-gradient(to bottom right, color-mix(in oklab, var(--paper) 84%, var(--ink)) 0 46%, color-mix(in oklab, var(--paper) 55%, var(--ink)) 50%, transparent 50%)", boxShadow: "-1px -1px 2px rgb(0 0 0 / 0.08)" }}
         />
       )}
-      {lamp && <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-(image:--lamp)" />}
+      {tape !== "none" && (
+        <span
+          aria-hidden="true"
+          data-part="tape"
+          className={cn(
+            "pointer-events-none absolute z-10 h-6 w-24 bg-[oklch(0.86_0.07_88/0.62)] shadow-[0_1px_2px_rgb(0_0_0/0.2)] dark:bg-[oklch(0.72_0.06_88/0.4)]",
+            tape === "top" ? "-top-3 left-1/2 -translate-x-1/2 -rotate-3" : "-top-1 -left-7 w-28 -rotate-45",
+          )}
+          style={{ backgroundImage: tapeStripes, clipPath: tapeEnds }}
+        />
+      )}
       {children}
     </Tag>
   );

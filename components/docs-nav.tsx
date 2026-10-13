@@ -5,9 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { IntentLink } from "@/components/intent-link";
 import type { NavGroup } from "@/lib/nav";
 import { inkRules } from "@/registry/ballpoint/lib/ink";
-import { Button } from "@/registry/ballpoint/ui/button";
 import { InkIcon } from "@/registry/ballpoint/ui/ink-icons";
-import { Kbd } from "@/registry/ballpoint/ui/kbd";
 
 export type { NavGroup };
 
@@ -79,22 +77,5 @@ export function DocsNav({ groups, onNavigate }: { groups: NavGroup[]; onNavigate
         );
       })}
     </nav>
-  );
-}
-
-/** "Jump to…" above the index: opens the same search as the header's, which listens for the slash. */
-export function JumpTo() {
-  return (
-    <Button
-      variant="outline"
-      size="sm"
-      seed="jump-to"
-      className="mb-4 w-full justify-start gap-2 text-ink-2"
-      onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "/", bubbles: true }))}
-    >
-      <InkIcon name="search" className="size-4" />
-      <span className="flex-1 text-left">Jump to…</span>
-      <Kbd aria-hidden="true">/</Kbd>
-    </Button>
   );
 }

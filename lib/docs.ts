@@ -743,26 +743,31 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   paper: {
     group: "Drawn",
-    examples: ["paper-demo", "paper-letter", "paper-textures"],
+    examples: ["paper-demo", "paper-edges", "paper-letter", "paper-form", "paper-textures"],
     exampleTitles: {
-      "paper-letter": { title: "A letter", description: "Ruled paper with a margin and a coffee ring, set with a letter." },
+      "paper-edges": { title: "Torn, dog-eared, taped", description: "Tear a sheet from a pad, turn its corner down, or tape it to the page. Tilt any of them, as if they had been dropped there." },
+      "paper-letter": { title: "A letter", description: "Ruled paper with a margin, a dog-ear and a coffee ring, set with a letter." },
+      "paper-form": { title: "Controls on paper", description: "Inputs, checkboxes and buttons draw on the sheet as if it were their own paper." },
       "paper-textures": { title: "Texture, stains, age", description: "Turn the grain off, add up to three coffee rings, or scatter age spots." },
     },
     usage: `import { Paper } from "@/components/ui/paper"
 
-<Paper variant="ruled" margin lifted stains={1}>
+<Paper variant="ruled" margin lifted edge="torn" tape="top" tilt={-1}>
   <p>Dear diary,</p>
 </Paper>`,
     props: [
       { name: "variant", type: '"plain" | "ruled" | "grid" | "dots"', default: '"plain"', description: "Plain, ruled like a notebook, squared like graph paper, or dotted. Lines are --paper-rule apart (2rem), in the ink at low strength." },
       { name: "margin", type: "boolean", default: "false", description: "The red margin line down the left (--paper-margin), with the content moved clear of it." },
+      { name: "edge", type: '"straight" | "torn" | "dog-ear"', default: '"straight"', description: "Cut square, torn from a pad (the outline is seeded, and the shadow follows it), or with the bottom corner turned down." },
+      { name: "tape", type: '"none" | "top" | "corner"', default: '"none"', description: "A strip of washi tape across the top, or over the top-left corner." },
+      { name: "tilt", type: "number", default: "0", description: "Degrees to turn the sheet, as if it were dropped there. Under 2 reads as paper; more reads as a mess." },
       { name: "texture", type: "boolean", default: "true", description: "The grain and fibres. They work on any paper colour, and average out to it, so text contrast is the contrast against --paper." },
       { name: "stains", type: "number", default: "0", description: "Coffee rings, up to 3. Brown by day; a faint warm tide line at night." },
       { name: "foxing", type: "boolean", default: "false", description: "Age spots scattered over the sheet." },
       { name: "lamp", type: "boolean", default: "false", description: "At night, a desk lamp warming the top of the sheet. Nothing by day." },
-      { name: "lifted", type: "boolean", default: "false", description: "A soft shadow under the sheet." },
+      { name: "lifted", type: "boolean", default: "false", description: "A soft shadow under the sheet, following its outline." },
       { name: "as", type: '"div" | "main" | "section" | "article" | "aside"', default: '"div"', description: "The element." },
-      { name: "seed", type: "string | number", description: "Moves the coffee rings." },
+      { name: "seed", type: "string | number", description: "Moves the coffee rings and the tear." },
     ],
   },
   frame: {

@@ -30,6 +30,7 @@ export async function CodeBlock({
     <CodeFrame
       className={className}
       numbers={lines > 4}
+      lay={code}
       header={
         <>
           <span className="code-title">

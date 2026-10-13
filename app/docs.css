@@ -39,7 +39,7 @@
   }
 }
 
-/* The column is pinned to the window: "Jump to" stays put, the index under it scrolls. */
+/* The column is pinned to the window; the index in it scrolls. */
 .docs-side {
   position: sticky;
   top: 1.5rem;
@@ -47,11 +47,6 @@
   height: calc(100dvh - 3rem);
   flex-direction: column;
   padding-top: 0.25rem;
-}
-
-.docs-side > :first-child {
-  flex-shrink: 0;
-  width: calc(100% - 1.25rem);
 }
 
 .docs-scroll {
@@ -394,15 +389,11 @@
 /* The slip an example sits on: a faint grid, like a sketchbook's, under the paper. */
 .doc-stage {
   --dot: color-mix(in oklab, var(--ink) 15%, transparent);
-  background-image: radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.3px), var(--paper-tile);
-  background-size: 20px 20px, var(--paper-tile-size);
-  background-position: 9px 9px, 0 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.3px);
+  background-size: 20px 20px;
+  background-position: 9px 9px;
 }
 
-.doc-stage[data-slip="taped"] {
-  --tape-x: 2.25rem;
-  --tape-rot: -4deg;
-}
 
 .doc-example-label {
   color: var(--ink-3);
@@ -437,11 +428,11 @@
 }
 
 /* Line numbers in the margin of the ruled page, like pencilled page numbers. */
-.code-block[data-numbers] pre {
+[data-numbers] pre {
   counter-reset: ln;
 }
 
-.code-block[data-numbers] .line::before {
+[data-numbers] .line::before {
   content: counter(ln);
   counter-increment: ln;
   display: inline-block;

@@ -49,9 +49,9 @@ test("the index scrolls on its own, and at its end the wheel goes on into the pa
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 200);
 });
 
-test("Jump to opens the search", async ({ page }) => {
+test("the slash opens the search", async ({ page }) => {
   await open(page, "/docs/button", "light");
-  await page.getByRole("button", { name: /Jump to/ }).click();
+  await page.keyboard.press("/");
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.type("dialog");
   await expect(page.getByRole("dialog").getByRole("option").first()).toBeVisible();
@@ -81,7 +81,7 @@ test("a long listing is folded to its first lines, and opens", async ({ page }) 
 
 test("a short snippet has line numbers and is not folded", async ({ page }) => {
   await open(page, "/docs/button", "light");
-  const usage = page.locator("#usage").locator("xpath=ancestor::section").locator(".code-block");
+  const usage = page.locator("#usage").locator("xpath=ancestor::section").locator("figure[data-code]");
   await expect(usage).toHaveAttribute("data-numbers", "");
   await expect(usage.locator(".code-fold")).toHaveCount(0);
   await expect(usage.locator(".line").first()).toContainText("import { Button }");

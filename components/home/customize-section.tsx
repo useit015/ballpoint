@@ -1,6 +1,6 @@
 import { SectionHeading } from "@/registry/ballpoint/ui/section-heading";
 import { Customize } from "@/components/home/customize";
-import { TornSheet } from "@/components/home/torn-sheet";
+import { TornSheet } from "@/components/torn-sheet";
 import { TextLink } from "@/components/text-link";
 
 /** "Customize your style": pick a pen and a paper and see the same page in them, by day and by night. */

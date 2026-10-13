@@ -77,13 +77,15 @@ function Command({ command }: { command: string }) {
   );
 }
 
-export function InstallCommand({ what, className }: { what: string; className?: string }) {
+/** `tilted` lays the slip a little askew, as the docs do with theirs. */
+export function InstallCommand({ what, className, tilted = false }: { what: string; className?: string; tilted?: boolean }) {
   const current = useSyncExternalStore(subscribe, read, () => "pnpm" as Manager);
   const command = install[current](what);
   return (
     <Tabs value={current} onValueChange={(v) => choose(v as Manager)} className="gap-0">
       <CodeFrame
         className={className}
+        lay={tilted ? what : undefined}
         header={
           <>
             <TabsList variant="line" aria-label="Package manager" className="-ml-1 gap-1 text-sm">
