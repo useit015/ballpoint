@@ -10,7 +10,7 @@ export function SiteFooter() {
         <p>
           Drawn by{" "}
           <a href="https://st9wd.com" className="underline decoration-ink-4 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink">
-            Oussama Nahiz
+            Ouss
           </a>
           . MIT licensed; the components are yours once you add them.
         </p>

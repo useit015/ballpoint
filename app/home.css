@@ -1,0 +1,1216 @@
+/* The front page: a notebook page with things laid and stuck on it (app/page.tsx,
+   components/home). The page itself is the site's paper; sheets of torn paper,
+   a sticky note and the pen's own drawings sit on it. Pen drawings are in
+   art.css. */
+
+/* The pen and paper picked in "Customize your style" (components/home/customize.tsx
+   writes them on <html>): the whole page follows, by day and by night. */
+html[data-pen] {
+  --ink: var(--pen-day);
+}
+
+html.dark[data-pen] {
+  --ink: var(--pen-night);
+}
+
+html[data-paper] {
+  --paper: var(--paper-day);
+  --pen-red: var(--red-day);
+  --paper-tile: var(--tile-day);
+  --slip-tile: var(--slip-tile-day);
+}
+
+html.dark[data-paper] {
+  --paper: var(--paper-night);
+  --pen-red: var(--red-night);
+  --paper-tile: var(--tile-night);
+  --slip-tile: var(--slip-tile-night);
+}
+
+/* What is written on a sticky note is in the pen; and a note that is the colour of
+   the paper would vanish into it, so on a legal pad it is a pink one. */
+html[data-pen] {
+  --sticky-ink: var(--pen-day);
+}
+
+html[data-paper="legal"] {
+  --sticky: oklch(0.89 0.07 12);
+  --sticky-edge: oklch(0.79 0.1 12);
+}
+
+html.dark[data-paper="legal"] {
+  --sticky: oklch(0.84 0.07 12);
+  --sticky-edge: oklch(0.75 0.09 12);
+}
+
+:root {
+  --sticky: oklch(0.9 0.115 96);
+  --sticky-edge: oklch(0.82 0.12 90);
+  --sticky-ink: oklch(0.32 0.1 267);
+  --tape: oklch(0.86 0.07 88 / 0.62);
+}
+
+.dark {
+  --sticky: oklch(0.85 0.1 96);
+  --sticky-edge: oklch(0.76 0.11 90);
+  --tape: oklch(0.72 0.06 88 / 0.4);
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────── */
+
+.home-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.25rem;
+  padding-block: clamp(0.5rem, 2vw, 1.75rem) clamp(2.5rem, 5vw, 4.5rem);
+}
+
+@media (min-width: 64rem) {
+  .home-hero {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: 1.5rem;
+  }
+}
+
+.home-title {
+  font-size: clamp(2.5rem, 10.4vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1.04;
+  word-spacing: -0.08em;
+}
+
+.home-title > span {
+  white-space: nowrap;
+}
+
+@media (min-width: 64rem) {
+  .home-title {
+    font-size: clamp(3.6rem, 4.4vw, 4.9rem);
+  }
+}
+
+.home-write {
+  font-style: italic;
+}
+
+.home-stop {
+  position: relative;
+}
+
+.home-ticks {
+  position: absolute;
+  left: 0.08em;
+  top: -0.6em;
+}
+
+/* No room for them beside the headline on the smallest screens. */
+@media (max-width: 22.5rem) {
+  .home-ticks {
+    display: none;
+  }
+}
+
+.home-lede {
+  max-width: 27rem;
+  margin-top: 1.5rem;
+  color: var(--ink-2);
+  font-size: 1.375rem;
+  line-height: 1.3;
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.25rem;
+  margin-top: 2rem;
+}
+
+.home-hero-art {
+  position: relative;
+}
+
+.home-art {
+  width: 100%;
+}
+
+/* The picture ends where the pen lifted: its edges thin out into the page. */
+.home-art .art-layer {
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(180deg, #000 88%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+/* The depths drift a little against each other as a mouse moves. */
+.art[data-parallax] .art-layer {
+  transition: transform 700ms var(--ease-out);
+}
+
+.art[data-parallax] .art-layer[data-z="0"] {
+  transform: translate3d(calc(var(--px, 0) * -5px), calc(var(--py, 0) * -3px), 0);
+}
+
+.art[data-parallax] .art-layer[data-z="1"] {
+  transform: translate3d(calc(var(--px, 0) * -11px), calc(var(--py, 0) * -6px), 0);
+}
+
+.art[data-parallax] .art-layer[data-z="2"] {
+  transform: translate3d(calc(var(--px, 0) * -20px), calc(var(--py, 0) * -10px), 0);
+}
+
+/* ─── Sticky note ────────────────────────────────────────────────────── */
+
+.sticky-note {
+  position: relative;
+  width: 10.5rem;
+  padding: 1.25rem 1rem 0.8rem;
+  rotate: 2.5deg;
+  background:
+    linear-gradient(165deg, oklch(1 0 0 / 0.28), transparent 38%),
+    var(--sticky);
+  color: var(--sticky-ink);
+  font-size: 1.25rem;
+  line-height: 1.12;
+  box-shadow:
+    0 1px 1px oklch(0.3 0.04 80 / 0.2),
+    0 12px 16px -8px oklch(0.3 0.05 80 / 0.35);
+  -webkit-text-stroke: 0.2px currentColor;
+  animation: note-stick 700ms var(--ease-out-expo) 2600ms both;
+}
+
+.sticky-note::before {
+  content: "";
+  position: absolute;
+  top: -0.6rem;
+  left: 50%;
+  width: 4rem;
+  height: 1.2rem;
+  translate: -50% 0;
+  rotate: -3deg;
+  background: var(--tape);
+  clip-path: polygon(0 0, 4% 22%, 0 44%, 4% 66%, 0 88%, 3% 100%, 100% 100%, 96% 78%, 100% 56%, 96% 34%, 100% 12%, 97% 0);
+}
+
+/* A corner that has started to lift. */
+.sticky-note::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: linear-gradient(135deg, transparent 50%, var(--sticky-edge) 50%);
+  box-shadow: -2px -2px 3px oklch(0.3 0.04 80 / 0.12);
+}
+
+.sticky-note p {
+  position: relative;
+}
+
+.sticky-face {
+  display: block;
+  margin: 0.5rem 0 0 auto;
+  color: var(--sticky-ink);
+}
+
+.home-sticky {
+  position: relative;
+  margin: 0.25rem 0.75rem 0 auto;
+}
+
+@media (min-width: 64rem) {
+  .sticky-note {
+    width: 11.5rem;
+    font-size: 1.375rem;
+  }
+
+  .home-sticky {
+    position: absolute;
+    right: -0.75rem;
+    bottom: -2.75rem;
+    margin: 0;
+  }
+}
+
+@keyframes note-stick {
+  from {
+    opacity: 0;
+    translate: 0 -18px;
+    rotate: 7deg;
+  }
+  60% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-note {
+    animation: none;
+  }
+}
+
+/* ─── Sheets of paper ────────────────────────────────────────────────── */
+
+.torn-wrap {
+  --paper: var(--slip);
+  --paper-tile: var(--slip-tile);
+  position: relative;
+  isolation: isolate;
+  rotate: var(--tilt, 0deg);
+}
+
+.torn-shadow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  filter: drop-shadow(0 1px 1px oklch(0.3 0.04 70 / 0.24)) drop-shadow(0 16px 16px oklch(0.3 0.04 70 / 0.14));
+}
+
+.dark .torn-shadow {
+  filter: drop-shadow(0 1px 1px oklch(0 0 0 / 0.55)) drop-shadow(0 18px 18px oklch(0 0 0 / 0.38));
+}
+
+.torn-paper {
+  position: absolute;
+  inset: 0;
+  background-color: var(--paper);
+  background-image: var(--paper-tile);
+  background-size: var(--paper-tile-size);
+  clip-path: var(--torn-a);
+}
+
+.torn-wrap[data-edge="b"] .torn-paper {
+  clip-path: var(--torn-b);
+}
+
+.torn {
+  position: relative;
+  padding: clamp(1.5rem, 3.4vw, 2.75rem) clamp(1.1rem, 3.4vw, 3rem) clamp(1.75rem, 3.4vw, 3rem);
+}
+
+/* ─── Components, out of the box ─────────────────────────────────────── */
+
+.home-sheet {
+  margin-top: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+.home-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1.75rem;
+}
+
+.home-h2 {
+  font-size: clamp(2.1rem, 5vw, 2.9rem);
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.1;
+}
+
+.home-sub {
+  margin-top: -0.25rem;
+  color: var(--ink-3);
+  font-size: 1.25rem;
+}
+
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+.demo {
+  grid-column: span 12;
+  --card-spacing: 1.1rem;
+  min-width: 0;
+}
+
+@media (min-width: 40rem) {
+  .demo {
+    grid-column: span 6;
+  }
+}
+
+@media (min-width: 64rem) {
+  .demo-1 {
+    grid-column: span 5;
+  }
+  .demo-2 {
+    grid-column: span 4;
+  }
+  .demo-3 {
+    grid-column: span 3;
+  }
+  .demo-4 {
+    grid-column: span 3;
+  }
+  .demo-5 {
+    grid-column: span 4;
+  }
+  .demo-6 {
+    grid-column: span 5;
+  }
+}
+
+.demo-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.demo-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.demo-stage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 7.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in oklab, var(--ink) 24%, transparent);
+  border-radius: var(--hand-radius);
+  background: color-mix(in oklab, var(--paper) 55%, transparent);
+}
+
+.demo-caption {
+  color: var(--ink-3);
+  font-size: 1.0625rem;
+  line-height: 1.25;
+}
+
+.demo-sentence {
+  font-size: 1.25rem;
+  line-height: 1.7;
+}
+
+.demo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.9rem;
+  margin-top: 0.4rem;
+}
+
+.demo-chip {
+  padding: 0.1rem 0.15rem;
+  color: var(--ink-3);
+  font-size: 1.0625rem;
+  cursor: pointer;
+  transition: color var(--dur-hover);
+}
+
+.demo-chip:hover,
+.demo-chip[aria-checked="true"] {
+  color: var(--ink);
+}
+
+.demo-chip:focus-visible {
+  outline: 1.5px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.demo-code {
+  margin-top: 0.4rem;
+  color: var(--ink-3);
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-variation-settings: "MONO" 1, "CASL" 1;
+  font-size: 0.8125rem;
+}
+
+/* Margin note: a ruled page with a margin, and the note out in it. It sizes
+   to the card it is in, so it fits at every width. */
+.demo-page {
+  position: relative;
+  container-type: inline-size;
+  max-width: 100%;
+  padding: 0.35rem 0 0.35rem 2rem;
+  background:
+    linear-gradient(to right, transparent 1.4rem, color-mix(in oklab, var(--pen-red) 40%, transparent) 1.4rem calc(1.4rem + 1px), transparent calc(1.4rem + 1px)),
+    repeating-linear-gradient(to bottom, transparent 0 calc(2rem - 1px), color-mix(in oklab, var(--ink) 18%, transparent) calc(2rem - 1px) 2rem);
+  background-position: 0 0, 0 0.35rem;
+}
+
+.demo-line {
+  width: clamp(6.5rem, 40cqw, 12rem);
+  min-height: 4rem;
+  font-size: 1.25rem;
+  line-height: 2rem;
+}
+
+.demo-margin {
+  --margin-note-width: clamp(5.25rem, 32cqw, 7.5rem);
+  --margin-note-gap: clamp(0.5rem, 4cqw, 1.6rem);
+  font-size: 1.125rem;
+  line-height: 1.1;
+  margin-top: 0.1rem;
+}
+
+.demo-checklist {
+  gap: 0.2rem;
+}
+
+.demo-signature {
+  height: 6.5rem;
+}
+
+/* ─── Simple, familiar API ───────────────────────────────────────────── */
+
+.home-api {
+  margin-top: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.api-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.api-grid > * {
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .api-grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 3rem;
+    padding-inline: 0.5rem;
+  }
+}
+
+.api-code {
+  font-size: 1rem;
+}
+
+.api-code pre {
+  font-size: 0.9rem;
+  overflow-x: auto;
+}
+
+.api-out {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.4rem 1.5rem 1.6rem;
+}
+
+.api-out-title {
+  color: var(--ink-3);
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+
+.api-hint {
+  margin-top: -0.7rem;
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+/* The line of code that makes the part being pointed at. */
+.api-grid[data-part="input"] .api-code .line[data-for="input"],
+.api-grid[data-part="checkbox"] .api-code .line[data-for="checkbox"],
+.api-grid[data-part="button"] .api-code .line[data-for="button"] {
+  background: color-mix(in oklab, var(--pen-red) 11%, transparent);
+  box-shadow: inset 3px 0 0 var(--pen-red);
+}
+
+.api-code .line[data-for] {
+  display: inline-block;
+  min-width: 100%;
+  transition: background-color var(--dur-hover);
+}
+
+.api-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.api-note {
+  min-height: 1.4rem;
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+.api-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+
+/* ─── Customize your style ───────────────────────────────────────────── */
+
+.home-customize {
+  margin-top: clamp(3rem, 7vw, 5.5rem);
+}
+
+.custom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.custom > * {
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .custom {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas:
+      "pens night"
+      "papers night"
+      "specimen night";
+    gap: 1.5rem 2rem;
+  }
+  .custom-pens {
+    grid-area: pens;
+  }
+  .custom-papers {
+    grid-area: papers;
+  }
+  .custom-night {
+    grid-area: night;
+  }
+  .custom-specimen {
+    grid-area: specimen;
+  }
+}
+
+.custom-label {
+  margin-bottom: 0.6rem;
+  color: var(--ink-2);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.pick-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pick-row-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pick-row-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (min-width: 40rem) {
+  .pick-row-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.pick {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 5.75rem;
+  padding: 0.8rem 0.5rem 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
+  border-radius: var(--hand-radius);
+  cursor: pointer;
+  transition: translate var(--dur-hover) ease-out;
+}
+
+.pick:hover {
+  translate: 0 -2px;
+}
+
+.pick:has(input:focus-visible) {
+  outline: 1.5px solid var(--ring);
+  outline-offset: 4px;
+}
+
+.pick-box {
+  inset: auto;
+}
+
+.pick-name {
+  position: relative;
+  font-size: 1.0625rem;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.pick-scribble {
+  position: relative;
+  width: 4.2rem;
+  height: 1.7rem;
+  color: var(--c-day);
+}
+
+.dark .pick-scribble {
+  color: var(--c-night);
+}
+
+.pick-paper {
+  position: relative;
+  width: 100%;
+  max-width: 6.5rem;
+  height: 2.6rem;
+  outline: 1px solid color-mix(in oklab, var(--ink) 22%, transparent);
+}
+
+/* The specimen sheet, and the paper-scope and pen-scope tokens it follows. */
+.custom-specimen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.6rem 1.75rem;
+  color: var(--ink);
+}
+
+.custom-sentence {
+  font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+  line-height: 1.2;
+  /* Two lines are always kept, so a longer pen and paper never move what is below. */
+  min-height: 2.4em;
+}
+
+@media (min-width: 64rem) {
+  .custom-sentence {
+    min-height: 0;
+  }
+}
+
+.custom-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.custom-ratio {
+  color: var(--ink-3);
+  font-size: 1.0625rem;
+}
+
+.custom-night {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.1rem 1.25rem 1.3rem;
+  color: var(--ink);
+  border-radius: 3px;
+}
+
+.custom-night .custom-label {
+  margin-bottom: 0;
+}
+
+.custom-night-art {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin-inline: -0.25rem;
+}
+
+.custom-night-art > * {
+  width: 100%;
+}
+
+.custom-night-line {
+  font-size: 1.25rem;
+  color: var(--ink-2);
+}
+
+/* ─── Put the paper and ink in your app ──────────────────────────────── */
+
+.home-start {
+  position: relative;
+  margin-top: clamp(4rem, 9vw, 7rem);
+  padding-inline: 0.5rem;
+}
+
+.start-body {
+  position: relative;
+  max-width: 50rem;
+  margin-inline: auto;
+}
+
+.start-cmd {
+  position: relative;
+  margin-top: 1.6rem;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────── */
+
+.home-footer {
+  position: relative;
+  margin-top: clamp(3rem, 7vw, 5rem);
+  overflow-x: clip;
+}
+
+.foot-top {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 85rem;
+  margin-inline: auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 40rem) {
+  .foot-top {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .foot-top {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 3rem;
+  }
+}
+
+.foot-logo {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.foot-brand p {
+  max-width: 17rem;
+  margin-top: 0.6rem;
+  color: var(--ink-2);
+  font-size: 1.1875rem;
+  line-height: 1.25;
+}
+
+.foot-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem 1.25rem;
+}
+
+.foot-title {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.foot-col ul {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.9rem;
+  list-style: none;
+}
+
+.foot-link {
+  color: var(--ink-2);
+  font-size: 1.125rem;
+  line-height: 1.2;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 5px;
+  transition: color var(--dur-hover), text-decoration-color var(--dur-hover);
+}
+
+.foot-link:hover,
+.foot-link:focus-visible {
+  color: var(--ink);
+  text-decoration-color: var(--ink-4);
+}
+
+.foot-legal {
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+@media (min-width: 64rem) {
+  .foot-legal {
+    grid-column: 2;
+    margin-top: 0.5rem;
+  }
+}
+
+/* The hillside runs the width of the window. The far hills and the sky
+   fade up into the page; the pines stand out of it. */
+.foot-art {
+  position: relative;
+  width: 100vw;
+  margin: 0.5rem 0 0 calc(50% - 50vw);
+  pointer-events: none;
+}
+
+.foot-art .art-layer[data-z="0"] {
+  mask-image: linear-gradient(to bottom, transparent 0, #000 34%);
+}
+
+.foot-art-pen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+}
+
+@media (max-width: 40rem) {
+  .foot-art {
+    width: 190vw;
+  }
+}
+
+/* ─── Motion on the page itself ──────────────────────────────────────── */
+
+/* Sheets are laid down as they come into view; the landscape's near and far
+   hills settle against each other as the page reaches the foot. Driven by
+   scroll where the browser can, and only then. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .torn-wrap {
+      animation: sheet-lay linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+
+    .foot-art .art-layer[data-z="0"],
+    .foot-art .art-layer[data-z="2"] {
+      animation: foot-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 55%;
+    }
+
+    .foot-art .art-layer[data-z="0"] {
+      --settle: -22px;
+    }
+
+    .foot-art .art-layer[data-z="2"] {
+      --settle: 30px;
+    }
+  }
+}
+
+@keyframes sheet-lay {
+  from {
+    translate: 0 40px;
+    rotate: calc(var(--tilt, 0deg) + 0.7deg);
+  }
+  to {
+    translate: 0 0;
+    rotate: var(--tilt, 0deg);
+  }
+}
+
+@keyframes foot-settle {
+  from {
+    translate: 0 var(--settle);
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .demo {
+    transition: translate 260ms var(--ease-out);
+  }
+
+  .demo:hover {
+    translate: 0 -2px;
+  }
+
+  .sticky-note {
+    transition:
+      rotate 300ms var(--ease-out),
+      translate 300ms var(--ease-out);
+  }
+
+  .sticky-note:hover {
+    rotate: 0.5deg;
+    translate: 0 -3px;
+  }
+}
+
+/* ─── Notes ─────────────────────────────────────────────────────────────
+   A note is placed with CSS, wherever there is room, and its arrow aimed at
+   what it is about by measuring (components/home/callout.tsx). */
+
+.callout {
+  position: relative;
+  z-index: 2;
+  width: fit-content;
+  color: var(--ink-2);
+  font-size: 1.375rem;
+  line-height: 1.1;
+  pointer-events: none;
+}
+
+.callout-text {
+  margin: 0;
+  rotate: -3deg;
+  transform-origin: left center;
+}
+
+.callout-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.callout-arrow {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.home-callout {
+  margin: 0 0 0.5rem 0.5rem;
+}
+
+@media (min-width: 64rem) {
+  .home-callout {
+    position: absolute;
+    top: -2.4rem;
+    left: 0.5rem;
+    margin: 0;
+  }
+}
+
+.showcase-callout {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  /* The header gets taller to give the note, and its arrow, room to breathe. */
+  .showcase-head {
+    min-height: 7.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .showcase-callout {
+    position: absolute;
+    top: 1.6rem;
+    right: 11%;
+    display: block;
+    font-size: 1.5rem;
+  }
+}
+
+.api-callout {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .api-callout {
+    display: block;
+    align-self: flex-start;
+    margin: 0.75rem 0 0 1.5rem;
+  }
+}
+
+.night-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 3.6rem;
+}
+
+/* On a narrow panel there is no room beside the switch for it. */
+.night-callout {
+  display: none;
+  font-size: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  .night-callout {
+    display: block;
+  }
+}
+
+.start-callout {
+  margin: 3.4rem 5rem 0 auto;
+}
+
+.start-head {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.start-pen {
+  position: absolute;
+  top: -2.9rem;
+  right: -4.6rem;
+  rotate: 34deg;
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .start-pen {
+    display: block;
+  }
+}
+
+/* ─── Inside the cards ───────────────────────────────────────────────── */
+
+.demo-hint {
+  color: var(--ink-3);
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.demo-redact {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.demo-margin-demo {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.demo-write {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+.demo-write-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.1rem 0.15rem;
+  border-bottom: 1.5px solid var(--ink-4);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.125rem;
+  outline: none;
+  transition: border-color var(--dur-hover);
+}
+
+.demo-write-input:hover,
+.demo-write-input:focus-visible {
+  border-bottom-color: var(--ink);
+}
+
+.demo-write-input::placeholder {
+  color: var(--ink-4);
+}
+
+.demo-scrawl {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-height: 9.5rem;
+}
+
+.demo-scrawl-pad {
+  position: relative;
+  flex: 1;
+  min-height: 8rem;
+  border-radius: var(--hand-radius);
+  cursor: crosshair;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.demo-scrawl-pad:focus-visible {
+  outline: 1.5px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.demo-scrawl-mark {
+  position: absolute;
+  translate: -50% -50%;
+}
+
+.demo-scrawl-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.demo-scrawl-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.demo-checklist-demo {
+  position: relative;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.demo-burst {
+  position: absolute;
+  top: -0.5rem;
+  right: 0.25rem;
+}
+
+.demo-signature-demo {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* ─── The hint under the buttons ─────────────────────────────────────── */
+
+.hero-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.25rem;
+  margin-top: 1.4rem;
+  color: var(--ink-3);
+  font-size: 1.0625rem;
+}
+
+/* ─── Things holding the sheets down ─────────────────────────────────── */
+
+.sheet-clip {
+  position: absolute;
+  z-index: 3;
+  top: -1.9rem;
+  right: 10%;
+  rotate: 8deg;
+  pointer-events: none;
+}
+
+@media (min-width: 64rem) {
+  .sheet-clip {
+    top: -1.6rem;
+    right: auto;
+    left: 9%;
+    rotate: -8deg;
+  }
+}
+
+.home-customize::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: -0.85rem;
+  left: 50%;
+  width: 8rem;
+  height: 1.7rem;
+  translate: -50% 0;
+  rotate: -2deg;
+  background:
+    repeating-linear-gradient(115deg, oklch(1 0 0 / 0.16) 0 7px, transparent 7px 14px),
+    var(--tape);
+  clip-path: polygon(0 0, 3% 20%, 0 42%, 3% 64%, 0 86%, 2% 100%, 100% 100%, 97% 80%, 100% 58%, 97% 36%, 100% 14%, 98% 0);
+  box-shadow: 0 1px 2px oklch(0.3 0.04 80 / 0.2);
+  pointer-events: none;
+}

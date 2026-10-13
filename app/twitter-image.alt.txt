@@ -1,0 +1,1 @@
+An interface you can write on: Ballpoint, shadcn-style components drawn in blue ballpoint, with a pen-drawn lake in the mountains and a sticky note.

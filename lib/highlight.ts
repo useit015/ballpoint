@@ -61,7 +61,22 @@ const penClasses: ShikiTransformer = {
 
 let highlighter: Promise<Highlighter> | undefined;
 
-export async function highlight(code: string, lang: "tsx" | "bash" | "css" | "json" = "tsx") {
+/**
+ * `lineData` can tag a line (by its text and number) with data attributes,
+ * for the page to find it by: the front page links lines of code to what
+ * they draw.
+ */
+export async function highlight(code: string, lang: "tsx" | "bash" | "css" | "json" = "tsx", lineData?: (text: string, line: number) => Record<string, string> | undefined) {
   highlighter ??= createHighlighter({ themes: [ink], langs: ["tsx", "bash", "css", "json"] });
-  return (await highlighter).codeToHtml(code.trimEnd(), { lang, theme: "ink", mergeSameStyleTokens: true, transformers: [penClasses] });
+  const lines = code.trimEnd().split("\n");
+  const tags: ShikiTransformer[] = lineData
+    ? [
+        {
+          line(node: Line, line: number) {
+            Object.assign(node.properties, lineData(lines[line - 1] ?? "", line));
+          },
+        },
+      ]
+    : [];
+  return (await highlighter).codeToHtml(code.trimEnd(), { lang, theme: "ink", mergeSameStyleTokens: true, transformers: [penClasses, ...tags] });
 }

@@ -3,9 +3,9 @@
 import { useSyncExternalStore } from "react";
 import { blotPath } from "@/registry/ballpoint/lib/ink-sketch";
 
-// Day and night for the site, from anywhere on the page: the same switch the
-// header's InkThemeToggle makes, with its ink blot spreading from whatever
-// was flipped (styles/ink-theme-toggle.css draws it).
+// Changing how the whole page looks (day or night, which pen, which paper),
+// from anywhere on it: the same ink blot the header's InkThemeToggle makes,
+// spreading from whatever was flipped (styles/ink-theme-toggle.css draws it).
 
 const blot = `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='${blotPath(11)}'/></svg>`)}")`;
 
@@ -23,15 +23,13 @@ export function useNight() {
 
 let running: ViewTransition | undefined;
 
-/** Turn the page to night (or day), the ink spreading out from `from`. */
-export async function setNight(night: boolean, from: Element) {
+/**
+ * Change the page with `apply` (it must change the DOM before it returns),
+ * the new look spreading out from `from` like ink. Without view transitions,
+ * or under reduced motion, it just changes.
+ */
+export async function inkBlot(apply: () => void, from: Element) {
   const root = document.documentElement;
-  const apply = () => {
-    root.classList.toggle("dark", night);
-    try {
-      localStorage.setItem("theme", night ? "dark" : "light");
-    } catch {}
-  };
   running?.skipTransition();
   if (matchMedia("(prefers-reduced-motion: reduce)").matches || typeof document.startViewTransition !== "function") return apply();
 
@@ -45,7 +43,7 @@ export async function setNight(night: boolean, from: Element) {
   root.style.setProperty("--ink-theme-y", `${y}px`);
   root.style.setProperty("--ink-theme-reach", `${Math.ceil(far * 2.9)}px`);
   root.style.setProperty("--ink-blot", blot);
-  root.dataset.inkThemeTransition = night ? "dark" : "light";
+  root.dataset.inkThemeTransition = isNight() ? "dark" : "light";
   let transition: ViewTransition | undefined;
   try {
     transition = document.startViewTransition(apply);
@@ -62,4 +60,14 @@ export async function setNight(night: boolean, from: Element) {
       running = undefined;
     }
   }
+}
+
+/** Turn the page to night (or day), the ink spreading out from `from`. */
+export function setNight(night: boolean, from: Element) {
+  return inkBlot(() => {
+    document.documentElement.classList.toggle("dark", night);
+    try {
+      localStorage.setItem("theme", night ? "dark" : "light");
+    } catch {}
+  }, from);
 }

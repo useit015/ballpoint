@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { PaperMarks } from "@/components/paper-marks";
 import localFont from "next/font/local";
+import { FooterSlot } from "@/components/footer-slot";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { homepage } from "@/registry/manifest";
 import "./globals.css";
 
 // The registry installs Gaegu through next/font/google, but this site serves
@@ -32,9 +34,14 @@ const code = localFont({
   style: "oblique 0deg 15deg",
 });
 
+const description = "shadcn-style components drawn in blue ballpoint. Same names, same props, drawn by hand.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(homepage),
   title: { default: "Ballpoint", template: "%s · Ballpoint" },
-  description: "shadcn-style components drawn in blue ballpoint. Same names, same props, drawn by hand.",
+  description,
+  openGraph: { title: "Ballpoint: an interface you can write on", description, siteName: "Ballpoint", type: "website" },
+  twitter: { card: "summary_large_image", title: "Ballpoint: an interface you can write on", description },
 };
 
 export const viewport: Viewport = {
@@ -61,7 +68,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <SiteHeader />
         {children}
-        <SiteFooter />
+        <FooterSlot>
+          <SiteFooter />
+        </FooterSlot>
       </body>
     </html>
   );

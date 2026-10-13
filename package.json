@@ -10,6 +10,8 @@
     "build": "pnpm registry:build && pnpm paper && next build",
     "start": "next start",
     "paper": "node scripts/paper-tiles.ts && node scripts/scrollbar-art.ts",
+    "torn": "node scripts/torn-edges.ts",
+    "og": "node scripts/og-image.ts",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "registry:build": "node scripts/contrast.ts --quiet && node scripts/build-registry.ts && shadcn build",

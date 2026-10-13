@@ -61,6 +61,33 @@ installed Google Chrome (`channel: "chrome"`). Screenshot baselines live in
 - `registry/ballpoint/hooks/use-ink-box.ts`: sizes a drawing to its element
   with one shared `ResizeObserver`, snapping to 2px so resizes redraw
   sparingly.
+- `lib/art/`: the front page's drawings, made in code: seeded noise and short
+  path helpers (`kit.ts`), mountains hatched down from their ridges, pines,
+  water and grass (`nature.ts`), and the scenes built from them (`hero.ts`,
+  `side.ts`, `footer.ts`, `doodles.ts`). The same seed draws the same picture
+  on the server and in the browser. A scene's outlines are laid one after
+  another by `track` (the strokes marked `lead`); the rest of it is worked in
+  around them. `components/art/pen-art.tsx` lays a scene out as one SVG per
+  depth, and `app/art.css` has the pen run along each stroke (`draw`) or the
+  hand work across a cluster of them (`sweep`); `pen-hand.tsx` is the one
+  small script that shows a pen at the tip of the lead strokes.
+- `lib/art/people.ts`, `lib/art/creatures.ts`, `components/art/life/`,
+  `app/life.css`: what lives in the pictures. People are posed by a small rig
+  (a pelvis, two-bone legs, arms), so a walk is a real gait with each foot
+  planted while the body passes over it; `footer-life.tsx` walks them up and
+  down the trail, sits them by the fire, and lets a pointer (or Enter) make
+  them wave and say something. The sun is a button that turns the page to
+  night, the boat has a bite when it is poked, the fire can be stoked, the
+  tent looked into, and birds scatter and pines sway under a pointer. Loops
+  only run while the picture is on screen, and none of it moves under
+  reduced motion. The footer's and the side panel's scenes are generated in
+  the browser when they near the viewport, so they are not in the page's HTML.
+- `components/home/`, `app/home.css`: the front page's sections. The torn
+  paper's outlines in `app/torn.css` are written once by
+  `scripts/torn-edges.ts` (`pnpm torn`). Picking a pen and a paper in
+  "Customize your style" dresses the whole page (`html[data-pen]`,
+  `html[data-paper]`), slips and torn sheets included: `pnpm paper` cuts a
+  slip texture for each paper.
 - `registry/ballpoint/ui/`: components. They use the same names and props
   as shadcn/ui, so they drop in as replacements.
 - `registry/ballpoint/examples/`: demos used by the docs and by

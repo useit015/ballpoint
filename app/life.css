@@ -1,0 +1,581 @@
+/* What lives in the pictures (components/art/life): birds, trees that sway,
+   a man in a boat, people walking a trail, a fire. Whatever loops only runs
+   while the picture is on screen (the `data-seen` ArtEffects sets), and none
+   of it moves under reduced motion. Lines are in the scene's own units. */
+
+.art-life {
+  --w: 1;
+}
+
+.art-life .hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
+.art-life ellipse,
+.art-life circle.spark {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: calc(var(--w, 0.8) * var(--art-k) * 1px);
+}
+
+.art-life circle.spark {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0;
+}
+
+.art-life .boat-fill,
+.art-life .peek-fill {
+  fill: var(--paper);
+  stroke: none;
+}
+
+/* A thing that can be poked. */
+.poke {
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.poke:focus-visible .hit {
+  stroke: var(--ring);
+  stroke-width: calc(var(--art-k) * 1.3px);
+  stroke-dasharray: 3 3;
+  fill: color-mix(in oklab, var(--ink) 7%, transparent);
+}
+
+/* ─── Loops, only while seen ─────────────────────────────────────────── */
+
+.art:not([data-seen]) :is(.fly, .pose, .cloud, .boat-drift, .boat-rock, .ring.idle, .smoke) {
+  animation-play-state: paused;
+}
+
+/* ─── Sky ────────────────────────────────────────────────────────────── */
+
+.art .rays {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transition: rotate 900ms var(--ease-out);
+}
+
+.art[data-sky] .rays {
+  rotate: 70deg;
+}
+
+.art .cloud {
+  animation: drift 58s ease-in-out infinite alternate;
+}
+
+.art .cloud.b {
+  animation-duration: 74s;
+  animation-delay: -24s;
+}
+
+@keyframes drift {
+  from {
+    translate: -26px 0;
+  }
+  to {
+    translate: 44px 0;
+  }
+}
+
+/* Birds: four beats of the wings, one shown at a time, while the bird crosses. */
+.flock .pose {
+  opacity: 0;
+  animation: pose var(--beat, 1s) linear infinite;
+  animation-delay: calc(var(--i) * var(--beat, 1s) / 4);
+}
+
+.flock .fly {
+  opacity: 0;
+}
+
+.art[data-run] .flock .fly {
+  animation: fly var(--dur, 30s) linear calc(var(--delay, 0s) + 3.4s) infinite both;
+}
+
+@keyframes pose {
+  0%,
+  24.9% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fly {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    translate: var(--tx) var(--ty);
+    opacity: 0;
+  }
+}
+
+/* Startled: they beat hard and are gone, and the sky is theirs again a while later. */
+.flock[data-scared] .pose {
+  --beat: 0.3s;
+}
+
+.flock[data-scared] .wings {
+  animation: scatter 2.6s cubic-bezier(0.5, 0, 0.8, 0.5) forwards;
+}
+
+@keyframes scatter {
+  to {
+    translate: var(--ex) var(--ey);
+    scale: 0.6;
+    opacity: 0;
+  }
+}
+
+/* ─── Trees ──────────────────────────────────────────────────────────── */
+
+.art g.tree {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.art g.tree[data-sway] {
+  animation: sway 1.6s ease-in-out;
+}
+
+.art g.tree[data-shake] {
+  animation: shake 1.2s ease-out;
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  22% {
+    rotate: 1.3deg;
+  }
+  48% {
+    rotate: -1deg;
+  }
+  72% {
+    rotate: 0.5deg;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  10% {
+    rotate: 2.6deg;
+  }
+  24% {
+    rotate: -2.2deg;
+  }
+  38% {
+    rotate: 1.6deg;
+  }
+  52% {
+    rotate: -1deg;
+  }
+  70% {
+    rotate: 0.5deg;
+  }
+}
+
+.art .fleck {
+  opacity: 0;
+  animation: fleck 1.5s ease-in var(--delay, 0s) forwards;
+}
+
+@keyframes fleck {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  14% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    translate: var(--dx) var(--fall);
+  }
+}
+
+/* ─── The lake ───────────────────────────────────────────────────────── */
+
+.boat-fill {
+  pointer-events: none;
+}
+
+.art .boat-drift {
+  animation: boat-drift 30s ease-in-out infinite alternate;
+}
+
+.art .boat-rock {
+  transform-origin: 0 6px;
+  animation: boat-rock 4.6s ease-in-out infinite alternate;
+}
+
+/* A hand near the boat sets it rocking a little more. */
+.boat-poke:hover .boat-rock {
+  animation-duration: 1.7s;
+}
+
+@keyframes boat-drift {
+  from {
+    translate: -12px 0;
+  }
+  to {
+    translate: 14px 1px;
+  }
+}
+
+@keyframes boat-rock {
+  from {
+    rotate: -1.3deg;
+    translate: 0 0;
+  }
+  to {
+    rotate: 1.2deg;
+    translate: 0 -0.8px;
+  }
+}
+
+.art .ring {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  --w: 0.5;
+}
+
+.art .ring.idle {
+  animation: ring 4.2s ease-out 4.8s infinite;
+}
+
+@keyframes ring {
+  0% {
+    opacity: 0.85;
+    scale: 0.25;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.6;
+  }
+}
+
+.art .rod-rig {
+  transform-origin: 5.4px -11.6px;
+}
+
+.art .fish path {
+  --w: 0.75;
+}
+
+.art .fish {
+  opacity: 0;
+}
+
+.art .alarm {
+  opacity: 0;
+  --w: 1;
+}
+
+.art .wake {
+  --w: 0.6;
+  --o: 0.7;
+}
+
+/* A bite. */
+.boat-rig[data-bite] .rod-rig {
+  animation: strike 1.9s cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+.boat-rig[data-bite] .fish {
+  animation: leap 1.5s cubic-bezier(0.3, 0.1, 0.5, 1) 0.35s both;
+}
+
+.boat-rig[data-bite] .ring.splash.a {
+  animation: ring 1.3s ease-out 0.5s both;
+}
+
+.boat-rig[data-bite] .ring.splash.b {
+  animation: ring 1.3s ease-out 1.5s both;
+}
+
+.boat-rig[data-bite] .alarm {
+  animation: alarm 1.7s ease-out both;
+}
+
+@keyframes strike {
+  0% {
+    rotate: 0deg;
+  }
+  14% {
+    rotate: -16deg;
+  }
+  34% {
+    rotate: -10deg;
+  }
+  52% {
+    rotate: 7deg;
+  }
+  74% {
+    rotate: -2deg;
+  }
+  100% {
+    rotate: 0deg;
+  }
+}
+
+@keyframes leap {
+  0% {
+    opacity: 0;
+    translate: 31px -1px;
+    rotate: -70deg;
+    scale: 0.6;
+  }
+  8% {
+    opacity: 1;
+  }
+  45% {
+    translate: 24px -25px;
+    rotate: -4deg;
+    scale: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 15px 0px;
+    rotate: 78deg;
+    scale: 1;
+  }
+}
+
+@keyframes alarm {
+  0% {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  12% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ─── The camp ───────────────────────────────────────────────────────── */
+
+.art .flames {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.fire-poke:hover .flames {
+  scale: 1.1 1.18;
+  transition: scale 200ms var(--ease-out);
+}
+
+.fire[data-stoked] .flames {
+  animation: stoke 1.6s ease-out;
+}
+
+@keyframes stoke {
+  0% {
+    scale: 1;
+  }
+  18% {
+    scale: 1.55 1.8;
+  }
+  60% {
+    scale: 1.2 1.3;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+.art .smoke {
+  opacity: 0;
+  animation: smoke 5.2s ease-out calc(var(--k, 0) * 1.7s) infinite;
+}
+
+@keyframes smoke {
+  0% {
+    opacity: 0;
+    translate: 0 8px;
+    scale: 0.8;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    translate: 3px -16px;
+    scale: 1.1 1.25;
+  }
+}
+
+.art .tent-dark {
+  opacity: 0;
+  transition: opacity 260ms;
+}
+
+.art .peek {
+  opacity: 0;
+  translate: 0 7px;
+  transition:
+    opacity 260ms,
+    translate 380ms var(--ease-out-expo);
+}
+
+.tent-poke[data-open] .tent-dark {
+  opacity: 0.9;
+}
+
+.tent-poke[data-open] .peek {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.art .peek-arm {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+}
+
+.tent-poke[data-open] .peek-arm {
+  animation: peek-wave 0.55s ease-in-out infinite alternate;
+}
+
+@keyframes peek-wave {
+  from {
+    rotate: -9deg;
+  }
+  to {
+    rotate: 12deg;
+  }
+}
+
+/* ─── The people on the trail ────────────────────────────────────────── */
+
+.hikers {
+  opacity: 0;
+}
+
+.art[data-run] .hikers {
+  animation: arrive 900ms var(--ease-out) 3.8s both;
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hiker {
+  transition: opacity 600ms;
+}
+
+.hiker .near,
+.hiker .far,
+.hiker .shadow {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hiker .near {
+  stroke-width: calc(var(--art-k) * 1.05px);
+}
+
+.hiker .far {
+  stroke-width: calc(var(--art-k) * 0.95px);
+  opacity: 0.62;
+}
+
+.hiker .shadow {
+  stroke-width: calc(var(--art-k) * 0.7px);
+  opacity: 0.45;
+}
+
+/* A few words, in a bubble pulled in and written. */
+.say .say-box {
+  fill: var(--paper);
+  stroke-dasharray: 1.05 1.05;
+  animation: say-draw 360ms var(--ease-pen) both;
+}
+
+.say .say-text {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  fill: currentColor;
+  stroke: none;
+  clip-path: inset(-3px 100% -3px -3px);
+  animation: art-sweep 480ms linear 260ms forwards;
+}
+
+@keyframes say-draw {
+  from {
+    stroke-dashoffset: 1.05;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ─── Not moving ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .art :is(.fly, .pose, .cloud, .boat-drift, .boat-rock, .ring, .smoke, .hikers, .flames, .peek-arm),
+  .art g.tree[data-sway],
+  .art g.tree[data-shake] {
+    animation: none !important;
+  }
+
+  .flock .pose.p0 {
+    opacity: 1;
+  }
+
+  .flock .fly {
+    opacity: 1;
+  }
+
+  .hikers {
+    opacity: 1;
+  }
+
+  .art .smoke {
+    opacity: 0.55;
+  }
+
+  .boat-rig[data-bite] .alarm {
+    opacity: 1;
+  }
+
+  .art .say-text {
+    clip-path: none;
+    animation: none;
+  }
+}

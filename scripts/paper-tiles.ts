@@ -120,10 +120,11 @@ function tooth(mode: "light" | "dark") {
 // Keep in step with --slip in app/globals.css (the same mixes, in oklab).
 const white = parseColor("#ffffff");
 const ink = { light: parseColor("oklch(0.4 0.185 267)"), dark: parseColor("oklch(0.9 0.045 258)") };
-const slip = {
-  light: mix(parseColor(papers.cream.paper.light), 0.8, white),
-  dark: mix(parseColor(papers.cream.paper.dark), 0.94, ink.dark),
-};
+const slipOf = (paper: (typeof papers)[keyof typeof papers]) => ({
+  light: mix(parseColor(paper.paper.light), 0.8, white),
+  dark: mix(parseColor(paper.paper.dark), 0.94, ink.dark),
+});
+const slip = slipOf(papers.cream);
 const gamma = (paper: string | Rgb) => (typeof paper === "string" ? parseColor(paper) : paper).map(toGamma);
 
 const dir = new URL("../public/paper/", import.meta.url);
@@ -132,6 +133,11 @@ mkdirSync(dir, { recursive: true });
 const reliefs: { file: URL; svg: string }[] = [];
 for (const [name, paper] of Object.entries(papers)) {
   for (const mode of ["light", "dark"] as const) reliefs.push({ file: new URL(`${name}-${mode}.png`, dir), svg: relief(gamma(paper.paper[mode]), mode, "page") });
+}
+// The cream slip is the docs' own (slip-light.png); each other paper has its own, cut the same way.
+for (const [name, paper] of Object.entries(papers)) {
+  if (name === "cream") continue;
+  for (const mode of ["light", "dark"] as const) reliefs.push({ file: new URL(`slip-${name}-${mode}.png`, dir), svg: relief(gamma(slipOf(paper)[mode]), mode, "slip") });
 }
 for (const mode of ["light", "dark"] as const) {
   reliefs.push({ file: new URL(`slip-${mode}.png`, dir), svg: relief(gamma(slip[mode]), mode, "slip") });

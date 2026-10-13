@@ -1,0 +1,187 @@
+/* Pen drawings (components/art/pen-art.tsx, lib/art). A stroke is a path in
+   the ink's colour. "draw" strokes are run in by the pen: one dash that
+   slides along the path. "sweep" strokes are clusters (shading, a stand of
+   trees, grass) that the hand works across: they are uncovered along their
+   width, or down it. The picture shows finished without scripts, and under
+   reduced motion. What lives in the picture is in life.css. */
+
+.art {
+  --art-k: 1;
+  position: relative;
+  color: var(--ink);
+}
+
+.art-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.art path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: calc(var(--w) * var(--art-k) * 1px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: var(--o, 1);
+}
+
+/* What belongs to one side of the day only (a sun, a moon, the stars) is
+   drawn with the rest, and shown when its side is up, so turning the page
+   over finds it already there. */
+.art-night {
+  visibility: hidden;
+}
+
+.dark .art-night {
+  visibility: visible;
+}
+
+.dark .art-day {
+  visibility: hidden;
+}
+
+/* A panel that shows the other side of the page: night on a day page, day on a night one. */
+.as-day .art-night {
+  visibility: hidden;
+}
+
+.as-day .art-day {
+  visibility: visible;
+}
+
+.as-night .art-day {
+  visibility: hidden;
+}
+
+.as-night .art-night {
+  visibility: visible;
+}
+
+@media (scripting: enabled) {
+  /* Unstarted: no round cap left sitting where the pen will land. */
+  .art .art-draw {
+    stroke-dasharray: 1.05 1.05;
+    stroke-dashoffset: 1.05;
+    opacity: 0;
+  }
+
+  .art .art-sweep {
+    clip-path: inset(-8px 100% -8px -8px);
+  }
+
+  .art .art-sweep[data-down] {
+    clip-path: inset(-8px -8px 100% -8px);
+  }
+
+  .art[data-run] .art-draw {
+    animation: art-draw var(--d) var(--ease-pen) var(--dd) both;
+  }
+
+  .art[data-run] .art-sweep {
+    animation: art-sweep var(--d) linear var(--dd) both;
+  }
+
+  .art[data-run] .art-sweep[data-down] {
+    animation-name: art-sweep-down;
+  }
+
+  /* Drawn: let go of the dash and the clip, so it paints as one plain stroke. */
+  .art .art-draw.done {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    opacity: var(--o, 1);
+  }
+
+  .art .art-sweep.done {
+    animation: none;
+    clip-path: none;
+  }
+}
+
+@keyframes art-draw {
+  from {
+    stroke-dashoffset: 1.05;
+    opacity: 0;
+  }
+  0.1% {
+    opacity: var(--o, 1);
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: var(--o, 1);
+  }
+}
+
+@keyframes art-sweep {
+  from {
+    clip-path: inset(-8px 100% -8px -8px);
+  }
+  to {
+    clip-path: inset(-8px -8px -8px -8px);
+  }
+}
+
+@keyframes art-sweep-down {
+  from {
+    clip-path: inset(-8px -8px 100% -8px);
+  }
+  to {
+    clip-path: inset(-8px -8px -8px -8px);
+  }
+}
+
+/* The big drawings are seen small on a phone: their lines are drawn heavier. */
+@media (max-width: 40rem) {
+  .home-art,
+  .foot-art-pen {
+    --art-k: 1.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art .art-draw,
+  .art[data-run] .art-draw {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    opacity: var(--o, 1);
+  }
+
+  .art .art-sweep,
+  .art[data-run] .art-sweep {
+    animation: none;
+    clip-path: none;
+  }
+}
+
+/* The pen that draws the picture (components/art/pen-hand.tsx): paper-filled,
+   so it hides what it passes over. */
+.art-pen {
+  opacity: 0;
+}
+
+.art .art-pen path {
+  fill: var(--paper);
+  stroke-width: 1.1px;
+  opacity: 1;
+}
+
+.art .art-pen .art-pen-ink {
+  fill: currentColor;
+}
+
+.art .art-pen .art-pen-line {
+  fill: none;
+  stroke-width: 0.8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art-pen {
+    display: none;
+  }
+}

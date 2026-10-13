@@ -19,6 +19,10 @@ for (const name of docs) {
 for (const theme of themes) {
   test(`visual home (${theme})`, async ({ page }) => {
     await open(page, "/", theme);
+    // The night panel's picture is drawn when its section is near: go there and wait for it.
+    await page.locator(".home-customize").scrollIntoViewIfNeeded();
+    await expect.poll(() => page.locator(".custom-night-art path").count()).toBeGreaterThan(50);
+    await page.evaluate(() => window.scrollTo(0, 0));
     await expect(page.locator("main")).toHaveScreenshot(`home-${theme}.png`);
   });
 }
