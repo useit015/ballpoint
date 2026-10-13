@@ -5,7 +5,12 @@ import { TextLink } from "@/components/text-link";
 import type { TocItem } from "@/components/toc";
 import { Alert, AlertDescription, AlertTitle } from "@/registry/ballpoint/ui/alert";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
+import { DocHeader } from "@/components/doc-header";
+import { Doodle } from "@/components/home/doodle";
 import { Heading } from "@/components/heading";
+import { ruledItem } from "@/components/rule";
+import { penDoodle } from "@/lib/art/doodles";
+import { inkRules } from "@/registry/ballpoint/lib/ink";
 import { InstallCommand } from "@/components/install-command";
 import { PropsTable } from "@/components/props-table";
 import { penProps, tokens } from "@/lib/docs";
@@ -14,8 +19,8 @@ import { homepage } from "@/registry/manifest";
 export const metadata: Metadata = { title: "Installation" };
 
 const toc: TocItem[] = [
-  { id: "init", title: "1. Set up the paper and ink" },
-  { id: "add", title: "2. Add components" },
+  { id: "init", title: "Set up the paper and ink" },
+  { id: "add", title: "Add components" },
   { id: "theming", title: "Theming" },
   { id: "pen", title: "Pen settings" },
 ];
@@ -23,22 +28,23 @@ const toc: TocItem[] = [
 export default function Installation() {
   return (
     <DocPage toc={toc}>
-      <header className="flex flex-col gap-4">
-        <Heading as="h1" id="installation" className="text-3xl">
-          Installation
-        </Heading>
-        <p className="text-lg text-ink-2">
-          Ballpoint is a shadcn registry. You copy the components into your app and own them.
-        </p>
-        <Alert seed="requirements">
+      <DocHeader
+        id="installation"
+        title="Installation"
+        lede="Ballpoint is a shadcn registry. You copy the components into your app and own them."
+        crumbs={[{ title: "Docs" }, { title: "Installation" }]}
+        art={<Doodle scene={penDoodle("install-pen")} scale={1.6} run className="size-full" />}
+      >
+        <Alert seed="requirements" className="max-w-xl">
           <InkGlyph name="info-circle" className="size-5" />
           <AlertTitle>Before you start</AlertTitle>
           <AlertDescription>React 19 and Tailwind CSS 4. The examples assume Next.js, but nothing in the components needs it.</AlertDescription>
         </Alert>
-      </header>
+      </DocHeader>
 
-      <section className="flex flex-col gap-5">
-        <Heading id="init">1. Set up the paper and ink</Heading>
+      <div className="doc-steps">
+      <section className="doc-section doc-step">
+        <Heading id="init">Set up the paper and ink</Heading>
         <p className="text-ink-2">
           In an app that already has Tailwind CSS 4, run init with the Ballpoint base. It writes the colour, type and motion tokens into your
           global CSS, adds Gaegu with <code className="inline-code">next/font</code>, copies the stroke engine into{" "}
@@ -48,8 +54,8 @@ export default function Installation() {
         <InstallCommand what={`init ${homepage}/r/ballpoint.json`} />
       </section>
 
-      <section className="flex flex-col gap-5">
-        <Heading id="add">2. Add components</Heading>
+      <section className="doc-section doc-step">
+        <Heading id="add">Add components</Heading>
         <InstallCommand what="add @ballpoint/button" />
         <CodeBlock
           code={`import { Button } from "@/components/ui/button"
@@ -57,8 +63,9 @@ export default function Installation() {
 <Button>Book a call</Button>`}
         />
       </section>
+      </div>
 
-      <section className="flex flex-col gap-5">
+      <section className="doc-section">
         <Heading id="theming">Theming</Heading>
         <p className="text-ink-2">
           Everything is one ink at different pressures, mixed toward the paper in oklab so the hue never drifts. Change{" "}
@@ -74,17 +81,20 @@ export default function Installation() {
           <TextLink href="/customize">customizer</TextLink>
           .
         </p>
-        <dl className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-[auto_1fr]">
+        <dl className="doc-tokens" style={inkRules}>
           {tokens.map(([name, what]) => (
-            <div key={name} className="contents">
-              <dt className="font-mono text-sm leading-7 text-ink">{name}</dt>
+            <div key={name} className={`${ruledItem} doc-token`}>
+              <dt>
+                <span aria-hidden="true" className="doc-swatch" style={{ background: `var(${name.split(",")[0]})` }} />
+                {name}
+              </dt>
               <dd className="text-ink-2">{what}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <section className="flex flex-col gap-5">
+      <section className="doc-section">
         <Heading id="pen">Pen settings</Heading>
         <p className="text-ink-2">
           Strokes are generated from a seed, so a component draws the same wobble on the server and in the browser; pass{" "}

@@ -5,6 +5,8 @@ import { CodeBlock } from "@/components/code-block";
 import { Disclosure } from "@/components/disclosure";
 import { Heading } from "@/components/heading";
 import { InstallCommand } from "@/components/install-command";
+import { ComponentArt } from "@/components/component-art";
+import { DocHeader } from "@/components/doc-header";
 import { DocPage } from "@/components/doc-page";
 import { Pager } from "@/components/pager";
 import { TextLink } from "@/components/text-link";
@@ -44,29 +46,29 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
 
   return (
     <DocPage toc={toc}>
-      <header className="flex flex-col gap-4">
-        <Heading as="h1" id={doc.name} className="text-3xl">
-          {doc.title}
-        </Heading>
-        <p className="text-lg text-ink-2">{doc.description}</p>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <Badge variant={doc.group === "Drawn" ? "default" : "secondary"} seed={`${doc.name}-group`}>
-            {doc.group === "Drawn" ? "Only in Ballpoint" : "From shadcn/ui"}
-          </Badge>
-          {doc.primitive && (
-            <a href={doc.primitive.href} className="flex w-fit items-center gap-1.5 text-ink-3 transition-colors hover:text-ink">
-              Built on Base UI {doc.primitive.name}
-              <InkGlyph name="arrow-up-right" className="size-3.5" />
-            </a>
-          )}
-        </div>
-      </header>
+      <DocHeader
+        id={doc.name}
+        title={doc.title}
+        lede={doc.description}
+        crumbs={[{ title: "Docs", href: "/docs" }, { title: "Components", href: "/components" }, { title: doc.title }]}
+        art={<ComponentArt name={doc.name} className="size-full" />}
+      >
+        <Badge variant={doc.group === "Drawn" ? "default" : "secondary"} seed={`${doc.name}-group`}>
+          {doc.group === "Drawn" ? "Only in Ballpoint" : "From shadcn/ui"}
+        </Badge>
+        {doc.primitive && (
+          <a href={doc.primitive.href} className="flex w-fit items-center gap-1.5 text-ink-3 transition-colors hover:text-ink">
+            Built on Base UI {doc.primitive.name}
+            <InkGlyph name="arrow-up-right" className="size-3.5" />
+          </a>
+        )}
+      </DocHeader>
 
-      <Preview code={<CodeBlock code={exampleSource(main)} />}>
+      <Preview taped code={<CodeBlock code={exampleSource(main)} />}>
         <Example />
       </Preview>
 
-      <section className="flex flex-col gap-5">
+      <section className="doc-section">
         <Heading id="installation">Installation</Heading>
         <InstallCommand what={`add @ballpoint/${doc.name}`} />
         <Disclosure summary="Or copy the source">
@@ -76,22 +78,22 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
         </Disclosure>
       </section>
 
-      <section className="flex flex-col gap-5">
+      <section className="doc-section">
         <Heading id="usage">Usage</Heading>
         <CodeBlock code={doc.usage} />
       </section>
 
       {more.length > 0 && (
-        <section className="flex flex-col gap-8">
+        <section className="doc-section gap-10!">
           <Heading id="examples">Examples</Heading>
           {more.map((name) => {
             const More = examples[name];
             const meta = doc.exampleTitles?.[name];
             return (
               <div key={name} className="flex flex-col gap-3">
-                <h3 id={name} className="scroll-mt-6 text-xl font-bold">
+                <Heading as="h3" id={name}>
                   {meta?.title ?? name}
-                </h3>
+                </Heading>
                 {meta && <p className="text-ink-2">{meta.description}</p>}
                 <Preview code={<CodeBlock code={exampleSource(name)} />}>
                   <More />
@@ -102,7 +104,7 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
         </section>
       )}
 
-      <section className="flex flex-col gap-5">
+      <section className="doc-section">
         <Heading id="api">API reference</Heading>
         {doc.props && <PropsTable props={doc.props} />}
         {doc.primitive && (
@@ -114,9 +116,9 @@ export default async function ComponentPage({ params }: PageProps<"/docs/[name]"
         )}
         {pen.length > 0 && (
           <div className="flex flex-col gap-3 pt-4">
-            <h3 id="pen-settings" className="text-xl font-bold">
+            <Heading as="h3" id="pen-settings">
               Pen settings
-            </h3>
+            </Heading>
             <p className="text-ink-2">
               The drawing also takes{" "}
               {pen.map((prop, i) => (

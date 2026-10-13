@@ -64,17 +64,17 @@ test("the code tabs swap the code and copy what is showing", async ({ page, cont
 test("picking a pen and a paper changes the specimen, with the keyboard too", async ({ page }) => {
   await open(page, "/", "light");
   const specimen = page.getByRole("group", { name: "Specimen" });
-  await expect(specimen).toContainText("Written in blue ballpoint on cream paper.");
+  await expect(specimen).toContainText("Blue ballpoint on cream.");
   await page.locator("label.pick", { hasText: "Green ink" }).click();
   await page.locator("label.pick", { hasText: "Legal pad" }).click();
-  await expect(specimen).toContainText("Written in green ink on legal pad paper.");
+  await expect(specimen).toContainText("Green ink on legal pad.");
   await expect(specimen).toContainText("Passes WCAG AA by day");
   // Arrow keys move through the pens, as through any radio group.
   const pens = page.getByRole("radiogroup", { name: "Pens" });
   await pens.getByRole("radio", { name: "Green ink" }).focus();
   await page.keyboard.press("ArrowLeft");
   await expect(pens.getByRole("radio", { name: "Pencil" })).toBeChecked();
-  await expect(specimen).toContainText("pencil on legal pad paper");
+  await expect(specimen).toContainText("Pencil on legal pad.");
 });
 
 test("the night side turns the whole page to night", async ({ page }) => {

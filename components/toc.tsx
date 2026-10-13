@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export type TocItem = { id: string; title: string; depth?: 2 | 3 };
 
-/** "On this page": the sections of the page, with the one being read marked. */
+/** "On this page": the sections of the page, a pen line beside them and a dot at the one being read. */
 export function Toc({ items }: { items: TocItem[] }) {
   const [current, setCurrent] = useState(items[0]?.id);
 
@@ -27,16 +27,12 @@ export function Toc({ items }: { items: TocItem[] }) {
   }, [items]);
 
   return (
-    <nav aria-label="On this page" className="flex flex-col gap-3">
-      <h2 className="text-sm font-bold tracking-wider text-ink-3 uppercase">On this page</h2>
-      <ul className="flex flex-col gap-1.5">
+    <nav aria-label="On this page" className="toc">
+      <h2>On this page</h2>
+      <ul>
         {items.map((item) => (
           <li key={item.id} className={cn(item.depth === 3 && "pl-3")}>
-            <a
-              href={`#${item.id}`}
-              aria-current={current === item.id ? "location" : undefined}
-              className={cn("block text-sm transition-colors", current === item.id ? "font-bold text-ink" : "text-ink-3 hover:text-ink")}
-            >
+            <a href={`#${item.id}`} aria-current={current === item.id ? "location" : undefined}>
               {item.title}
             </a>
           </li>

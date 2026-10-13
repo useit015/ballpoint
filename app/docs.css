@@ -1,0 +1,854 @@
+/* The docs, dressed like the front page: a margin line down the page, a
+   notebook index for a sidebar, titles written in italic and underlined by
+   hand, examples on a taped slip, code on ruled paper. Everything here is
+   layout and ink; the drawing itself is the registry's. */
+
+/* ─── Shell ──────────────────────────────────────────────────────────── */
+
+.docs-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: 90rem;
+  flex: 1;
+  margin-inline: auto;
+  padding: 1.5rem 1rem 6rem;
+}
+
+@media (min-width: 40rem) {
+  .docs-shell {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  .docs-shell {
+    grid-template-columns: 15.5rem minmax(0, 1fr);
+    column-gap: 3.5rem;
+  }
+}
+
+.docs-side-cell {
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .docs-side-cell {
+    display: block;
+  }
+}
+
+/* The column is pinned to the window: "Jump to" stays put, the index under it scrolls. */
+.docs-side {
+  position: sticky;
+  top: 1.5rem;
+  display: flex;
+  height: calc(100dvh - 3rem);
+  flex-direction: column;
+  padding-top: 0.25rem;
+}
+
+.docs-side > :first-child {
+  flex-shrink: 0;
+  width: calc(100% - 1.25rem);
+}
+
+.docs-scroll {
+  --fade-top: 0px;
+  --fade-bottom: 0px;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.25rem 1.25rem 2rem 0.6rem;
+  /* Not trapped: at either end the wheel goes on into the page. */
+  overscroll-behavior: auto;
+  scrollbar-width: none !important;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent);
+}
+
+.docs-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.docs-scroll[data-top] {
+  --fade-top: 1.75rem;
+}
+
+.docs-scroll[data-bottom] {
+  --fade-bottom: 2.5rem;
+}
+
+/* A margin line pulled down the whole page beside the index, in pencil. */
+.docs-rule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 7px;
+  pointer-events: none;
+  background: var(--ink-4);
+  opacity: 0.8;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='360' viewBox='0 0 7 360'%3E%3Cpath d='M3.2 0c1.6 18 .2 33 .8 52s-1.4 31 .4 52S2.2 142 3 176s1.6 33-.2 56-.8 34 .6 58-.4 45 -.2 70' fill='none' stroke='%23000' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 7px 360px repeat-y;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='360' viewBox='0 0 7 360'%3E%3Cpath d='M3.2 0c1.6 18 .2 33 .8 52s-1.4 31 .4 52S2.2 142 3 176s1.6 33-.2 56-.8 34 .6 58-.4 45 -.2 70' fill='none' stroke='%23000' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 7px 360px repeat-y;
+  animation: docs-rule 1.4s var(--ease-pen, ease-out) both;
+}
+
+@keyframes docs-rule {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+/* ─── The index (sidebar, and the menu on a phone) ───────────────────── */
+
+.dnav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.dnav-group h2 {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: fit-content;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.2rem;
+  color: var(--ink-2);
+  font-size: 1.3rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.dnav-group h2::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -3px;
+  height: 5px;
+  background: var(--ink-4);
+  -webkit-mask: var(--ink-rule-2) 0 0 / 100% 100% no-repeat;
+  mask: var(--ink-rule-2) 0 0 / 100% 100% no-repeat;
+}
+
+.dnav-group h2 button {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: color 150ms;
+}
+
+.dnav-group h2 button:hover {
+  color: var(--ink);
+}
+
+.dnav-chevron {
+  align-self: center;
+  color: var(--ink-3);
+  transition: rotate 240ms var(--ease-out, ease-out);
+}
+
+.dnav-group h2 button[aria-expanded="false"] .dnav-chevron {
+  rotate: -90deg;
+}
+
+/* A group folds by letting its rows shrink to nothing (and drops out of the tab order). */
+.dnav-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 260ms var(--ease-out, ease-out), visibility 0s;
+}
+
+.dnav-body[data-open="false"] {
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 260ms var(--ease-out, ease-out), visibility 0s 260ms;
+}
+
+.dnav-body > ul {
+  min-height: 0;
+  margin-left: -0.6rem;
+  padding-left: 0.6rem;
+  overflow: hidden;
+}
+
+.dnav-count {
+  color: var(--ink-3);
+  font-size: 0.9rem;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.dnav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.dnav-link {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  margin-left: -0.55rem;
+  padding: 0.12rem 0.55rem;
+  color: var(--ink-2);
+  font-size: 1.125rem;
+  line-height: 1.35;
+  transition: color 150ms;
+}
+
+/* A marker stroke behind the title: swept in on hover, left in place on the page you are on. */
+.dnav-link::before {
+  content: "";
+  position: absolute;
+  inset: 0.1rem 0 0.1rem -0.1rem;
+  z-index: -1;
+  background: color-mix(in oklab, var(--ink) 14%, transparent);
+  clip-path: polygon(1% 14%, 38% 4%, 99% 0, 100% 46%, 97% 100%, 52% 92%, 3% 100%, 0 52%);
+  scale: 0 1;
+  transform-origin: left center;
+  transition: scale 280ms var(--ease-out, ease-out);
+}
+
+.dnav-link:hover {
+  color: var(--ink);
+}
+
+.dnav-link:hover::before {
+  scale: 0.55 1;
+}
+
+.dnav-link[aria-current="page"] {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.dnav-link[aria-current="page"]::before {
+  scale: 1 1;
+  background: color-mix(in oklab, var(--ink) 18%, transparent);
+}
+
+/* ─── A docs page ────────────────────────────────────────────────────── */
+
+.doc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 80rem) {
+  .doc {
+    grid-template-columns: minmax(0, 46rem) 11.5rem;
+    column-gap: 3.5rem;
+  }
+}
+
+.doc-article {
+  display: flex;
+  min-width: 0;
+  max-width: 48rem;
+  flex-direction: column;
+  gap: 3.75rem;
+  font-size: 1.1875rem;
+  line-height: 1.65;
+}
+
+.doc-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.doc-toc-cell {
+  display: none;
+}
+
+@media (min-width: 80rem) {
+  .doc-toc-cell {
+    position: sticky;
+    top: 1.5rem;
+    display: block;
+    align-self: start;
+    padding-top: 0.5rem;
+  }
+}
+
+/* Titles: italic, written in, underlined by hand: the front page's. */
+.doc-h1,
+.doc-h2,
+.doc-h3 {
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.1;
+}
+
+.doc-h1 {
+  font-size: clamp(2.4rem, 6vw, 3.5rem);
+}
+
+.doc-h2 {
+  font-size: clamp(1.75rem, 3.6vw, 2.15rem);
+}
+
+.doc-h3 {
+  font-size: 1.5rem;
+  font-style: normal;
+}
+
+/* Page header: where you are, what it is, and a sketch of it. */
+.doc-head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.doc-crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  color: var(--ink-3);
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.doc-crumbs li + li::before {
+  content: "/";
+  margin-right: 0.5rem;
+  color: var(--ink-4);
+}
+
+.doc-crumbs a {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: color 150ms, text-decoration-color 150ms;
+}
+
+.doc-crumbs a:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink-4);
+}
+
+.doc-lede {
+  max-width: 36rem;
+  color: var(--ink-2);
+  font-size: 1.375rem;
+  line-height: 1.5;
+}
+
+.doc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+}
+
+.doc-head-art {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .doc-head-art {
+    position: absolute;
+    top: 1.4rem;
+    right: 0;
+    display: block;
+    width: 8.5rem;
+    height: 6rem;
+    color: var(--ink-3);
+    rotate: 2deg;
+  }
+}
+
+/* ─── Examples ───────────────────────────────────────────────────────── */
+
+.doc-example {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.doc-example-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* The slip an example sits on: a faint grid, like a sketchbook's, under the paper. */
+.doc-stage {
+  --dot: color-mix(in oklab, var(--ink) 15%, transparent);
+  background-image: radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.3px), var(--paper-tile);
+  background-size: 20px 20px, var(--paper-tile-size);
+  background-position: 9px 9px, 0 0;
+}
+
+.doc-stage[data-slip="taped"] {
+  --tape-x: 2.25rem;
+  --tape-rot: -4deg;
+}
+
+.doc-example-label {
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+/* ─── Code ───────────────────────────────────────────────────────────── */
+
+.code-block .code-head {
+  min-height: 2.75rem;
+}
+
+.code-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink-2);
+  font-size: 1rem;
+}
+
+.code-title svg {
+  flex-shrink: 0;
+  color: var(--ink-3);
+}
+
+.code-lang {
+  color: var(--ink-3);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Line numbers in the margin of the ruled page, like pencilled page numbers. */
+.code-block[data-numbers] pre {
+  counter-reset: ln;
+}
+
+.code-block[data-numbers] .line::before {
+  content: counter(ln);
+  counter-increment: ln;
+  display: inline-block;
+  width: 2ch;
+  margin-right: 2ch;
+  color: var(--code-quiet);
+  opacity: 0.55;
+  text-align: right;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Long listings fold: the first lines, then the rest on request. */
+.code-fold {
+  position: relative;
+}
+
+.code-fold[data-folded] .code-fold-body {
+  max-height: var(--fold, 26rem);
+  overflow: hidden;
+}
+
+.code-fold[data-folded] .code-fold-body::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 2.6rem;
+  height: 6rem;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--slip));
+}
+
+.code-fold-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0 0.75rem;
+  color: var(--ink-2);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: color 150ms;
+}
+
+.code-fold-toggle:hover {
+  color: var(--ink);
+}
+
+.code-fold-toggle svg {
+  transition: rotate 220ms var(--ease-out, ease-out);
+}
+
+.code-fold:not([data-folded]) .code-fold-toggle svg {
+  rotate: 180deg;
+}
+
+/* ─── API reference ──────────────────────────────────────────────────── */
+
+.props-row {
+  display: grid;
+  gap: 0.35rem 2rem;
+  padding-block: 1.1rem;
+}
+
+@media (min-width: 40rem) {
+  .props-row {
+    grid-template-columns: minmax(8.5rem, 11rem) minmax(0, 1fr);
+  }
+}
+
+.props-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.props-default {
+  margin-top: 0.15rem;
+  color: var(--ink-3);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.props-type {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.05rem 0.5rem;
+  border-radius: var(--hand-radius);
+  background: color-mix(in oklab, var(--ink) 6%, transparent);
+  color: var(--code-plain);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.props-type,
+.props-default code {
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-variation-settings: "MONO" 1, "CASL" 1;
+}
+
+.props-desc {
+  margin-top: 0.4rem;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* ─── On this page ───────────────────────────────────────────────────── */
+
+.toc h2 {
+  margin-bottom: 0.75rem;
+  color: var(--ink-2);
+  font-size: 1.2rem;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.toc ul {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-left: 1rem;
+}
+
+/* A pen line down the left, and a dot on it at the section being read. */
+.toc ul::before {
+  content: "";
+  position: absolute;
+  inset: 0.2rem auto 0.2rem 0;
+  width: 5px;
+  background: var(--ink-4);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='200' viewBox='0 0 5 200'%3E%3Cpath d='M2.4 0c1.2 20 0 36 .6 58s-1 34 .3 60-.6 40 -1.1 82' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 5px 200px repeat-y;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='200' viewBox='0 0 5 200'%3E%3Cpath d='M2.4 0c1.2 20 0 36 .6 58s-1 34 .3 60-.6 40 -1.1 82' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 5px 200px repeat-y;
+}
+
+.toc li {
+  position: relative;
+}
+
+.toc a {
+  display: block;
+  padding-block: 0.15rem;
+  color: var(--ink-3);
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  transition: color 150ms;
+}
+
+.toc a:hover {
+  color: var(--ink);
+}
+
+.toc a[aria-current="location"] {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.toc a[aria-current="location"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(-1rem - 1.5px);
+  width: 9px;
+  height: 9px;
+  translate: 0 -50%;
+  border-radius: 55% 45% 50% 50%;
+  background: var(--ink);
+  animation: toc-dot 260ms var(--ease-out, ease-out);
+}
+
+@keyframes toc-dot {
+  from {
+    scale: 0;
+  }
+}
+
+/* ─── Previous and next ──────────────────────────────────────────────── */
+
+.pager {
+  display: grid;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+@media (min-width: 40rem) {
+  .pager {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pager-card {
+  --card-spacing: 1.1rem;
+  transition: translate 180ms var(--ease-out, ease-out);
+}
+
+.pager-card:hover {
+  translate: 0 -2px;
+}
+
+.pager-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding-inline: 1.4rem;
+}
+
+.pager-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.pager-link:focus-visible {
+  outline-offset: 6px;
+}
+
+.pager-kind {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink-3);
+  font-size: 1rem;
+}
+
+.pager-kind svg {
+  transition: translate 200ms var(--ease-out, ease-out);
+}
+
+.pager-card[data-dir="next"] .pager-link {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.pager-card[data-dir="next"]:hover svg {
+  translate: 4px 0;
+}
+
+.pager-card[data-dir="prev"]:hover svg {
+  translate: -4px 0;
+}
+
+.pager-title {
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ─── Installation: numbered steps ───────────────────────────────────── */
+
+.doc-steps {
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: 3.75rem;
+}
+
+.doc-step {
+  position: relative;
+  counter-increment: step;
+}
+
+@media (min-width: 40rem) {
+  .doc-step {
+    padding-left: 4rem;
+  }
+
+  /* A pen-ringed numeral in the margin, with a dashed line running to the next. */
+  .doc-step::before {
+    content: counter(step);
+    position: absolute;
+    top: 0.15rem;
+    left: 0;
+    display: grid;
+    width: 2.6rem;
+    height: 2.6rem;
+    place-items: center;
+    border: 1.6px solid var(--ink);
+    border-radius: 52% 48% 55% 45% / 48% 54% 46% 52%;
+    color: var(--ink);
+    font-size: 1.5rem;
+    font-weight: 700;
+    rotate: -4deg;
+  }
+
+  .doc-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 3.2rem;
+    bottom: -3.4rem;
+    left: 1.3rem;
+    border-left: 1.5px dashed var(--ink-4);
+  }
+}
+
+/* ─── Tokens ─────────────────────────────────────────────────────────── */
+
+.doc-tokens {
+  display: grid;
+  gap: 0;
+}
+
+.doc-token {
+  display: grid;
+  align-items: baseline;
+  gap: 0.15rem 1.5rem;
+  padding-block: 0.8rem;
+}
+
+@media (min-width: 40rem) {
+  .doc-token {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+}
+
+.doc-token dt {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.9rem;
+  font-variation-settings: "MONO" 1, "CASL" 1;
+}
+
+.doc-swatch {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  border-radius: 45% 55% 50% 50%;
+}
+
+/* ─── The components index ───────────────────────────────────────────── */
+
+.index-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.index-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+}
+
+.index-card {
+  --card-spacing: 1rem;
+  height: 100%;
+  transition: translate 180ms var(--ease-out, ease-out);
+}
+
+.index-card:hover,
+.index-card:has(a:focus-visible) {
+  translate: 0 -3px;
+}
+
+.index-link {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-inline: 1.1rem;
+}
+
+.index-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.index-art {
+  width: 100%;
+  height: 4.6rem;
+  color: var(--ink-3);
+  transition: color 180ms;
+}
+
+.index-card:hover .index-art {
+  color: var(--ink);
+}
+
+.index-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.index-desc {
+  color: var(--ink-3);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-rule {
+    animation: none;
+  }
+
+  .dnav-body,
+  .dnav-chevron {
+    transition: none;
+  }
+}
+
+.index-sheet {
+  margin-top: 0.5rem;
+}

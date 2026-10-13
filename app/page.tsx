@@ -1,6 +1,7 @@
 import "./art.css";
 import "./life.css";
 import "./home.css";
+import "./sheets.css";
 import "./torn.css";
 import { Api } from "@/components/home/api";
 import { HomeFooter, Start } from "@/components/home/closing";

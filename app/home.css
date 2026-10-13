@@ -250,45 +250,6 @@ html.dark[data-paper="legal"] {
   }
 }
 
-/* ─── Sheets of paper ────────────────────────────────────────────────── */
-
-.torn-wrap {
-  --paper: var(--slip);
-  --paper-tile: var(--slip-tile);
-  position: relative;
-  isolation: isolate;
-  rotate: var(--tilt, 0deg);
-}
-
-.torn-shadow {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  filter: drop-shadow(0 1px 1px oklch(0.3 0.04 70 / 0.24)) drop-shadow(0 16px 16px oklch(0.3 0.04 70 / 0.14));
-}
-
-.dark .torn-shadow {
-  filter: drop-shadow(0 1px 1px oklch(0 0 0 / 0.55)) drop-shadow(0 18px 18px oklch(0 0 0 / 0.38));
-}
-
-.torn-paper {
-  position: absolute;
-  inset: 0;
-  background-color: var(--paper);
-  background-image: var(--paper-tile);
-  background-size: var(--paper-tile-size);
-  clip-path: var(--torn-a);
-}
-
-.torn-wrap[data-edge="b"] .torn-paper {
-  clip-path: var(--torn-b);
-}
-
-.torn {
-  position: relative;
-  padding: clamp(1.5rem, 3.4vw, 2.75rem) clamp(1.1rem, 3.4vw, 3rem) clamp(1.75rem, 3.4vw, 3rem);
-}
-
 /* ─── Components, out of the box ─────────────────────────────────────── */
 
 .home-sheet {

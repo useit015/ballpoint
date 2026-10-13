@@ -1,41 +1,100 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useEffect, useId, useRef, useState } from "react";
 import { IntentLink } from "@/components/intent-link";
-import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 import type { NavGroup } from "@/lib/nav";
-import { cn } from "@/lib/utils";
+import { inkRules } from "@/registry/ballpoint/lib/ink";
+import { Button } from "@/registry/ballpoint/ui/button";
+import { InkIcon } from "@/registry/ballpoint/ui/ink-icons";
+import { Kbd } from "@/registry/ballpoint/ui/kbd";
 
 export type { NavGroup };
 
+/** The group a page belongs to (the start pages sit in "Start"). */
+const groupOf = (groups: NavGroup[], pathname: string) => groups.find((g) => g.links.some((l) => l.href === pathname))?.title;
+
+/**
+ * The index of the docs. The page you are on is marked as with a highlighter,
+ * and only its group is open (the start pages leave Components open), so the
+ * index is short enough to read without scrolling. A group opens and folds
+ * from its title.
+ */
 export function DocsNav({ groups, onNavigate }: { groups: NavGroup[]; onNavigate?: () => void }) {
   const pathname = usePathname();
+  const nav = useRef<HTMLElement>(null);
+  const here = groupOf(groups, pathname);
+  const opened = (title?: string): Record<string, boolean> => ({ [title ?? ""]: true, ...(title === "Start" || !title ? { Components: true } : null) });
+  const [open, setOpen] = useState(() => opened(here));
+  const toggle = (title: string) => setOpen((o) => ({ ...o, [title]: !o[title] }));
+  const id = useId();
+
+  // Going to a page in another group opens that one and folds the rest.
+  const [at, setAt] = useState(here);
+  if (at !== here) {
+    setAt(here);
+    setOpen(opened(here));
+  }
+
+  // A long index opens at the page you are on, not at the top.
+  useEffect(() => {
+    const link = nav.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    const box = link?.closest<HTMLElement>("[data-scroll]");
+    if (!link || !box) return;
+    const at = link.getBoundingClientRect().top - box.getBoundingClientRect().top;
+    if (at < 60 || at > box.clientHeight - 80) box.scrollTop += at - box.clientHeight / 3;
+  }, []);
+
   return (
-    <nav aria-label="Docs" className="flex flex-col gap-6">
-      {groups.map((group) => (
-        <div key={group.title} className="flex flex-col gap-1.5">
-          <h2 className="text-sm font-bold tracking-wider text-ink-3 uppercase">{group.title}</h2>
-          <ul className="flex flex-col gap-1.5">
-            {group.links.map((link) => {
-              const active = pathname === link.href;
-              return (
-                <li key={link.href}>
-                  <IntentLink
-                    href={link.href}
-                    onClick={onNavigate}
-                    aria-current={active ? "page" : undefined}
-                    className={cn("relative inline-block transition-colors", active ? "font-bold text-ink" : "text-ink-2 hover:text-ink")}
-                  >
-                    {link.title}
-                    {/* The current page gets a dot in the margin, not another underline. */}
-                    {active && <InkGlyph name="dot" className="absolute top-1/2 -left-3.5 size-2 -translate-y-1/2" />}
-                  </IntentLink>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+    <nav ref={nav} aria-label="Docs" className="dnav" style={inkRules}>
+      {groups.map((group) => {
+        const folds = group.title !== "Start";
+        const isOpen = !folds || !!open[group.title];
+        const body = `${id}-${group.title}`;
+        return (
+          <div key={group.title} className="dnav-group">
+            <h2>
+              {folds ? (
+                <button type="button" aria-expanded={isOpen} aria-controls={body} onClick={() => toggle(group.title)}>
+                  {group.title}
+                  <span className="dnav-count">{group.links.length}</span>
+                  <InkIcon name="chevron-down" className="dnav-chevron size-4" />
+                </button>
+              ) : (
+                group.title
+              )}
+            </h2>
+            <div id={body} className="dnav-body" data-open={isOpen} inert={!isOpen}>
+              <ul>
+                {group.links.map((link) => (
+                  <li key={link.href}>
+                    <IntentLink href={link.href} onClick={onNavigate} aria-current={pathname === link.href ? "page" : undefined} className="dnav-link">
+                      {link.title}
+                    </IntentLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+      })}
     </nav>
+  );
+}
+
+/** "Jump to…" above the index: opens the same search as the header's, which listens for the slash. */
+export function JumpTo() {
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      seed="jump-to"
+      className="mb-4 w-full justify-start gap-2 text-ink-2"
+      onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "/", bubbles: true }))}
+    >
+      <InkIcon name="search" className="size-4" />
+      <span className="flex-1 text-left">Jump to…</span>
+      <Kbd aria-hidden="true">/</Kbd>
+    </Button>
   );
 }

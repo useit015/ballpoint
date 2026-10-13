@@ -2,29 +2,27 @@ import type { Prop } from "@/lib/docs";
 import { ruledItem } from "@/components/rule";
 import { inkRules } from "@/registry/ballpoint/lib/ink";
 
-const code = "font-mono text-[0.8125rem] leading-relaxed [font-variation-settings:'MONO'_1,'CASL'_1]";
-
 /**
- * Props as a ruled list: the name and its type on one line, the default on
- * the right, what it does underneath. Reads the same on a phone.
+ * Props as a ruled list: the name (and its default) in the margin, the type
+ * and what it does beside it. Stacks the same way on a phone.
  */
 export function PropsTable({ props }: { props: Prop[] }) {
   return (
     <dl className="flex flex-col" style={inkRules}>
       {props.map((p) => (
-        <div key={p.name} className={`${ruledItem} py-4`}>
-          <dt className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="font-bold">{p.name}</span>
-              <code className={`${code} text-ink-2`}>{p.type}</code>
-            </span>
+        <div key={p.name} className={`${ruledItem} props-row`}>
+          <dt>
+            <div className="props-name">{p.name}</div>
             {p.default && (
-              <span className="text-sm text-ink-3">
-                default <code className={`${code} text-ink-2`}>{p.default}</code>
-              </span>
+              <div className="props-default">
+                default <code>{p.default}</code>
+              </div>
             )}
           </dt>
-          <dd className="mt-1.5 text-ink-2">{p.description}</dd>
+          <dd>
+            <code className="props-type">{p.type}</code>
+            <p className="props-desc">{p.description}</p>
+          </dd>
         </div>
       ))}
     </dl>

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { DocHeader } from "@/components/doc-header";
 import { DocPage } from "@/components/doc-page";
+import { Doodle } from "@/components/home/doodle";
+import { star } from "@/lib/art/doodles";
 import { Heading } from "@/components/heading";
 import { TextLink } from "@/components/text-link";
 import type { TocItem } from "@/components/toc";
@@ -16,22 +19,19 @@ const toc: TocItem[] = [
 export default function ThemesPage() {
   return (
     <DocPage toc={toc}>
-      <header className="flex flex-col gap-4">
-        <Heading as="h1" id="themes" className="text-3xl">
-          Pens and papers
-        </Heading>
-        <p className="text-lg text-ink-2">
-          A pen sets the ink; a paper sets the paper and the red pen that shows up on it. Add one of each and every component picks them
-          up. Any pair passes WCAG AA by day and by night, checked on every build.
-        </p>
+      <DocHeader
+        id="themes"
+        title="Pens and papers"
+        lede="A pen sets the ink; a paper sets the paper and the red pen that shows up on it. Add one of each and every component picks them up. Any pair passes WCAG AA by day and by night, checked on every build."
+        crumbs={[{ title: "Docs", href: "/docs" }, { title: "Pens and papers" }]}
+        art={<Doodle scene={star("themes-star")} scale={1.5} run className="size-full" />}
+      >
         <p className="text-ink-3">
-          Switch the lamp in the corner to see them at night, or mix your own in the{" "}
-          <TextLink href="/customize">customizer</TextLink>
-          .
+          Switch the lamp in the corner to see them at night, or mix your own in the <TextLink href="/customize">customizer</TextLink>.
         </p>
-      </header>
+      </DocHeader>
 
-      <section className="flex flex-col gap-8">
+      <section className="doc-section gap-8!">
         <Heading id="pens">Pens</Heading>
         <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2">
           {Object.entries(pens).map(([name, pen], i) => (
@@ -40,7 +40,7 @@ export default function ThemesPage() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-8">
+      <section className="doc-section gap-8!">
         <Heading id="papers">Papers</Heading>
         <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2">
           {(Object.keys(papers) as PaperName[]).map((name, i) => (

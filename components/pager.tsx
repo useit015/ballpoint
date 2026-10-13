@@ -1,32 +1,36 @@
 import Link from "next/link";
-import { Button } from "@/registry/ballpoint/ui/button";
+import { Card } from "@/registry/ballpoint/ui/card";
 import { InkGlyph } from "@/registry/ballpoint/lib/ink-glyphs";
 
 type Page = { href: string; title: string };
 
-/** The previous and next pages, in the sidebar's order. */
+/** The previous and next pages, in the sidebar's order: two pencilled cards, each one link. */
 export function Pager({ prev, next }: { prev?: Page; next?: Page }) {
   return (
-    <nav aria-label="More components" className="flex items-stretch justify-between gap-4 pt-4">
+    <nav aria-label="More components" className="pager">
       {prev ? (
-        <Button render={<Link href={prev.href} />} nativeButton={false} variant="outline" size="lg" seed="pager-prev" className="h-auto min-w-0 flex-col items-start gap-0.5 py-3 text-left">
-          <span className="flex items-center gap-1.5 text-sm text-ink-3">
-            <InkGlyph name="arrow-right" className="size-3.5 rotate-180" />
-            Previous
-          </span>
-          <span className="truncate">{prev.title}</span>
-        </Button>
+        <Card seed="pager-prev" data-dir="prev" className="pager-card">
+          <Link href={prev.href} className="pager-link">
+            <span className="pager-kind">
+              <InkGlyph name="arrow-right" className="size-4 rotate-180" />
+              Previous
+            </span>
+            <span className="pager-title">{prev.title}</span>
+          </Link>
+        </Card>
       ) : (
         <span />
       )}
       {next && (
-        <Button render={<Link href={next.href} />} nativeButton={false} variant="outline" size="lg" seed="pager-next" className="h-auto min-w-0 flex-col items-end gap-0.5 py-3 text-right">
-          <span className="flex items-center gap-1.5 text-sm text-ink-3">
-            Next
-            <InkGlyph name="arrow-right" className="size-3.5" />
-          </span>
-          <span className="truncate">{next.title}</span>
-        </Button>
+        <Card seed="pager-next" data-dir="next" className="pager-card">
+          <Link href={next.href} className="pager-link">
+            <span className="pager-kind">
+              Next
+              <InkGlyph name="arrow-right" className="size-4" />
+            </span>
+            <span className="pager-title">{next.title}</span>
+          </Link>
+        </Card>
       )}
     </nav>
   );
