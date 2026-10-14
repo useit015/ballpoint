@@ -76,6 +76,10 @@ import SwitchSettings from "@/registry/ballpoint/examples/switch-settings";
 import SliderControlled from "@/registry/ballpoint/examples/slider-controlled";
 
 import CardForm from "@/registry/ballpoint/examples/card-form";
+import CardMedia from "@/registry/ballpoint/examples/card-media";
+import CardPick from "@/registry/ballpoint/examples/card-pick";
+import CardPricing from "@/registry/ballpoint/examples/card-pricing";
+import CardVariants from "@/registry/ballpoint/examples/card-variants";
 import CardStats from "@/registry/ballpoint/examples/card-stats";
 import BadgeIcons from "@/registry/ballpoint/examples/badge-icons";
 import BadgeStatus from "@/registry/ballpoint/examples/badge-status";
@@ -87,6 +91,9 @@ import AlertSimple from "@/registry/ballpoint/examples/alert-simple";
 import SkeletonCard from "@/registry/ballpoint/examples/skeleton-card";
 import ProgressControlled from "@/registry/ballpoint/examples/progress-controlled";
 import TableSelectable from "@/registry/ballpoint/examples/table-selectable";
+import TableEmpty from "@/registry/ballpoint/examples/table-empty";
+import TableSortable from "@/registry/ballpoint/examples/table-sortable";
+import TableStriped from "@/registry/ballpoint/examples/table-striped";
 import TabsVertical from "@/registry/ballpoint/examples/tabs-vertical";
 import TabsIcons from "@/registry/ballpoint/examples/tabs-icons";
 import AccordionMultiple from "@/registry/ballpoint/examples/accordion-multiple";
@@ -156,6 +163,10 @@ export const examples: Record<string, ComponentType> = {
   "tabs-demo": TabsDemo,
   "accordion-demo": AccordionDemo,
   "card-form": CardForm,
+  "card-media": CardMedia,
+  "card-pick": CardPick,
+  "card-pricing": CardPricing,
+  "card-variants": CardVariants,
   "card-stats": CardStats,
   "badge-icons": BadgeIcons,
   "badge-status": BadgeStatus,
@@ -167,6 +178,9 @@ export const examples: Record<string, ComponentType> = {
   "skeleton-card": SkeletonCard,
   "progress-controlled": ProgressControlled,
   "table-selectable": TableSelectable,
+  "table-empty": TableEmpty,
+  "table-sortable": TableSortable,
+  "table-striped": TableStriped,
   "tabs-vertical": TabsVertical,
   "tabs-icons": TabsIcons,
   "accordion-multiple": AccordionMultiple,

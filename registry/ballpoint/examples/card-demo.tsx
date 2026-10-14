@@ -4,8 +4,8 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 
 export default function CardDemo() {
   return (
-    <div className="grid w-full gap-8 md:grid-cols-2">
-      <Card seed="card-a">
+    <div className="grid w-full gap-10 md:grid-cols-2">
+      <Card variant="lifted" seed="card-a">
         <CardHeader>
           <CardTitle>Ink refill</CardTitle>
           <CardDescription>Medium point, blue. Writes about two kilometres.</CardDescription>

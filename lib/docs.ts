@@ -219,14 +219,21 @@ import { Switch } from "@/components/ui/switch"
   },
   card: {
     group: "Components",
-    examples: ["card-demo", "card-form", "card-stats"],
+    examples: ["card-demo", "card-variants", "card-media", "card-pricing", "card-pick", "card-form", "card-stats"],
     exampleTitles: {
+      "card-variants": { title: "Variants", description: "Pencilled, lifted off a hatched shadow, or washed with hatching." },
+      "card-media": { title: "With a picture", description: "CardMedia runs a photo or drawing edge to edge across the top, ruled off from the text." },
+      "card-pricing": { title: "Pricing", description: "Plans side by side; the one to pick is lifted and badged." },
+      "card-pick": { title: "Cards you press", description: "interactive cards rise on hover; selected goes over the box in full ink. Here each is a radio button, through render." },
       "card-form": { title: "Login form", description: "A card holding a form, with a full-width action and a quiet link underneath." },
       "card-stats": { title: "Stats", description: "Small cards in a grid, for numbers with a note." },
     },
-    usage: `import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+    usage: `import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardMedia, CardTitle } from "@/components/ui/card"
 
-<Card>
+<Card variant="lifted">
+  <CardMedia>
+    <img src="/refill.jpg" alt="" />
+  </CardMedia>
   <CardHeader>
     <CardTitle>Ink refill</CardTitle>
     <CardDescription>Medium point, blue.</CardDescription>
@@ -235,7 +242,14 @@ import { Switch } from "@/components/ui/switch"
   <CardFooter>…</CardFooter>
 </Card>`,
     props: [
+      { name: "variant", type: '"outline" | "lifted" | "wash"', default: '"outline"', description: "The pencilled box alone; the box standing off a hatched shadow; or the box hatched lightly across." },
       { name: "size", type: '"default" | "sm"', default: '"default"', description: "Inner spacing." },
+      { name: "interactive", type: "boolean", default: "false", description: "The whole card is something to press: it rises on hover and focus, and gets a focus pass of the pen." },
+      { name: "selected", type: "boolean", default: "false", description: "Goes over the outline in full ink, for a card that has been picked." },
+      { name: "render", type: "ReactElement", description: 'Render as another element: a link (`<a href>`) or a button, for an interactive card.' },
+      { name: "shadow", type: '"hatch" | "solid" | "none"', description: 'What a lifted card stands on. Defaults to "hatch" for the lifted variant, and to none otherwise.' },
+      { name: "fill", type: '"hatch" | "shade" | "scribble" | "flat"', description: "How a washed card is coloured in. Defaults to hatch for the wash variant." },
+      { name: "CardMedia", type: "component", description: "A picture or drawing across the top, edge to edge inside the box, ruled off underneath." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     pen: ["draw", "roughness", "passes", "radius", "corners", "weight", "speed"],
@@ -351,16 +365,19 @@ import { Switch } from "@/components/ui/switch"
   },
   table: {
     group: "Components",
-    examples: ["table-demo", "table-selectable"],
+    examples: ["table-demo", "table-striped", "table-sortable", "table-selectable", "table-empty"],
     exampleTitles: {
+      "table-striped": { title: "Striped, ruled, compact", description: "Every other row hatched, the columns ruled by hand, and the rows tightened." },
+      "table-sortable": { title: "Sortable columns", description: "A heading with sort is a button; its chevron points the way it is sorted." },
       "table-selectable": { title: "Selectable rows", description: "Checkboxes select rows; the header one is mixed when only some are picked." },
+      "table-empty": { title: "Nothing to show", description: "TableEmpty says so across every column, when a filter leaves no rows." },
     },
     usage: `import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-<Table>
+<Table variant="striped" columns>
   <TableHeader>
     <TableRow>
-      <TableHead>Invoice</TableHead>
+      <TableHead sort="asc" onSort={() => {}}>Invoice</TableHead>
       <TableHead>Amount</TableHead>
     </TableRow>
   </TableHeader>
@@ -372,7 +389,13 @@ import { Switch } from "@/components/ui/switch"
   </TableBody>
 </Table>`,
     props: [
-      { name: "TableRow", type: "component", description: "Each row is ruled off underneath by hand, three different lines so neighbours never match." },
+      { name: "variant", type: '"plain" | "striped"', default: '"plain"', description: "Plain rows, or every other row hatched with the pen." },
+      { name: "columns", type: "boolean", default: "false", description: "Rule the columns too: a different hand-drawn line for each, the way the rows are ruled." },
+      { name: "size", type: '"default" | "compact"', default: '"default"', description: "Row height." },
+      { name: "TableHead sort", type: '"asc" | "desc" | "none"', description: "Makes the heading a sort button. The chevron shows the direction, and the cell carries aria-sort." },
+      { name: "TableHead onSort", type: "() => void", description: "Called when the sort button is pressed." },
+      { name: "TableRow", type: "component", description: "Each row is ruled off underneath by hand, three different lines so neighbours never match. Hovered and selected rows (data-state=selected) are hatched." },
+      { name: "TableEmpty", type: "component", description: "A row that says there is nothing here, across colSpan columns." },
       { name: "TableFooter", type: "component", description: "Totals, set in bold under the rows." },
       { name: "TableCaption", type: "component", description: "A note under the table, in lighter ink." },
     ],
