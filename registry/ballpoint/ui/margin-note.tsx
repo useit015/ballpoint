@@ -5,17 +5,20 @@ import { cn } from "@/lib/utils";
 import { penStyle, useInkBox, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { createRng, handCurve } from "@/registry/ballpoint/lib/ink-sketch";
+import { Annotate, type AnnotateType } from "@/registry/ballpoint/ui/annotate";
 
 type P = readonly [number, number];
 type Geometry = { line: string; head: string; box: [number, number, number, number] };
 
 /** A curved pull from `a` to `b`, bowed to one side, with a head flicked on the end. */
-function arrow(seed: number, a: P, b: P, bend: number): Geometry {
+function arrow(seed: number, a: P, b: P, bend: number, headed: boolean): Geometry {
   const r = createRng(seed);
   const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
   const len = Math.hypot(dx, dy) || 1;
   const [nx, ny] = [-dy / len, dx / len];
-  const mid: P = [a[0] + dx * 0.5 + nx * bend * len * 0.22, a[1] + dy * 0.5 + ny * bend * len * 0.22];
+  // The bow grows with the arrow's length, but only so far: a long reach curves no more than a short one.
+  const bow = bend * Math.min(len, 90) * 0.22;
+  const mid: P = [a[0] + dx * 0.5 + nx * bow, a[1] + dy * 0.5 + ny * bow];
   const line = handCurve(seed, [a, mid, b], { jitter: 0.6 });
   // The head trails back along the way the line arrives.
   const [tx, ty] = [b[0] - mid[0], b[1] - mid[1]];
@@ -23,7 +26,7 @@ function arrow(seed: number, a: P, b: P, bend: number): Geometry {
   const size = 6 + r() * 1.5;
   const wing = (turn: number): P => [b[0] + Math.cos(back + turn) * size, b[1] + Math.sin(back + turn) * size];
   const [w1, w2] = [wing(0.5 + r() * 0.1), wing(-0.5 - r() * 0.1)];
-  const head = `M${w1[0].toFixed(1)} ${w1[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}L${w2[0].toFixed(1)} ${w2[1].toFixed(1)}`;
+  const head = headed ? `M${w1[0].toFixed(1)} ${w1[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}L${w2[0].toFixed(1)} ${w2[1].toFixed(1)}` : "";
   const xs = [a[0], b[0], mid[0], w1[0], w2[0]];
   const ys = [a[1], b[1], mid[1], w1[1], w2[1]];
   const [x0, y0] = [Math.min(...xs) - 6, Math.min(...ys) - 6];
@@ -36,11 +39,19 @@ function arrow(seed: number, a: P, b: P, bend: number): Geometry {
  * its words (the paragraph needs the room beside it, so keep it narrow); on
  * narrow ones it drops in under the line, pointing up. The arrow draws as
  * it scrolls into view.
+ *
+ * The pen can mark the words themselves (`mark`), draw the pointer as a
+ * headed arrow, a plain line, or leave it out (`pointer`), and the note can
+ * be set a little off the level (`tilt`) and written in ink, red pen or pencil.
  */
 function MarginNote({
   note,
   side = "right",
   color = "ink",
+  pointer = "arrow",
+  mark = "none",
+  tilt = -1.5,
+  width,
   className,
   children,
   seed,
@@ -51,7 +62,15 @@ function MarginNote({
   /** What's written in the margin. */
   note: ReactNode;
   side?: "left" | "right";
-  color?: "ink" | "red";
+  color?: "ink" | "red" | "pencil";
+  /** What runs from the note to the words: a headed arrow, a plain line, or nothing. */
+  pointer?: "arrow" | "line" | "none";
+  /** A mark drawn on the words the note is about, in the note's colour. */
+  mark?: "none" | Extract<AnnotateType, "underline" | "circle" | "box" | "highlight">;
+  /** Degrees the note is turned from level. */
+  tilt?: number;
+  /** How wide the note is on a wide screen, as a CSS length (default 9rem). */
+  width?: string;
   /** Styles the note (width with --margin-note-width, 9rem). */
   className?: string;
   /** The words the note is about. */
@@ -95,12 +114,18 @@ function MarginNote({
     return () => observer.disconnect();
   }, [right]);
 
-  const geo = useMemo(() => (where ? arrow(s, where.a, where.b, right ? -1 : 1) : null), [s, where, right]);
+  const geo = useMemo(() => (where && pointer !== "none" ? arrow(s, where.a, where.b, pointer === "line" ? 0.35 * (right ? -1 : 1) : right ? -1 : 1, pointer === "arrow") : null), [s, where, right, pointer]);
 
   return (
     <>
       <span ref={target} data-slot="margin-note-target">
-        {children}
+        {mark === "none" ? (
+          children
+        ) : (
+          <Annotate type={mark} color={color === "red" ? "red" : "ink"} seed={seed === undefined ? undefined : `${seed}-mark`} delay={150}>
+            {children}
+          </Annotate>
+        )}
       </span>
       <span
         ref={noteRef}
@@ -108,8 +133,8 @@ function MarginNote({
         data-slot="margin-note"
         data-side={side}
         className={cn(
-          "relative block rotate-[-1.5deg] text-sm leading-snug [--margin-note-gap:2.5rem] [--margin-note-width:9rem]",
-          color === "red" ? "text-pen-red" : "text-ink-2",
+          "relative block text-sm leading-snug [--margin-note-gap:2.5rem] [--margin-note-width:9rem]",
+          color === "red" ? "text-pen-red" : color === "pencil" ? "text-ink-3 italic" : "text-ink-2",
           // Narrow: under the line, set in so the arrow can point up.
           "my-1.5 ps-6",
           // Wide: floated out into the margin, level with the words.
@@ -119,7 +144,7 @@ function MarginNote({
             : "lg:float-left lg:clear-left lg:-ms-[calc(var(--margin-note-width)+var(--margin-note-gap))] lg:text-right",
           className,
         )}
-        style={penStyle(pen) as CSSProperties}
+        style={{ rotate: `${tilt}deg`, ...(width ? { "--margin-note-width": width } : null), ...penStyle(pen) } as CSSProperties}
       >
         <InkSvg
           ref={ref}
@@ -131,7 +156,7 @@ function MarginNote({
           {geo && (
             <>
               <Stroke d={geo.line} draw={mode} delay={200} duration={420} width={1.3} />
-              <Stroke d={geo.head} draw={mode} delay={600} duration={160} width={1.3} />
+              {geo.head && <Stroke d={geo.head} draw={mode} delay={600} duration={160} width={1.3} />}
             </>
           )}
         </InkSvg>

@@ -9,24 +9,27 @@ import { hatchStrokes, penBoxStrokes, roundedRectPath, scribbleFill, shadeFill }
 type TrackInk = { w: number; h: number; r: number; s: number; pen: Pen };
 const TrackContext = createContext<TrackInk | null>(null);
 
-function Progress({ className, children, value, seed, roughness, passes, radius, fill, draw, weight, speed, ...props }: ProgressPrimitive.Root.Props & TrackPen) {
+function Progress({ className, children, value, size, seed, roughness, passes, radius, fill, draw, weight, speed, ...props }: ProgressPrimitive.Root.Props & TrackPen) {
   return (
     <ProgressPrimitive.Root value={value} data-slot="progress" className={inkClassName("group/progress flex flex-wrap gap-x-3 gap-y-2", className)} {...props}>
       {children}
-      <ProgressTrack seed={seed} roughness={roughness} passes={passes} radius={radius} fill={fill} draw={draw} weight={weight} speed={speed}>
+      <ProgressTrack size={size} seed={seed} roughness={roughness} passes={passes} radius={radius} fill={fill} draw={draw} weight={weight} speed={speed}>
         <ProgressIndicator />
       </ProgressTrack>
     </ProgressPrimitive.Root>
   );
 }
 
-type TrackPen = Pick<Pen, "roughness" | "passes" | "radius" | "fill" | "draw" | "weight" | "speed"> & { seed?: string | number };
+type TrackPen = Pick<Pen, "roughness" | "passes" | "radius" | "fill" | "draw" | "weight" | "speed"> & { seed?: string | number; size?: keyof typeof heights };
+
+// Track heights, px: a hairline for a page, a fat bar to fill in.
+const heights = { sm: 8, default: 12, lg: 18 } as const;
 
 /** A pill pulled once along the full length; the indicator inside shades it in. */
-function ProgressTrack({ className, children, seed, roughness, passes, radius, fill, draw, weight, speed, ...props }: ProgressPrimitive.Track.Props & TrackPen) {
+function ProgressTrack({ className, children, size = "default", seed, roughness, passes, radius, fill, draw, weight, speed, ...props }: ProgressPrimitive.Track.Props & TrackPen) {
   const pen = usePen({ roughness, passes, radius, fill, draw, weight, speed });
   const s = useInkSeed(seed);
-  const { ref, w, h, frame } = useInkFrame([320, 12], { pad: 5 });
+  const { ref, w, h, frame } = useInkFrame([320, heights[size]], { pad: 5 });
   const r = pen.radius === undefined || pen.radius === "full" ? h / 2 : Math.min(pen.radius, h / 2);
   const outline = useMemo(
     () => penBoxStrokes(s, w, h, { roughness: pen.roughness ?? 1, passes: pen.passes ?? 1, corners: "joined", radius: r }),
@@ -35,7 +38,7 @@ function ProgressTrack({ className, children, seed, roughness, passes, radius, f
   const mode = pen.draw ?? "auto";
   const track = useMemo(() => ({ w, h, r, s, pen }), [w, h, r, s, pen]);
   return (
-    <ProgressPrimitive.Track data-slot="progress-track" className={inkClassName("relative flex h-3 w-full items-center", className)} {...props}>
+    <ProgressPrimitive.Track data-slot="progress-track" className={inkClassName("relative flex w-full items-center", className)} style={{ height: heights[size] }} {...props}>
       <InkSvg ref={ref} {...frame} pending={mode === "auto"} className="text-ink-line" style={{ ...frame.style, ...penStyle(pen) }}>
         {outline.map((d, i) => (
           <Stroke key={i} d={d} draw={mode} delay={i * 240} duration={520} width={[1.3, 1, 0.9][i]} opacity={[1, 0.7, 0.5][i]} />

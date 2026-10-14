@@ -11,9 +11,14 @@ import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { hatchStrokes, roundedRectPath, scribbleFill, shadeFill } from "@/registry/ballpoint/lib/ink-sketch";
 
 const badgeVariants = cva(
-  "group/badge relative isolate inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1 px-2.5 text-sm whitespace-nowrap [&>svg:not(.ink-sketch)]:pointer-events-none [&>svg:not(.ink-sketch)]:size-3.5",
+  "group/badge relative isolate inline-flex w-fit shrink-0 items-center justify-center gap-1 whitespace-nowrap [&>svg:not(.ink-sketch)]:pointer-events-none [&>svg:not(.ink-sketch)]:size-3.5",
   {
     variants: {
+      size: {
+        sm: "h-5 px-2 text-xs [&>svg:not(.ink-sketch)]:size-3",
+        default: "h-6 px-2.5 text-sm",
+        lg: "h-8 px-3.5 text-base [&>svg:not(.ink-sketch)]:size-4",
+      },
       variant: {
         default: "text-primary-foreground",
         secondary: "text-foreground",
@@ -23,7 +28,7 @@ const badgeVariants = cva(
         link: "ink-hover text-foreground",
       },
     },
-    defaultVariants: { variant: "default" },
+    defaultVariants: { variant: "default", size: "default" },
   },
 );
 
@@ -37,6 +42,7 @@ type Variant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>;
 function Badge({
   className,
   variant = "default",
+  size = "default",
   render,
   children,
   seed,
@@ -59,7 +65,7 @@ function Badge({
       {
         "data-slot": "badge",
         "data-variant": v,
-        className: cn(badgeVariants({ variant: v }), className),
+        className: cn(badgeVariants({ variant: v, size }), className),
         children: (
           <>
             <BadgeInk variant={v} pen={pen} seed={seed} />

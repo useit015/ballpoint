@@ -35,4 +35,19 @@ function Skeleton({ className, seed, ...props }: ComponentProps<"div"> & { seed?
   );
 }
 
-export { Skeleton };
+/**
+ * A paragraph's worth of placeholder: `lines` lines, the last one shorter, each
+ * a different length so it reads as text and not as a block.
+ */
+function SkeletonText({ lines = 3, className, seed }: { lines?: number; className?: string; seed?: string | number }) {
+  const widths = ["100%", "92%", "97%", "84%", "95%", "88%"];
+  return (
+    <div aria-hidden="true" className={cn("flex flex-col gap-2.5", className)}>
+      {Array.from({ length: lines }, (_, i) => (
+        <Skeleton key={i} className="h-4" style={{ width: i === lines - 1 && lines > 1 ? "58%" : widths[i % widths.length] }} seed={`${seed ?? "skeleton-text"}-${i}`} />
+      ))}
+    </div>
+  );
+}
+
+export { Skeleton, SkeletonText };

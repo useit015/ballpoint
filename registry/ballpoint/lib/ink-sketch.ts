@@ -621,6 +621,92 @@ export function slashPulls(seed: number, w: number, h: number, { count = 7 } = {
   return out;
 }
 
+/** A spiral, the way a pen is got going: three turns out from a point, a little uneven. */
+export function spiralPulls(seed: number, w: number, h: number): Pt[][] {
+  const r = createRng(seed);
+  const turns = 2.6 + r() * 0.5;
+  const steps = 54;
+  const phase = r() * Math.PI * 2;
+  const pts: Pt[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const a = phase + t * turns * Math.PI * 2;
+    const k = 0.08 + t * 0.92;
+    pts.push([w / 2 + Math.cos(a) * (w / 2) * k * (1 + spread(r, 0.05)), h / 2 + Math.sin(a) * (h / 2) * k * (1 + spread(r, 0.05))]);
+  }
+  return [pts];
+}
+
+/** A row of looping cursive: the line that tests whether a pen writes. */
+export function loopPulls(seed: number, w: number, h: number): Pt[][] {
+  const r = createRng(seed);
+  const loops = 5 + Math.round(r() * 2);
+  const steps = loops * 9;
+  const pts: Pt[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const a = t * loops * Math.PI * 2;
+    // A cycloid with its loops tipped forward: the pen moves on as it circles.
+    pts.push([(w - h * 0.5) * t + h * 0.25 - Math.sin(a) * h * 0.34 + spread(r, 0.5), h / 2 - Math.cos(a) * h * 0.4 + spread(r, 0.5)]);
+  }
+  return [pts];
+}
+
+/** A long wave, pulled across and then back a little lower, the second pass looser. */
+export function wavePulls(seed: number, w: number, h: number): Pt[][] {
+  const r = createRng(seed);
+  const crests = 3 + Math.round(r());
+  const wave = (y: number, amp: number, from: number, to: number, phase: number): Pt[] =>
+    Array.from({ length: crests * 10 + 1 }, (_, i) => {
+      const t = i / (crests * 10);
+      return [from + (to - from) * t, y + Math.sin(t * crests * Math.PI * 2 + phase) * amp * (1 + spread(r, 0.12))] as Pt;
+    });
+  return [wave(h * 0.35, h * 0.28, 0, w, 0), wave(h * 0.66, h * 0.24, w * 0.03, w * 0.96, 0.8 + r())];
+}
+
+/** A cross struck through something: two long pulls, the second a hurried afterthought. */
+export function crossPulls(seed: number, w: number, h: number): Pt[][] {
+  const r = createRng(seed);
+  return [
+    [[w * (0.08 + r() * 0.06), h * (0.1 + r() * 0.08)], [w * (0.9 + r() * 0.06), h * (0.9 + r() * 0.06)]],
+    [[w * (0.9 + r() * 0.06), h * (0.08 + r() * 0.08)], [w * (0.08 + r() * 0.06), h * (0.92 + r() * 0.05)]],
+    [[w * 0.2, h * 0.5 + spread(r, 2)], [w * 0.8, h * 0.52 + spread(r, 2)]],
+  ];
+}
+
+/** An asterisk: six spokes through one point, drawn round in turn. */
+export function asteriskPulls(seed: number, w: number, h: number): Pt[][] {
+  const r = createRng(seed);
+  const out: Pt[][] = [];
+  const turn = r() * 0.4;
+  for (let i = 0; i < 3; i++) {
+    const a = turn + (i / 3) * Math.PI + spread(r, 0.1);
+    const [rx, ry] = [(w / 2) * (0.85 + r() * 0.15), (h / 2) * (0.85 + r() * 0.15)];
+    out.push([[w / 2 - Math.cos(a) * rx, h / 2 - Math.sin(a) * ry], [w / 2 + Math.cos(a) * rx, h / 2 + Math.sin(a) * ry]]);
+  }
+  return out;
+}
+
+/** A ring pulled round twice, and not quite closed either time. */
+export function ringPulls(seed: number, w: number, h: number): Pt[][] {
+  const r = createRng(seed);
+  const round = (grow: number, turns: number, from: number): Pt[] =>
+    Array.from({ length: 26 }, (_, i) => {
+      const t = i / 25;
+      const a = from + t * turns * Math.PI * 2;
+      const k = 1 - 0.06 * t + grow;
+      return [w / 2 + Math.cos(a) * (w / 2 - 2) * (k + spread(r, 0.025)) + spread(r, 1.1), h / 2 + Math.sin(a) * (h / 2 - 2) * (k + spread(r, 0.04)) + spread(r, 1.1)] as Pt;
+    });
+  const start = -Math.PI * (0.5 + r() * 0.3);
+  return [round(0, 1.06, start), round(0.04, 0.95, start + 0.5)];
+}
+
+/** A tick, put quickly: a short down-stroke and a long flick up. */
+export function tickPulls(seed: number, w: number, h: number): Pt[][] {
+  const r = createRng(seed);
+  return [[[w * (0.06 + r() * 0.04), h * (0.55 + r() * 0.06)], [w * (0.32 + r() * 0.04), h * (0.9 + r() * 0.05)], [w * (0.94 + r() * 0.04), h * (0.06 + r() * 0.06)]]];
+}
+
 /** Three quick emphasis dashes fanning out, like the marks beside a signature. */
 export function flickPulls(seed: number): Pt[][] {
   const r = createRng(seed);

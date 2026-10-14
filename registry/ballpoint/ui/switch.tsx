@@ -10,6 +10,7 @@ import { ringStroke, roundedRectPath, scribbleFill, shadeFill, hatchStrokes } fr
 const sizes = {
   default: { w: 44, h: 24, thumb: 18 },
   sm: { w: 32, h: 18, thumb: 12 },
+  lg: { w: 56, h: 30, thumb: 24 },
 } as const;
 
 /**

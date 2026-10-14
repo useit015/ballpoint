@@ -8,7 +8,7 @@ import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { dotStroke, ringStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
-const sizes = { sm: 24, default: 32, lg: 40 } as const;
+const sizes = { sm: 24, default: 32, lg: 40, xl: 56 } as const;
 
 /** A portrait circled with the pen, the way you'd ring a face in a photo. */
 function Avatar({
@@ -29,7 +29,7 @@ function Avatar({
       data-slot="avatar"
       data-size={size}
       className={inkClassName(
-        "group/avatar relative flex size-8 shrink-0 rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6",
+        "group/avatar relative flex size-8 shrink-0 rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6 data-[size=xl]:size-14",
         className,
       )}
       {...props}
@@ -64,7 +64,7 @@ function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props)
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={inkClassName(
-        "flex size-full items-center justify-center rounded-full bg-ink-5 text-sm text-ink group-data-[size=lg]/avatar:text-base group-data-[size=sm]/avatar:text-xs",
+        "flex size-full items-center justify-center rounded-full bg-ink-5 text-sm text-ink group-data-[size=lg]/avatar:text-base group-data-[size=sm]/avatar:text-xs group-data-[size=xl]/avatar:text-xl",
         className,
       )}
       {...props}
@@ -80,7 +80,7 @@ function AvatarBadge({ className, seed, ...props }: ComponentProps<"span"> & { s
     <span
       data-slot="avatar-badge"
       className={cn(
-        "absolute right-0 bottom-0 z-10 inline-flex size-2.5 items-center justify-center rounded-full bg-background text-ink select-none group-data-[size=lg]/avatar:size-3 group-data-[size=sm]/avatar:size-2",
+        "absolute right-0 bottom-0 z-10 inline-flex size-2.5 items-center justify-center rounded-full bg-background text-ink select-none group-data-[size=lg]/avatar:size-3 group-data-[size=sm]/avatar:size-2 group-data-[size=xl]/avatar:size-3.5",
         className,
       )}
       {...props}

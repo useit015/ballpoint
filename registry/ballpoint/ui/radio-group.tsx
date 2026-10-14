@@ -7,8 +7,16 @@ import { inkClassName, Stroke } from "@/registry/ballpoint/lib/ink";
 import { InkOutline } from "@/registry/ballpoint/lib/ink-outline";
 import { dotStroke } from "@/registry/ballpoint/lib/ink-sketch";
 
-function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
-  return <RadioGroupPrimitive data-slot="radio-group" className={inkClassName("grid w-full gap-3", className)} {...props} />;
+/** The options as a column, or (`orientation="horizontal"`) in a row that wraps. */
+function RadioGroup({ className, orientation = "vertical", ...props }: RadioGroupPrimitive.Props & { orientation?: "vertical" | "horizontal" }) {
+  return (
+    <RadioGroupPrimitive
+      data-slot="radio-group"
+      data-orientation={orientation}
+      className={inkClassName("w-full gap-3 data-[orientation=horizontal]:flex data-[orientation=horizontal]:flex-wrap data-[orientation=horizontal]:gap-x-6 data-[orientation=vertical]:grid", className)}
+      {...props}
+    />
+  );
 }
 
 /** A drawn ring; choosing it inks a dot in the middle with a tight spiral. */

@@ -49,8 +49,9 @@ export function Actions() {
   },
   input: {
     group: "Components",
-    examples: ["input-demo", "input-types", "input-states", "input-with-button"],
+    examples: ["input-demo", "input-types", "input-states", "input-with-button", "input-search"],
     exampleTitles: {
+      "input-search": { title: "Search", description: "A leading icon, a shortcut hint that goes when you type, and a filtered list." },
       "input-types": { title: "Types", description: "Password, number, search and file inputs, each with a field label and hint." },
       "input-states": { title: "States", description: "Read-only, disabled, and invalid in the box or on the line." },
       "input-with-button": { title: "With a button", description: "An email field and a submit button on one row." },
@@ -87,8 +88,9 @@ export function Actions() {
   },
   label: {
     group: "Components",
-    examples: ["label-demo", "label-controls"],
+    examples: ["label-demo", "label-controls", "label-required"],
     exampleTitles: {
+      "label-required": { title: "Required and optional", description: "A red-pen asterisk for required fields, a quiet note for optional ones." },
       "label-controls": { title: "With controls", description: "Wrap a switch, radio or checkbox so the whole row is clickable; mark required fields; disabled controls dim their label." },
     },
     usage: `import { Label } from "@/components/ui/label"
@@ -97,12 +99,16 @@ export function Actions() {
     props: [
       { name: "htmlFor", type: "string", description: "The id of the control it names. Or wrap the control instead: the label lays it out beside the text." },
       { name: "className", type: "string", description: "A plain <label>: every prop goes to it." },
+      { name: "required", type: "boolean", default: "false", description: "Marks the label with a red-pen asterisk. The control still needs its own required." },
+      { name: "optional", type: "boolean", default: "false", description: "Writes (optional) after the label, in lighter ink." },
     ],
   },
   separator: {
     group: "Components",
-    examples: ["separator-demo", "separator-sections"],
+    examples: ["separator-demo", "separator-sections", "separator-label", "separator-toolbar"],
     exampleTitles: {
+      "separator-label": { title: "With a label", description: "Write in the middle of a rule: the or between two ways in." },
+      "separator-toolbar": { title: "In a toolbar", description: "Vertical rules dividing groups of buttons." },
       "separator-sections": { title: "Between sections", description: "Rules that divide a settings page, with the danger zone last." },
     },
     usage: `import { Separator } from "@/components/ui/separator"
@@ -112,6 +118,7 @@ export function Actions() {
     props: [
       { name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Which way the rule runs." },
       { name: "delay", type: "number", default: "0", description: "ms after the pen gets to it before the rule is drawn. Rising delays rule a list off one line after another." },
+      { name: "children", type: "ReactNode", description: "If given, written in the middle of a rule that runs both sides of it. The wrapper is the separator for assistive technology." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     primitive: { name: "Separator", href: "https://base-ui.com/react/components/separator" },
@@ -119,8 +126,9 @@ export function Actions() {
   },
   field: {
     group: "Components",
-    examples: ["field-demo", "field-settings", "field-errors"],
+    examples: ["field-demo", "field-settings", "field-errors", "field-form"],
     exampleTitles: {
+      "field-form": { title: "A whole form", description: "Grouped fields, a radio set and a textarea, checked when submitted." },
       "field-settings": { title: "Settings list", description: "A fieldset of horizontal fields, each with a title, a hint and a switch." },
       "field-errors": { title: "Several errors", description: "Give FieldError a list of errors and it shows each distinct message once." },
     },
@@ -141,8 +149,10 @@ import { Input } from "@/components/ui/input"
   },
   checkbox: {
     group: "Components",
-    examples: ["checkbox-demo", "checkbox-states", "checkbox-cards"],
+    examples: ["checkbox-demo", "checkbox-states", "checkbox-cards", "checkbox-select-all", "checkbox-form"],
     exampleTitles: {
+      "checkbox-select-all": { title: "Select all", description: "A parent that is mixed when only some children are ticked." },
+      "checkbox-form": { title: "In a form", description: "A required box with a description and an error after a try." },
       "checkbox-states": { title: "States", description: "Unchecked, checked, mixed, disabled, and invalid with an error." },
       "checkbox-cards": { title: "Choice cards", description: "Wrap a Field in FieldLabel and the whole row becomes the target." },
     },
@@ -162,8 +172,11 @@ import { Label } from "@/components/ui/label"
   },
   "radio-group": {
     group: "Components",
-    examples: ["radio-group-demo", "radio-group-states"],
+    examples: ["radio-group-demo", "radio-group-states", "radio-group-cards", "radio-group-horizontal", "radio-group-scale"],
     exampleTitles: {
+      "radio-group-cards": { title: "Choice cards", description: "Wrap a Field in FieldLabel and the whole row is the target." },
+      "radio-group-horizontal": { title: "Horizontal", description: "The options in a row that wraps, under a heading." },
+      "radio-group-scale": { title: "A scale", description: "A 1 to 5 rating with a word at each end, read back as you choose." },
       "radio-group-states": { title: "States", description: "A disabled option, and a group with no choice made yet and an error." },
     },
     usage: `import { Label } from "@/components/ui/label"
@@ -179,14 +192,20 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
     Pencil
   </Label>
 </RadioGroup>`,
-    props: [{ name: "RadioGroupItem seed", type: "string | number", description: "Pins the drawing." }],
+    props: [
+      { name: "orientation", type: '"vertical" | "horizontal"', default: '"vertical"', description: "The options as a column, or in a row that wraps." },
+      { name: "RadioGroupItem disabled", type: "boolean", description: "Dims the option and takes it out of the choice." },
+      { name: "RadioGroupItem seed", type: "string | number", description: "Pins the drawing." },
+    ],
     primitive: { name: "Radio", href: "https://base-ui.com/react/components/radio" },
     pen: ["draw", "passes", "weight", "speed"],
   },
   switch: {
     group: "Components",
-    examples: ["switch-demo", "switch-settings"],
+    examples: ["switch-demo", "switch-settings", "switch-sizes", "switch-form"],
     exampleTitles: {
+      "switch-sizes": { title: "Sizes and states", description: "Three sizes, disabled on and off, and invalid." },
+      "switch-form": { title: "In a form", description: "Switches with descriptions, one required, and an error until it is on." },
       "switch-settings": { title: "In a card", description: "A controlled switch in a settings card, and a disabled one beside it." },
     },
     usage: `import { Label } from "@/components/ui/label"
@@ -197,7 +216,7 @@ import { Switch } from "@/components/ui/switch"
   Draw things in
 </Label>`,
     props: [
-      { name: "size", type: '"default" | "sm"', default: '"default"', description: "Track size." },
+      { name: "size", type: '"sm" | "default" | "lg"', default: '"default"', description: "Track size: 32, 44 or 56px wide." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     primitive: { name: "Switch", href: "https://base-ui.com/react/components/switch" },
@@ -205,15 +224,22 @@ import { Switch } from "@/components/ui/switch"
   },
   slider: {
     group: "Components",
-    examples: ["slider-demo", "slider-controlled"],
+    examples: ["slider-demo", "slider-controlled", "slider-marks", "slider-vertical"],
     exampleTitles: {
+      "slider-marks": { title: "Marks", description: "Ticks under the line, labelled where you say, or one for every step." },
+      "slider-vertical": { title: "Vertical", description: "Upright sliders for levels, each named and read out." },
       "slider-controlled": { title: "Controlled", description: "Read the value as it moves: a single pen-pressure value and a price range in steps of five." },
     },
     usage: `import { Slider } from "@/components/ui/slider"
 
 <Slider defaultValue={40} aria-label="Roughness" />
 <Slider defaultValue={[20, 70]} aria-label="Range" />`,
-    props: [{ name: "seed", type: "string | number", description: "Pins the drawing." }],
+    props: [
+      { name: "marks", type: "boolean | { value: number; label?: string }[]", description: "Pencilled ticks under the line (horizontal only): true for one at every step, or a list of values, each with an optional label written beneath." },
+      { name: "step", type: "number", default: "1", description: "How far a press of an arrow key, or a drag, moves the value." },
+      { name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Which way the line runs. A vertical slider takes the height of its parent." },
+      { name: "seed", type: "string | number", description: "Pins the drawing." },
+    ],
     primitive: { name: "Slider", href: "https://base-ui.com/react/components/slider" },
     pen: ["draw", "weight", "speed"],
   },
@@ -256,8 +282,11 @@ import { Switch } from "@/components/ui/switch"
   },
   badge: {
     group: "Components",
-    examples: ["badge-demo", "badge-icons", "badge-status"],
+    examples: ["badge-demo", "badge-icons", "badge-status", "badge-sizes", "badge-filters", "badge-removable"],
     exampleTitles: {
+      "badge-sizes": { title: "Sizes", description: "Small, default and large, in three variants." },
+      "badge-filters": { title: "Filter chips", description: "Badges rendered as toggle buttons: pressed ones are coloured in." },
+      "badge-removable": { title: "Removable tags", description: "A close button inside the pill, and a way to put them back." },
       "badge-icons": { title: "With icons", description: "Glyphs and counts inside the pill." },
       "badge-status": { title: "Status in a list", description: "One variant per state, aligned to the right of each row." },
     },
@@ -269,14 +298,18 @@ import { Switch } from "@/components/ui/switch"
     props: [
       { name: "variant", type: '"default" | "secondary" | "destructive" | "outline" | "ghost" | "link"', default: '"default"', description: "Coloured in, hatched, red pen, circled, circled on hover, or underlined." },
       { name: "render", type: "ReactElement", description: "Render as another element, e.g. a link." },
+      { name: "size", type: '"sm" | "default" | "lg"', default: '"default"', description: "20, 24 or 32px high, with the type to match." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     pen: ["draw", "roughness", "radius", "fill", "weight", "speed"],
   },
   avatar: {
     group: "Components",
-    examples: ["avatar-demo", "avatar-list"],
+    examples: ["avatar-demo", "avatar-list", "avatar-sizes", "avatar-stack", "avatar-profile"],
     exampleTitles: {
+      "avatar-sizes": { title: "Sizes", description: "Four sizes, from a margin dot to a profile picture." },
+      "avatar-stack": { title: "Stacked", description: "A group that overlaps like coins, with how many more." },
+      "avatar-profile": { title: "Profile", description: "A large avatar with a status dot, a role and a follow button." },
       "avatar-list": { title: "User list", description: "Avatars with a name, an email and an online dot." },
     },
     usage: `import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -286,7 +319,7 @@ import { Switch } from "@/components/ui/switch"
   <AvatarFallback>ON</AvatarFallback>
 </Avatar>`,
     props: [
-      { name: "size", type: '"default" | "sm" | "lg"', default: '"default"', description: "24, 32 or 40px." },
+      { name: "size", type: '"sm" | "default" | "lg" | "xl"', default: '"default"', description: "24, 32, 40 or 56px; the initials and the status dot scale with it." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     primitive: { name: "Avatar", href: "https://base-ui.com/react/components/avatar" },
@@ -314,8 +347,10 @@ import { Switch } from "@/components/ui/switch"
   },
   alert: {
     group: "Components",
-    examples: ["alert-demo", "alert-simple"],
+    examples: ["alert-demo", "alert-simple", "alert-variants", "alert-dismiss"],
     exampleTitles: {
+      "alert-variants": { title: "Variants", description: "Pencil, a hatched note, and red pen, each with its glyph." },
+      "alert-dismiss": { title: "Dismissible", description: "An action in the corner closes the note, and brings it back." },
       "alert-simple": { title: "Without an icon", description: "Title only, description only, and with an action." },
     },
     usage: `import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -325,15 +360,18 @@ import { Switch } from "@/components/ui/switch"
   <AlertDescription>The connection dropped halfway.</AlertDescription>
 </Alert>`,
     props: [
-      { name: "variant", type: '"default" | "destructive"', default: '"default"', description: "Pencil, or red pen." },
+      { name: "variant", type: '"default" | "note" | "destructive"', default: '"default"', description: "Pencil, hatched lightly across like a margin highlight, or red pen." },
+      { name: "fill", type: '"hatch" | "flat"', description: "How the note variant is coloured in: hatching, or a flat wash." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
-    pen: ["draw", "roughness", "passes", "radius", "corners", "weight", "speed"],
+    pen: ["draw", "roughness", "passes", "radius", "corners", "weight", "speed", "fill"],
   },
   skeleton: {
     group: "Components",
-    examples: ["skeleton-demo", "skeleton-card"],
+    examples: ["skeleton-demo", "skeleton-card", "skeleton-text", "skeleton-profile"],
     exampleTitles: {
+      "skeleton-text": { title: "Text", description: "A heading and paragraphs of placeholder lines, each a different length." },
+      "skeleton-profile": { title: "A list", description: "Round avatars with a name and two lines of text, three times over." },
       "skeleton-card": { title: "Card placeholder", description: "The shape of a card while its content loads." },
     },
     usage: `import { Skeleton } from "@/components/ui/skeleton"
@@ -341,13 +379,17 @@ import { Switch } from "@/components/ui/switch"
 <Skeleton className="h-4 w-48" />`,
     props: [
       { name: "className", type: "string", description: "Size and shape it: rounded-full makes a round placeholder." },
+      { name: "SkeletonText lines", type: "number", default: "3", description: "A paragraph of placeholder: this many lines, the last one shorter, each a different width." },
       { name: "seed", type: "string | number", description: "Pins the hatching." },
     ],
   },
   progress: {
     group: "Components",
-    examples: ["progress-demo", "progress-controlled"],
+    examples: ["progress-demo", "progress-controlled", "progress-sizes", "progress-upload", "progress-steps"],
     exampleTitles: {
+      "progress-sizes": { title: "Sizes", description: "A hairline, the default, and a fat bar to fill in." },
+      "progress-upload": { title: "Upload", description: "Waits indeterminate, then fills in uneven bursts, and is done." },
+      "progress-steps": { title: "Steps", description: "A step counter that moves the bar a quarter at a time." },
       "progress-controlled": { title: "Controlled", description: "Drive the value from state and watch the shading follow." },
     },
     usage: `import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
@@ -358,6 +400,7 @@ import { Switch } from "@/components/ui/switch"
 </Progress>`,
     props: [
       { name: "value", type: "number | null", description: "null for indeterminate: a patch of shading slides along." },
+      { name: "size", type: '"sm" | "default" | "lg"', default: '"default"', description: "Track height: 8, 12 or 18px." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     primitive: { name: "Progress", href: "https://base-ui.com/react/components/progress" },
@@ -402,8 +445,10 @@ import { Switch } from "@/components/ui/switch"
   },
   tabs: {
     group: "Components",
-    examples: ["tabs-demo", "tabs-vertical", "tabs-icons"],
+    examples: ["tabs-demo", "tabs-vertical", "tabs-icons", "tabs-settings", "tabs-counts"],
     exampleTitles: {
+      "tabs-settings": { title: "Settings", description: "Tabs holding cards of fields, the way an account page does." },
+      "tabs-counts": { title: "With counts", description: "Underlined tabs with a badge each, read from state." },
       "tabs-vertical": { title: "Vertical", description: "Tabs stacked beside their panel." },
       "tabs-icons": { title: "With icons", description: "Icons beside the labels." },
     },
@@ -426,8 +471,10 @@ import { Switch } from "@/components/ui/switch"
   },
   accordion: {
     group: "Components",
-    examples: ["accordion-demo", "accordion-multiple"],
+    examples: ["accordion-demo", "accordion-multiple", "accordion-icons", "accordion-controlled"],
     exampleTitles: {
+      "accordion-icons": { title: "With icons", description: "A glyph in front of each title." },
+      "accordion-controlled": { title: "Open them all", description: "Own the open items to expand and collapse everything at once." },
       "accordion-multiple": { title: "Several open", description: "With multiple, items open independently." },
     },
     usage: `import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -441,15 +488,18 @@ import { Switch } from "@/components/ui/switch"
     props: [
       { name: "multiple", type: "boolean", default: "false", description: "On Accordion: lets more than one item stay open." },
       { name: "defaultValue", type: "string[]", description: "On Accordion: the items open to begin with." },
-      { name: "AccordionTrigger seed", type: "string | number", description: "Pins the chevron's drawing." },
       { name: "AccordionTrigger header", type: "Accordion.Header props", description: "Reaches the heading row, an h3 by default. Pass { render: <div /> } to keep it out of the page outline." },
+      { name: "AccordionTrigger seed", type: "string | number", description: "Pins the chevron's drawing." },
     ],
     primitive: { name: "Accordion", href: "https://base-ui.com/react/components/accordion" },
   },
   dialog: {
     group: "Components",
-    examples: ["dialog-demo", "dialog-controlled", "dialog-scroll"],
+    examples: ["dialog-demo", "dialog-controlled", "dialog-scroll", "dialog-form", "dialog-share", "dialog-sizes"],
     exampleTitles: {
+      "dialog-form": { title: "A form", description: "A wider dialog holding two columns of fields and a textarea." },
+      "dialog-share": { title: "Share a link", description: "A small dialog with a read-only link and a copy button." },
+      "dialog-sizes": { title: "Sizes", description: "From a small confirmation to a wide editor." },
       "dialog-controlled": { title: "Controlled", description: "Own the open state to close the dialog from code, here when the form is submitted." },
       "dialog-scroll": { title: "Long content", description: "A scrolling region inside a dialog, reachable from the keyboard." },
     },
@@ -481,6 +531,7 @@ import {
       { name: "DialogContent showCloseButton", type: "boolean", default: "true", description: "A drawn cross in the top-right corner." },
       { name: "DialogFooter showCloseButton", type: "boolean", default: "false", description: "Adds an outlined Close button to the footer." },
       { name: "DialogTrigger render", type: "ReactElement", description: "Renders the trigger as your own element, usually a Button." },
+      { name: "DialogContent size", type: '"sm" | "default" | "lg" | "xl"', default: '"default"', description: "How wide it is: 24, 28, 42 or 56rem at most, and never wider than the screen." },
       { name: "seed", type: "string | number", description: "On DialogContent: pins the drawing." },
     ],
     pen: ["draw", "roughness", "passes", "radius", "corners", "shadow", "weight", "speed"],
@@ -488,8 +539,10 @@ import {
   },
   "alert-dialog": {
     group: "Components",
-    examples: ["alert-dialog-demo", "alert-dialog-confirm"],
+    examples: ["alert-dialog-demo", "alert-dialog-confirm", "alert-dialog-type", "alert-dialog-small"],
     exampleTitles: {
+      "alert-dialog-type": { title: "Type to confirm", description: "The destructive action stays disabled until the notebook's name is typed." },
+      "alert-dialog-small": { title: "Small, with an icon", description: "size=\"sm\" with an AlertDialogMedia icon and two short buttons." },
       "alert-dialog-confirm": { title: "Confirming an action", description: "The action runs only when confirmed; cancelling leaves things as they were." },
     },
     usage: `import {
@@ -529,8 +582,11 @@ import { Button } from "@/components/ui/button"
   },
   sheet: {
     group: "Components",
-    examples: ["sheet-demo", "sheet-nav"],
+    examples: ["sheet-demo", "sheet-nav", "sheet-sides", "sheet-form", "sheet-cart"],
     exampleTitles: {
+      "sheet-sides": { title: "Every side", description: "Slide in from the top, right, bottom or left." },
+      "sheet-form": { title: "A form", description: "Edit something in a wider sheet, with the actions pinned to the foot." },
+      "sheet-cart": { title: "A basket", description: "A list you can remove from, with a total and a check-out at the foot." },
       "sheet-nav": { title: "Navigation menu", description: "A sheet from the left holding a list of links." },
     },
     usage: `import { Button } from "@/components/ui/button"
@@ -548,6 +604,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
     props: [
       { name: "SheetContent side", type: '"top" | "right" | "bottom" | "left"', default: '"right"', description: "The edge it slides in from." },
       { name: "SheetContent showCloseButton", type: "boolean", default: "true", description: "A drawn cross in the top-right corner." },
+      { name: "SheetContent size", type: '"sm" | "default" | "lg" | "xl"', default: '"default"', description: "How wide a left or right sheet is, at most: 20, 24, 32 or 42rem." },
       { name: "seed", type: "string | number", description: "On SheetContent: pins the drawing." },
     ],
     pen: ["draw", "roughness", "weight", "speed"],
@@ -555,8 +612,10 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
   },
   popover: {
     group: "Components",
-    examples: ["popover-demo", "popover-actions"],
+    examples: ["popover-demo", "popover-actions", "popover-form", "popover-pens"],
     exampleTitles: {
+      "popover-form": { title: "A small form", description: "Two fields with their labels, opened from a button." },
+      "popover-pens": { title: "A picker", description: "Choose from a radio group; the trigger shows the choice and the popover closes." },
       "popover-actions": { title: "Account menu", description: "An avatar that opens a small card of actions." },
     },
     usage: `import { Button } from "@/components/ui/button"
@@ -577,8 +636,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
   },
   tooltip: {
     group: "Components",
-    examples: ["tooltip-demo", "tooltip-sides", "tooltip-shortcut"],
+    examples: ["tooltip-demo", "tooltip-sides", "tooltip-shortcut", "tooltip-toolbar", "tooltip-disabled"],
     exampleTitles: {
+      "tooltip-toolbar": { title: "Toolbar", description: "Icon buttons that name themselves, with the key beside the name." },
+      "tooltip-disabled": { title: "On a disabled button", description: "Disabled buttons take no pointer events, so the tip hangs off a wrapper that is focusable." },
       "tooltip-sides": { title: "Sides", description: "Which edge of the trigger the tooltip opens on." },
       "tooltip-shortcut": { title: "With a shortcut", description: "Name a tool and show the key that triggers it." },
     },
@@ -602,8 +663,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
   },
   "dropdown-menu": {
     group: "Components",
-    examples: ["dropdown-menu-demo", "dropdown-menu-row-actions"],
+    examples: ["dropdown-menu-demo", "dropdown-menu-row-actions", "dropdown-menu-user", "dropdown-menu-checkboxes"],
     exampleTitles: {
+      "dropdown-menu-user": { title: "Account menu", description: "A profile as the trigger, with shortcuts and a red sign-out." },
+      "dropdown-menu-checkboxes": { title: "Checkboxes", description: "Items that tick and leave the menu open, so several can be changed in one go." },
       "dropdown-menu-row-actions": { title: "Row actions", description: "An icon trigger for each row, with a destructive item set apart." },
     },
     usage: `import { Button } from "@/components/ui/button"
@@ -637,8 +700,10 @@ import {
   },
   select: {
     group: "Components",
-    examples: ["select-demo", "select-form", "select-controlled"],
+    examples: ["select-demo", "select-form", "select-controlled", "select-status", "select-sizes"],
     exampleTitles: {
+      "select-status": { title: "With a note", description: "Each option carries a few words of what it means." },
+      "select-sizes": { title: "Sizes", description: "The small and default triggers, side by side with their labels." },
       "select-form": { title: "In a form", description: "With a label, a hint, and an invalid state." },
       "select-controlled": { title: "Controlled", description: "Read the chosen value from state." },
     },
@@ -672,8 +737,10 @@ const pens = [
   },
   toast: {
     group: "Components",
-    examples: ["toast-demo", "toast-actions"],
+    examples: ["toast-demo", "toast-actions", "toast-promise", "toast-undo"],
     exampleTitles: {
+      "toast-promise": { title: "Promise", description: "One note that follows a save: pending, then done or failed." },
+      "toast-undo": { title: "Undo", description: "Removing something posts a note whose action puts it back." },
       "toast-actions": { title: "More kinds", description: "Info, warning, a note that stays until closed, and clearing them all." },
     },
     usage: `// app/layout.tsx: once, near the root
@@ -693,7 +760,7 @@ toast.error("Couldn't send")
 toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't save" })`,
     props: [
       { name: "toast(title, options)", type: "string id", description: "Also toast.success, .error, .warning, .info, .loading (stays until dismissed), .promise, .update and .dismiss(id?)." },
-      { name: "options", type: "{ description, action, timeout, priority, id, onClose }", description: "action is { label, onClick }; timeout 0 keeps it up; priority \"high\" announces it at once." },
+      { name: "options", type: "{ description, action, timeout, priority, id, onClose }", description: 'action is { label, onClick }; timeout 0 keeps it up; priority "high" announces it at once.' },
       { name: "Toaster limit", type: "number", default: "3", description: "How many notes show at once; older ones wait." },
       { name: "Toaster timeout", type: "number", default: "5000", description: "ms before a note takes itself down." },
     ],
@@ -702,8 +769,9 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "ink-icons": {
     group: "Drawn",
-    examples: ["ink-icons-demo", "ink-icons-buttons", "ink-icons-sizes"],
+    examples: ["ink-icons-demo", "ink-icons-buttons", "ink-icons-sizes", "ink-icons-draw"],
     exampleTitles: {
+      "ink-icons-draw": { title: "Drawing in", description: "Written as they appear, or drawn in while the pointer is over their button." },
       "ink-icons-buttons": { title: "In buttons", description: "Icons take the button's colour and size, beside a label or on their own." },
       "ink-icons-sizes": { title: "Sizes and colour", description: "Size with a class; the icon takes the text colour." },
     },
@@ -746,8 +814,10 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "section-heading": {
     group: "Drawn",
-    examples: ["section-heading-demo", "section-heading-levels"],
+    examples: ["section-heading-demo", "section-heading-levels", "section-heading-underlines", "section-heading-page"],
     exampleTitles: {
+      "section-heading-underlines": { title: "Six underlines", description: "Swoosh, double, wave, zigzag, loop and flick. Left alone, the seed picks one for each title." },
+      "section-heading-page": { title: "A page title", description: "A sentence-case page title with a subtitle, and a section heading under it." },
       "section-heading-levels": { title: "Levels and sizes", description: "The element sets the level; className sets the size. A delay lets the pen land after the page does." },
     },
     usage: `import { SectionHeading } from "@/components/ui/section-heading"
@@ -760,6 +830,7 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
       { name: "id", type: "string", description: "The heading's id, for aria-labelledby and links. Also seeds the drawing." },
       { name: "specks", type: "boolean", default: "false", description: "A few scratches beside the swoosh, where the pen was lifted." },
       { name: "delay", type: "number", default: "0", description: "ms after it scrolls into view before the pen starts." },
+      { name: "underline", type: '"swoosh" | "double" | "wave" | "zigzag" | "loop" | "flick"', description: "Which underline. By default the seed picks one, so each title keeps its own." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     pen: ["draw", "weight", "speed"],
@@ -795,8 +866,9 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   frame: {
     group: "Drawn",
-    examples: ["frame-demo", "frame-gallery"],
+    examples: ["frame-demo", "frame-gallery", "frame-taped"],
     exampleTitles: {
+      "frame-taped": { title: "Taped and tilted", description: "Hold the picture down with tape and set it a little askew, the way you would pin a photo to a page." },
       "frame-gallery": { title: "Passes", description: "The more passes, the more it looks gone over." },
     },
     usage: `import { Frame } from "@/components/ui/frame"
@@ -807,14 +879,18 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
     props: [
       { name: "caption", type: "ReactNode", description: "Written under the frame, as the figure's caption." },
       { name: "gap", type: "number", default: "6", description: "px between the picture and the frame." },
+      { name: "tilt", type: "number", default: "0", description: "Degrees to turn the frame, as if it were dropped there." },
+      { name: "tape", type: "boolean", default: "false", description: "A strip of washi tape across the top." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     pen: ["draw", "roughness", "passes", "weight", "speed"],
   },
   "copy-button": {
     group: "Drawn",
-    examples: ["copy-button-demo", "copy-button-states", "copy-button-dynamic"],
+    examples: ["copy-button-demo", "copy-button-states", "copy-button-dynamic", "copy-button-snippet", "copy-button-input"],
     exampleTitles: {
+      "copy-button-snippet": { title: "Beside a command", description: "An icon button at the end of a line of code." },
+      "copy-button-input": { title: "Beside a field", description: "A read-only link with a labelled copy button next to it." },
       "copy-button-states": { title: "Variants and sizes", description: "Any button variant, a custom copied label, and the icon size." },
       "copy-button-dynamic": { title: "Read at click time", description: "Pass a function and the value is read when it's clicked." },
     },
@@ -833,8 +909,9 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "signature-pad": {
     group: "Drawn",
-    examples: ["signature-pad-demo", "signature-pad-controls"],
+    examples: ["signature-pad-demo", "signature-pad-controls", "signature-pad-form"],
     exampleTitles: {
+      "signature-pad-form": { title: "In a form", description: "A required signature beside a name and a checkbox, read back from the form data." },
       "signature-pad-controls": { title: "Undo, clear, export", description: "The ref hands back undo(), clear(), and exports; here a PNG, trimmed to the ink." },
     },
     usage: `import { SignaturePad } from "@/components/ui/signature-pad"
@@ -858,8 +935,9 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   "hatch-grid": {
     group: "Drawn",
-    examples: ["hatch-grid-demo", "hatch-grid-custom"],
+    examples: ["hatch-grid-demo", "hatch-grid-custom", "hatch-grid-habits"],
     exampleTitles: {
+      "hatch-grid-habits": { title: "Several habits", description: "The same half-year for three habits, each with its own unit and total." },
       "hatch-grid-custom": { title: "Your own levels and labels", description: "Pass level per day to set the shading yourself, and label to write the hover line." },
     },
     usage: `import { HatchGrid } from "@/components/ui/hatch-grid"
@@ -880,8 +958,10 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
   },
   timeline: {
     group: "Drawn",
-    examples: ["timeline-demo", "timeline-vertical"],
+    examples: ["timeline-demo", "timeline-vertical", "timeline-status", "timeline-changelog"],
     exampleTitles: {
+      "timeline-status": { title: "Order status", description: "Done, current and upcoming stops: the current one underlined, the rest to come paler." },
+      "timeline-changelog": { title: "Changelog", description: "Versions with a badge each, newest first." },
       "timeline-vertical": { title: "Down the side", description: "For more stops, longer ones, or narrow screens: a line down the left, each stop landing as the pen reaches it." },
     },
     usage: `import { Timeline, TimelineDescription, TimelineItem, TimelineTime, TimelineTitle } from "@/components/ui/timeline"
@@ -896,14 +976,16 @@ toast.promise(save(), { loading: "Saving…", success: "Saved", error: "Couldn't
     props: [
       { name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "An arrow across the top, each stop a column (scrolling sideways when there are more than fit), or a line down the side." },
       { name: "TimelineTime", type: "component", description: "A time element; pass dateTime for a machine-readable date." },
+      { name: "TimelineItem status", type: '"done" | "current" | "upcoming"', default: '"done"', description: 'Where the stop is. Current is underlined and marked aria-current="step"; upcoming is paler.' },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     pen: ["draw", "weight", "speed"],
   },
   "ink-theme-toggle": {
     group: "Drawn",
-    examples: ["ink-theme-toggle-demo", "ink-theme-toggle-controlled"],
+    examples: ["ink-theme-toggle-demo", "ink-theme-toggle-controlled", "ink-theme-toggle-header"],
     exampleTitles: {
+      "ink-theme-toggle-header": { title: "In a header", description: "A ghost icon button at the end of a nav bar, where it usually lives." },
       "ink-theme-toggle-controlled": { title: "Controlled", description: "Own the theme (or hand it to next-themes) and the toggle only reports clicks." },
     },
     usage: `import { InkThemeToggle } from "@/components/ui/ink-theme-toggle"
@@ -923,8 +1005,12 @@ const { resolvedTheme, setTheme } = useTheme()
   },
   "margin-note": {
     group: "Drawn",
-    examples: ["margin-note-demo", "margin-note-sides"],
+    examples: ["margin-note-demo", "margin-note-sides", "margin-note-essay", "margin-note-marks", "margin-note-pointers", "margin-note-review"],
     exampleTitles: {
+      "margin-note-marks": { title: "Marking the words", description: "mark underlines, circles, boxes or highlights what the note is about, in the note's colour." },
+      "margin-note-pointers": { title: "Arrows, lines, none", description: "The pointer drawn as an arrow, a plain line, or left out; and the note tilted the other way." },
+      "margin-note-review": { title: "A review", description: "Notes on a draft, in ink, red pen and pencil, each with its own mark and width." },
+      "margin-note-essay": { title: "In an essay", description: "Notes along a paragraph, one in ink and one in red pen." },
       "margin-note-sides": { title: "Left, and in red", description: "Flip the side, or use red for a correction." },
     },
     usage: `import { MarginNote } from "@/components/ui/margin-note"
@@ -936,16 +1022,21 @@ const { resolvedTheme, setTheme } = useTheme()
     props: [
       { name: "note", type: "ReactNode", description: "What's written in the margin." },
       { name: "side", type: '"left" | "right"', default: '"right"', description: "Which margin. Below lg the note drops in under the line instead." },
-      { name: "color", type: '"ink" | "red"', default: '"ink"', description: "The ink, or the red pen." },
+      { name: "color", type: '"ink" | "red" | "pencil"', default: '"ink"', description: "The ink, the red pen for a correction, or pencil, lighter and slanted." },
       { name: "className", type: "string", description: "Styles the note; --margin-note-width (9rem) and --margin-note-gap (2.5rem) set its size and distance." },
+      { name: "pointer", type: '"arrow" | "line" | "none"', default: '"arrow"', description: "What is drawn from the note to the words: a headed arrow, a plain line, or nothing." },
+      { name: "mark", type: '"none" | "underline" | "circle" | "box" | "highlight"', default: '"none"', description: "A mark drawn on the words themselves, in the note's colour (it uses Annotate)." },
+      { name: "tilt", type: "number", default: "-1.5", description: "Degrees the note is turned from level." },
+      { name: "width", type: "string", default: '"9rem"', description: "How wide the note is out in the margin, as a CSS length." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
     pen: ["draw", "weight", "speed"],
   },
   checklist: {
     group: "Drawn",
-    examples: ["checklist-demo", "checklist-progress", "checklist-states"],
+    examples: ["checklist-demo", "checklist-progress", "checklist-states", "checklist-onboarding"],
     exampleTitles: {
+      "checklist-onboarding": { title: "Getting started", description: "A card that counts down what is left and washes over when everything is done." },
       "checklist-progress": { title: "With progress", description: "Controlled with value, feeding a Progress bar, with check-all and clear." },
       "checklist-states": { title: "Disabled items", description: "Items that can't be ticked yet are paler; a disabled item can still arrive done." },
     },
@@ -965,8 +1056,10 @@ const { resolvedTheme, setTheme } = useTheme()
   },
   redact: {
     group: "Drawn",
-    examples: ["redact-demo", "redact-controlled"],
+    examples: ["redact-demo", "redact-controlled", "redact-letter", "redact-table"],
     exampleTitles: {
+      "redact-letter": { title: "In a letter", description: "Names, places and sums scribbled over; click each to read it, and again to cover it." },
+      "redact-table": { title: "Secrets in a table", description: "Keys that stay hidden until asked for, each with its own screen-reader label." },
       "redact-controlled": { title: "Reveal them all", description: "Control revealed and the scribbles come off together; clicking one still reports through onRevealedChange." },
     },
     usage: `import { Redact } from "@/components/ui/redact"
@@ -982,8 +1075,13 @@ const { resolvedTheme, setTheme } = useTheme()
   },
   scrawl: {
     group: "Drawn",
-    examples: ["scrawl-demo", "scrawl-stamp"],
+    examples: ["scrawl-demo", "scrawl-stamp", "scrawl-dividers", "scrawl-kinds", "scrawl-red", "scrawl-pen-test", "scrawl-margins"],
     exampleTitles: {
+      "scrawl-kinds": { title: "Seven more", description: "A spiral, a row of loops, a wave, and the marks of a proofreader: cross, asterisk, ring and tick." },
+      "scrawl-red": { title: "Red pen", description: "A tick, a ring, an asterisk and a cross, scaled down and set beside a to-do list." },
+      "scrawl-pen-test": { title: "Testing the pen", description: "The first page of a new notebook: a spiral, loops, a wave and a zigzag, on ruled paper." },
+      "scrawl-margins": { title: "In the margins", description: "Marks around a paragraph, as if someone had read it with a pen in hand." },
+      "scrawl-dividers": { title: "As dividers", description: "A scrawl between sections, a different one each time." },
       "scrawl-stamp": { title: "As a stamp", description: "Position a scrawl on a corner of a card, staggering the delay so each is drawn in turn." },
     },
     usage: `import { Scrawl } from "@/components/ui/scrawl"
@@ -993,13 +1091,17 @@ const { resolvedTheme, setTheme } = useTheme()
   …
 </section>`,
     props: [
-      { name: "kind", type: '"zigzag" | "corner" | "star" | "slash"', default: '"zigzag"', description: "Which pen test." },
+      { name: "kind", type: '"zigzag" | "corner" | "star" | "slash" | "spiral" | "loops" | "waves" | "cross" | "asterisk" | "ring" | "tick"', default: '"zigzag"', description: "Which scribble: the ones a pen makes while it gets going (zigzag, corner, star, slash, spiral, loops, waves), or a proofreader's marks (cross, asterisk, ring, tick)." },
       { name: "scale", type: "number", default: "1", description: "Size; the line stays the same weight." },
       { name: "rotate", type: "number", default: "0", description: "Degrees." },
       { name: "delay", type: "number", default: "0", description: "ms after it comes into view before the pen starts." },
+      { name: "color", type: '"ink" | "red"', default: '"ink"', description: "The ink, or the red pen." },
+      { name: "flip", type: "boolean", default: "false", description: "Mirror it, so the same scribble can lean the other way." },
+      { name: "retrace", type: "number", description: "0 to 1: how much of it the pen goes back over. Each kind has its own habit (a spiral none, a zigzag most of it)." },
+      { name: "weight", type: "number", default: "1", description: "Line weight multiplier. Also settable in CSS as --ink-weight." },
       { name: "seed", type: "string | number", description: "Pins the drawing." },
     ],
-    pen: ["draw", "speed"],
+    pen: ["draw", "weight", "speed"],
   },
 };
 

@@ -147,12 +147,16 @@ function Timeline({
 }
 
 /** One stop: its dot on the line, and whatever's said about it. */
-function TimelineItem({ className, children, style, ...props }: ComponentProps<"li">) {
+/**
+ * One stop. `status` tells where it is: done (as normal), current (written
+ * heavier) or upcoming (paler, still to come).
+ */
+function TimelineItem({ className, children, style, status = "done", ...props }: ComponentProps<"li"> & { status?: "done" | "current" | "upcoming" }) {
   const { index, orientation, at, rise, mode } = useContext(StopContext);
   const s = hashSeed(`timeline-dot-${index}`);
   const vertical = orientation === "vertical";
   return (
-    <li data-slot="timeline-item" className={cn("relative flex min-w-0 flex-col gap-1", vertical ? "" : "pt-6", className)} style={style} {...props}>
+    <li data-slot="timeline-item" data-status={status} aria-current={status === "current" ? "step" : undefined} className={cn("relative flex min-w-0 flex-col gap-1 data-[status=upcoming]:opacity-55 data-[status=current]:[&_[data-slot=timeline-title]]:underline data-[status=current]:[&_[data-slot=timeline-title]]:decoration-ink-3 data-[status=current]:[&_[data-slot=timeline-title]]:underline-offset-4", vertical ? "" : "pt-6", className)} style={style} {...props}>
       <svg
         aria-hidden="true"
         viewBox="-7 -7 14 14"

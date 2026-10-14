@@ -11,9 +11,13 @@ import { ringStroke, ruleStroke, verticalStroke } from "@/registry/ballpoint/lib
 const LENGTH = 700;
 const THUMB = 20;
 
+type Mark = { value: number; label?: string };
+
 /**
  * A pencilled line with the chosen range inked over it, and a drawn ring to
- * drag. Ranges get one ring per value.
+ * drag. Ranges get one ring per value. `marks` pencils ticks under the line:
+ * `true` for one at every step, or a list of values, each with a label to
+ * write beneath it.
  */
 function Slider({
   className,
@@ -21,6 +25,8 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  step = 1,
+  marks,
   seed,
   draw,
   weight,
@@ -28,7 +34,7 @@ function Slider({
   "aria-label": label,
   "aria-labelledby": labelledBy,
   ...props
-}: SliderPrimitive.Root.Props & Pick<Pen, "draw" | "weight" | "speed"> & { seed?: string | number }) {
+}: SliderPrimitive.Root.Props & Pick<Pen, "draw" | "weight" | "speed"> & { seed?: string | number; marks?: boolean | Mark[] }) {
   const pen = usePen({ draw, weight, speed });
   // One thumb per value: a range slider takes an array.
   const values = Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [value ?? defaultValue ?? min];
@@ -43,6 +49,7 @@ function Slider({
       value={value}
       min={min}
       max={max}
+      step={step}
       thumbAlignment="edge"
       {...props}
     >
@@ -74,7 +81,27 @@ function Slider({
           </SliderPrimitive.Thumb>
         ))}
       </SliderPrimitive.Control>
+      {marks && props.orientation !== "vertical" && <SliderMarks marks={marks} min={min} max={max} step={step} seed={seed} pen={pen} />}
     </SliderPrimitive.Root>
+  );
+}
+
+/** Ticks under the line, each written beneath if it has a label. They sit where the ring's centre goes. */
+function SliderMarks({ marks, min, max, step, seed, pen }: { marks: boolean | Mark[]; min: number; max: number; step: number; seed?: string | number; pen: Pen }) {
+  const s = useInkSeed(seed === undefined ? undefined : `${seed}-marks`);
+  const list: Mark[] = Array.isArray(marks) ? marks : Array.from({ length: Math.min(21, Math.floor((max - min) / step) + 1) }, (_, i) => ({ value: min + i * ((max - min) / Math.min(20, Math.floor((max - min) / step))) }));
+  const tick = useMemo(() => verticalStroke(s, 12), [s]);
+  return (
+    <div data-slot="slider-marks" aria-hidden="true" className="relative -mt-0.5 h-9 text-ink-3 select-none">
+      {list.map((mark) => (
+        <span key={mark.value} className="absolute top-0 flex -translate-x-1/2 flex-col items-center gap-0.5" style={{ left: `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${(mark.value - min) / (max - min)})` }}>
+          <InkSvg box={[-1, 0, 4, 12]} stretch className="relative h-2.5 w-1" style={penStyle(pen)}>
+            <Stroke d={tick} draw="none" width={1.2} />
+          </InkSvg>
+          {mark.label && <span className="text-sm whitespace-nowrap">{mark.label}</span>}
+        </span>
+      ))}
+    </div>
   );
 }
 

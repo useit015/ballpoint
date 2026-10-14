@@ -10,14 +10,18 @@ import { crossedBoxStroke } from "@/registry/ballpoint/lib/ink-sketch";
  * A photo frame ruled round a picture (or anything): each side pulled on
  * its own, well past the corners, then gone over again a little off the
  * first, so the corners cross like a quick sketch. `caption` is written
- * underneath; the whole is a <figure>.
+ * underneath; the whole is a <figure>. `tilt` sets it a little askew and
+ * `tape` holds the picture down with a strip of washi tape.
  */
 function Frame({
   children,
   caption,
   gap = 6,
+  tilt = 0,
+  tape = false,
   seed,
   className,
+  style,
   draw,
   roughness,
   passes,
@@ -31,6 +35,10 @@ function Frame({
     caption?: ReactNode;
     /** px between the picture and the frame. */
     gap?: number;
+    /** Degrees to turn it, as if it were dropped there. */
+    tilt?: number;
+    /** A strip of washi tape across the top. */
+    tape?: boolean;
     seed?: string | number;
   }) {
   const pen = usePen({ draw, roughness, passes, weight, speed });
@@ -50,7 +58,7 @@ function Frame({
   );
 
   return (
-    <figure data-slot="frame" className={cn("inline-flex w-fit max-w-full flex-col items-center gap-3", className)} {...props}>
+    <figure data-slot="frame" className={cn("relative inline-flex w-fit max-w-full flex-col items-center gap-3", className)} style={{ ...(tilt ? { rotate: `${tilt}deg` } : null), ...style }} {...props}>
       <div data-slot="frame-picture" className="relative max-w-full *:[img]:block" style={{ padding: gap }}>
         <InkSvg ref={ref} {...frame} pending={mode === "auto"} className="text-ink" style={{ ...frame.style, ...penStyle(pen) }}>
           {strokes.map((d, i) => (
@@ -58,6 +66,16 @@ function Frame({
           ))}
         </InkSvg>
         {children}
+        {tape && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-3 left-1/2 z-10 h-6 w-24 -translate-x-1/2 -rotate-3 bg-[oklch(0.86_0.07_88/0.62)] dark:bg-[oklch(0.72_0.06_88/0.4)]"
+            style={{
+              backgroundImage: "repeating-linear-gradient(115deg, oklch(1 0 0 / 0.16) 0 7px, transparent 7px 14px)",
+              clipPath: "polygon(0 0, 3% 20%, 0 42%, 3% 64%, 0 86%, 2% 100%, 100% 100%, 97% 80%, 100% 58%, 97% 36%, 100% 14%, 98% 0)",
+            }}
+          />
+        )}
       </div>
       {caption && (
         <figcaption data-slot="frame-caption" className="text-center text-sm text-ink-2">

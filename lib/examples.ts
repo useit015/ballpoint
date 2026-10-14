@@ -121,8 +121,152 @@ import CopyButtonStates from "@/registry/ballpoint/examples/copy-button-states";
 import CopyButtonDynamic from "@/registry/ballpoint/examples/copy-button-dynamic";
 import InkIconsButtons from "@/registry/ballpoint/examples/ink-icons-buttons";
 import InkIconsSizes from "@/registry/ballpoint/examples/ink-icons-sizes";
+import AlertVariants from "@/registry/ballpoint/examples/alert-variants";
+import AlertDismiss from "@/registry/ballpoint/examples/alert-dismiss";
+import AvatarSizes from "@/registry/ballpoint/examples/avatar-sizes";
+import AvatarStack from "@/registry/ballpoint/examples/avatar-stack";
+import AvatarProfile from "@/registry/ballpoint/examples/avatar-profile";
+import BadgeSizes from "@/registry/ballpoint/examples/badge-sizes";
+import BadgeFilters from "@/registry/ballpoint/examples/badge-filters";
+import BadgeRemovable from "@/registry/ballpoint/examples/badge-removable";
+import SwitchSizes from "@/registry/ballpoint/examples/switch-sizes";
+import SwitchForm from "@/registry/ballpoint/examples/switch-form";
+import SliderMarks from "@/registry/ballpoint/examples/slider-marks";
+import SliderVertical from "@/registry/ballpoint/examples/slider-vertical";
+import RadioGroupCards from "@/registry/ballpoint/examples/radio-group-cards";
+import RadioGroupHorizontal from "@/registry/ballpoint/examples/radio-group-horizontal";
+import RadioGroupScale from "@/registry/ballpoint/examples/radio-group-scale";
+import CheckboxSelectAll from "@/registry/ballpoint/examples/checkbox-select-all";
+import CheckboxForm from "@/registry/ballpoint/examples/checkbox-form";
+import LabelRequired from "@/registry/ballpoint/examples/label-required";
+import SeparatorLabel from "@/registry/ballpoint/examples/separator-label";
+import SeparatorToolbar from "@/registry/ballpoint/examples/separator-toolbar";
+import ProgressSizes from "@/registry/ballpoint/examples/progress-sizes";
+import ProgressUpload from "@/registry/ballpoint/examples/progress-upload";
+import ProgressSteps from "@/registry/ballpoint/examples/progress-steps";
+import SkeletonText from "@/registry/ballpoint/examples/skeleton-text";
+import SkeletonProfile from "@/registry/ballpoint/examples/skeleton-profile";
+import InputSearch from "@/registry/ballpoint/examples/input-search";
+import FieldForm from "@/registry/ballpoint/examples/field-form";
+import DialogForm from "@/registry/ballpoint/examples/dialog-form";
+import DialogShare from "@/registry/ballpoint/examples/dialog-share";
+import DialogSizes from "@/registry/ballpoint/examples/dialog-sizes";
+import AlertDialogType from "@/registry/ballpoint/examples/alert-dialog-type";
+import AlertDialogSmall from "@/registry/ballpoint/examples/alert-dialog-small";
+import SheetSides from "@/registry/ballpoint/examples/sheet-sides";
+import SheetForm from "@/registry/ballpoint/examples/sheet-form";
+import SheetCart from "@/registry/ballpoint/examples/sheet-cart";
+import PopoverForm from "@/registry/ballpoint/examples/popover-form";
+import PopoverPens from "@/registry/ballpoint/examples/popover-pens";
+import TooltipToolbar from "@/registry/ballpoint/examples/tooltip-toolbar";
+import TooltipDisabled from "@/registry/ballpoint/examples/tooltip-disabled";
+import DropdownMenuUser from "@/registry/ballpoint/examples/dropdown-menu-user";
+import DropdownMenuCheckboxes from "@/registry/ballpoint/examples/dropdown-menu-checkboxes";
+import SelectStatus from "@/registry/ballpoint/examples/select-status";
+import SelectSizes from "@/registry/ballpoint/examples/select-sizes";
+import ToastPromise from "@/registry/ballpoint/examples/toast-promise";
+import ToastUndo from "@/registry/ballpoint/examples/toast-undo";
+import TabsSettings from "@/registry/ballpoint/examples/tabs-settings";
+import TabsCounts from "@/registry/ballpoint/examples/tabs-counts";
+import AccordionIcons from "@/registry/ballpoint/examples/accordion-icons";
+import AccordionControlled from "@/registry/ballpoint/examples/accordion-controlled";
+import FrameTaped from "@/registry/ballpoint/examples/frame-taped";
+import TimelineStatus from "@/registry/ballpoint/examples/timeline-status";
+import TimelineChangelog from "@/registry/ballpoint/examples/timeline-changelog";
+import RedactLetter from "@/registry/ballpoint/examples/redact-letter";
+import RedactTable from "@/registry/ballpoint/examples/redact-table";
+import MarginNoteEssay from "@/registry/ballpoint/examples/margin-note-essay";
+import ChecklistOnboarding from "@/registry/ballpoint/examples/checklist-onboarding";
+import HatchGridHabits from "@/registry/ballpoint/examples/hatch-grid-habits";
+import ScrawlDividers from "@/registry/ballpoint/examples/scrawl-dividers";
+import SectionHeadingUnderlines from "@/registry/ballpoint/examples/section-heading-underlines";
+import SectionHeadingPage from "@/registry/ballpoint/examples/section-heading-page";
+import SignaturePadForm from "@/registry/ballpoint/examples/signature-pad-form";
+import InkThemeToggleHeader from "@/registry/ballpoint/examples/ink-theme-toggle-header";
+import InkIconsDraw from "@/registry/ballpoint/examples/ink-icons-draw";
+import CopyButtonSnippet from "@/registry/ballpoint/examples/copy-button-snippet";
+import CopyButtonInput from "@/registry/ballpoint/examples/copy-button-input";
+import ScrawlKinds from "@/registry/ballpoint/examples/scrawl-kinds";
+import ScrawlRed from "@/registry/ballpoint/examples/scrawl-red";
+import ScrawlPenTest from "@/registry/ballpoint/examples/scrawl-pen-test";
+import ScrawlMargins from "@/registry/ballpoint/examples/scrawl-margins";
+import MarginNoteMarks from "@/registry/ballpoint/examples/margin-note-marks";
+import MarginNotePointers from "@/registry/ballpoint/examples/margin-note-pointers";
+import MarginNoteReview from "@/registry/ballpoint/examples/margin-note-review";
 
 export const examples: Record<string, ComponentType> = {
+  "margin-note-review": MarginNoteReview,
+  "margin-note-pointers": MarginNotePointers,
+  "margin-note-marks": MarginNoteMarks,
+  "scrawl-margins": ScrawlMargins,
+  "scrawl-pen-test": ScrawlPenTest,
+  "scrawl-red": ScrawlRed,
+  "scrawl-kinds": ScrawlKinds,
+  "copy-button-input": CopyButtonInput,
+  "copy-button-snippet": CopyButtonSnippet,
+  "ink-icons-draw": InkIconsDraw,
+  "ink-theme-toggle-header": InkThemeToggleHeader,
+  "signature-pad-form": SignaturePadForm,
+  "section-heading-page": SectionHeadingPage,
+  "section-heading-underlines": SectionHeadingUnderlines,
+  "scrawl-dividers": ScrawlDividers,
+  "hatch-grid-habits": HatchGridHabits,
+  "checklist-onboarding": ChecklistOnboarding,
+  "margin-note-essay": MarginNoteEssay,
+  "redact-table": RedactTable,
+  "redact-letter": RedactLetter,
+  "timeline-changelog": TimelineChangelog,
+  "timeline-status": TimelineStatus,
+  "frame-taped": FrameTaped,
+  "accordion-controlled": AccordionControlled,
+  "accordion-icons": AccordionIcons,
+  "tabs-counts": TabsCounts,
+  "tabs-settings": TabsSettings,
+  "toast-undo": ToastUndo,
+  "toast-promise": ToastPromise,
+  "select-sizes": SelectSizes,
+  "select-status": SelectStatus,
+  "dropdown-menu-checkboxes": DropdownMenuCheckboxes,
+  "dropdown-menu-user": DropdownMenuUser,
+  "tooltip-disabled": TooltipDisabled,
+  "tooltip-toolbar": TooltipToolbar,
+  "popover-pens": PopoverPens,
+  "popover-form": PopoverForm,
+  "sheet-cart": SheetCart,
+  "sheet-form": SheetForm,
+  "sheet-sides": SheetSides,
+  "alert-dialog-small": AlertDialogSmall,
+  "alert-dialog-type": AlertDialogType,
+  "dialog-sizes": DialogSizes,
+  "dialog-share": DialogShare,
+  "dialog-form": DialogForm,
+  "field-form": FieldForm,
+  "input-search": InputSearch,
+  "skeleton-profile": SkeletonProfile,
+  "skeleton-text": SkeletonText,
+  "progress-steps": ProgressSteps,
+  "progress-upload": ProgressUpload,
+  "progress-sizes": ProgressSizes,
+  "separator-toolbar": SeparatorToolbar,
+  "separator-label": SeparatorLabel,
+  "label-required": LabelRequired,
+  "checkbox-form": CheckboxForm,
+  "checkbox-select-all": CheckboxSelectAll,
+  "radio-group-scale": RadioGroupScale,
+  "radio-group-horizontal": RadioGroupHorizontal,
+  "radio-group-cards": RadioGroupCards,
+  "slider-vertical": SliderVertical,
+  "slider-marks": SliderMarks,
+  "switch-form": SwitchForm,
+  "switch-sizes": SwitchSizes,
+  "badge-removable": BadgeRemovable,
+  "badge-filters": BadgeFilters,
+  "badge-sizes": BadgeSizes,
+  "avatar-profile": AvatarProfile,
+  "avatar-stack": AvatarStack,
+  "avatar-sizes": AvatarSizes,
+  "alert-dismiss": AlertDismiss,
+  "alert-variants": AlertVariants,
   "button-demo": ButtonDemo,
   "button-pens": ButtonPens,
   "input-demo": InputDemo,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 import { penStyle, useInkBox, useInkSeed, usePen, type Pen } from "@/registry/ballpoint/hooks/use-ink-box";
 import { inkClassName, InkSvg, Stroke } from "@/registry/ballpoint/lib/ink";
@@ -10,7 +11,25 @@ import { ruleStroke, verticalStroke } from "@/registry/ballpoint/lib/ink-sketch"
 // weight at any size and never needs redrawing as it resizes.
 const LENGTH = 700;
 
-function Separator({
+/**
+ * A wandering pen rule. Give it children and they are written in the middle
+ * of a rule that runs both sides: the "or" between two ways to sign in.
+ */
+function Separator({ children, ...props }: SeparatorProps) {
+  if (!children) return <Rule {...props} />;
+  const { className, ...rule } = props;
+  return (
+    <div role="separator" aria-orientation="horizontal" className={cn("flex w-full items-center gap-3 text-sm text-ink-3", className)}>
+      <Rule {...rule} aria-hidden="true" role="presentation" className="flex-1" />
+      <span>{children}</span>
+      <Rule {...rule} aria-hidden="true" role="presentation" className="flex-1" delay={(rule.delay ?? 0) + 200} />
+    </div>
+  );
+}
+
+type SeparatorProps = SeparatorPrimitive.Props & Pick<Pen, "draw" | "weight" | "speed"> & { seed?: string | number; delay?: number };
+
+function Rule({
   className,
   orientation = "horizontal",
   seed,
@@ -19,12 +38,7 @@ function Separator({
   weight,
   speed,
   ...props
-}: SeparatorPrimitive.Props &
-  Pick<Pen, "draw" | "weight" | "speed"> & {
-    seed?: string | number;
-    /** ms after the pen gets to it before the rule is drawn. */
-    delay?: number;
-  }) {
+}: SeparatorProps) {
   const pen = usePen({ draw, weight, speed });
   const s = useInkSeed(seed);
   const [ref] = useInkBox([LENGTH, 4]);

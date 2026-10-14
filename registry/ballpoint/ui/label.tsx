@@ -3,7 +3,11 @@
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
-function Label({ className, ...props }: ComponentProps<"label">) {
+/**
+ * A plain <label>. `required` marks it with a red-pen asterisk (the control
+ * still needs its own `required`), `optional` says so in lighter ink.
+ */
+function Label({ className, children, required, optional, ...props }: ComponentProps<"label"> & { required?: boolean; optional?: boolean }) {
   return (
     <label
       data-slot="label"
@@ -12,7 +16,15 @@ function Label({ className, ...props }: ComponentProps<"label">) {
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+      {required && (
+        <span aria-hidden="true" className="-ml-1 text-destructive">
+          *
+        </span>
+      )}
+      {optional && <span className="-ml-0.5 text-sm text-ink-3">(optional)</span>}
+    </label>
   );
 }
 

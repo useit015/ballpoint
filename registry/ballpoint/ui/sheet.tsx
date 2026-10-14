@@ -51,6 +51,7 @@ function SheetContent({
   className,
   children,
   side = "right",
+  size = "default",
   showCloseButton = true,
   seed,
   roughness,
@@ -58,7 +59,7 @@ function SheetContent({
   weight,
   speed,
   ...props
-}: SheetPrimitive.Popup.Props & Pick<Pen, "roughness" | "draw" | "weight" | "speed"> & { side?: Side; showCloseButton?: boolean; seed?: string | number }) {
+}: SheetPrimitive.Popup.Props & Pick<Pen, "roughness" | "draw" | "weight" | "speed"> & { side?: Side; size?: "sm" | "default" | "lg" | "xl"; showCloseButton?: boolean; seed?: string | number }) {
   const pen = usePen({ roughness, draw, weight, speed });
   return (
     <SheetPortal>
@@ -66,14 +67,15 @@ function SheetContent({
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         data-side={side}
+        data-size={size}
         className={inkClassName(
           "ink-paper fixed isolate z-50 flex flex-col gap-5 text-base text-popover-foreground outline-none",
           "transition-[translate,opacity] duration-(--dur-enter) ease-out-expo data-ending-style:duration-(--dur-state) data-ending-style:ease-in",
           "motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:opacity-0",
           "data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:max-h-[85dvh] motion-safe:data-[side=bottom]:data-starting-style:translate-y-full motion-safe:data-[side=bottom]:data-ending-style:translate-y-full",
           "data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:max-h-[85dvh] motion-safe:data-[side=top]:data-starting-style:-translate-y-full motion-safe:data-[side=top]:data-ending-style:-translate-y-full",
-          "data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:sm:max-w-sm motion-safe:data-[side=left]:data-starting-style:-translate-x-full motion-safe:data-[side=left]:data-ending-style:-translate-x-full",
-          "data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:w-3/4 data-[side=right]:sm:max-w-sm motion-safe:data-[side=right]:data-starting-style:translate-x-full motion-safe:data-[side=right]:data-ending-style:translate-x-full",
+          "data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:sm:max-w-sm data-[side=left]:data-[size=sm]:sm:max-w-xs data-[side=left]:data-[size=lg]:sm:max-w-lg data-[side=left]:data-[size=xl]:sm:max-w-2xl motion-safe:data-[side=left]:data-starting-style:-translate-x-full motion-safe:data-[side=left]:data-ending-style:-translate-x-full",
+          "data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:w-3/4 data-[side=right]:sm:max-w-sm data-[side=right]:data-[size=sm]:sm:max-w-xs data-[side=right]:data-[size=lg]:sm:max-w-lg data-[side=right]:data-[size=xl]:sm:max-w-2xl motion-safe:data-[side=right]:data-starting-style:translate-x-full motion-safe:data-[side=right]:data-ending-style:translate-x-full",
           className,
         )}
         {...props}

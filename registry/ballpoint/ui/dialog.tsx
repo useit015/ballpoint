@@ -46,12 +46,13 @@ type DialogPen = Omit<Pen, "fill"> & { seed?: string | number };
 
 /**
  * A sheet of paper laid over the page: pencilled round, lifted off its
- * hatched shadow, and drawn in as it lands.
+ * hatched shadow, and drawn in as it lands. `size` sets how wide it is.
  */
 function DialogContent({
   className,
   children,
   showCloseButton = true,
+  size = "default",
   seed,
   roughness,
   passes,
@@ -62,7 +63,7 @@ function DialogContent({
   weight,
   speed,
   ...props
-}: DialogPrimitive.Popup.Props & DialogPen & { showCloseButton?: boolean }) {
+}: DialogPrimitive.Popup.Props & DialogPen & { showCloseButton?: boolean; size?: "sm" | "default" | "lg" | "xl" }) {
   const pen = usePen({ roughness, passes, radius, corners, shadow, draw, weight, speed });
   return (
     <DialogPortal>
@@ -70,8 +71,9 @@ function DialogContent({
       <DialogPrimitive.Viewport data-slot="dialog-viewport" className="fixed inset-0 z-50 flex items-center justify-center p-5">
         <DialogPrimitive.Popup
           data-slot="dialog-content"
+          data-size={size}
           className={inkClassName(
-            "ink-paper relative isolate grid w-full max-w-md gap-5 p-6 text-base text-popover-foreground outline-none",
+            "ink-paper relative isolate grid w-full max-w-md gap-5 data-[size=lg]:max-w-2xl data-[size=sm]:max-w-sm data-[size=xl]:max-w-4xl p-6 text-base text-popover-foreground outline-none",
             // It lands: a little low and askew, then settles flat.
             "transition-[opacity,translate,rotate] duration-(--dur-enter) ease-out-expo data-starting-style:opacity-0 data-ending-style:opacity-0",
             "motion-safe:data-starting-style:translate-y-3 motion-safe:data-starting-style:-rotate-1",
